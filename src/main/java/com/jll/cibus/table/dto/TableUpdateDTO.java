@@ -21,4 +21,10 @@ public class TableUpdateDTO {
     @Positive
     private Long waiterId;
 
+    @Min(value = 0, message = "X coordinate cannot be negative")
+    private Integer posX;
+
+    @Min(value = 0, message = "Y coordinate cannot be negative")
+    private Integer posY;
+
 }

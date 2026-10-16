@@ -426,10 +426,14 @@ public class DataLoader {
 
                 List<TableEntity> mesas = new ArrayList<>();
                 for (int i = 1; i <= 5; i++) {
+                    int posX = 50 + ((i - 1) * 150);
+                    int posY = 100;
                     mesas.add(TableEntity.builder()
                             .number(i)
                             .capacity(i % 2 == 0 ? 4 : 2)
                             .available(true)
+                            .posX(posX)
+                            .posY(posY)
                             .waiter(adminMozo)
                             .branch(sucursalCentro)
                             .build());

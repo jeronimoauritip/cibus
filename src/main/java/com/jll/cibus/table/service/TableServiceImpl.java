@@ -149,32 +149,39 @@ public class TableServiceImpl implements TableService {
     @Override
     @Transactional
     public TableResponseDTO update(Long branchId, Integer tableNumber, TableUpdateDTO newTable) {
-
         authenticateUserBelongsInBranch(branchId);
-
         TableEntity table = getTableByBranchIdAndNumber(branchId, tableNumber);
-        if(newTable.getNumber() != null){
+        if (newTable.getNumber() != null && !newTable.getNumber().equals(table.getNumber())) {
+            if (existsByBranchIdAndNumber(branchId, newTable.getNumber())) {
+                throw new BusinessException("There is another table with number " + newTable.getNumber());
+            }
             table.setNumber(newTable.getNumber());
         }
-
-        if(existsByBranchIdAndNumber(branchId, newTable.getNumber())) throw new BusinessException("There is another table with the same number.");
-
         if (newTable.getCapacity() != null) {
             if (newTable.getCapacity() < 1) {
                 throw new BusinessException("The capacity can not be less than 1");
             }
-
             table.setCapacity(newTable.getCapacity());
         }
-
         if (newTable.getWaiterId() != null) {
             UserEntity newWaiter = userRepository.findById(newTable.getWaiterId())
                     .orElseThrow(()-> new ResourceNotFoundException("user",newTable.getWaiterId()));
             validateWaiterRole(newWaiter.getId());
-
             table.setWaiter(newWaiter);
         }
+        if (newTable.getPosX() != null) {
+            if (newTable.getPosX() < 0) {
+                throw new BusinessException("The X position can not be less than 0");
+            }
+            table.setPosX(newTable.getPosX());
+        }
 
+        if (newTable.getPosY() != null) {
+            if (newTable.getPosY() < 0) {
+                throw new BusinessException("The Y position can not be less than 0");
+            }
+            table.setPosY(newTable.getPosY());
+        }
         TableEntity updatedTable = tableRepository.save(table);
         return tableMapper.toDTO(updatedTable);
     }

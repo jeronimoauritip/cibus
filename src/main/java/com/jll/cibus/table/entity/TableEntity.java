@@ -28,6 +28,12 @@ public class TableEntity {
     @Column (name = "available", nullable = false)
     private Boolean available;
 
+    @Column(name = "pos_x", nullable = false)
+    private Integer posX = 0;
+
+    @Column(name = "pos_y", nullable = false)
+    private Integer posY = 0;
+
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "waiter_id")
    private UserEntity waiter;

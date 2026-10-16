@@ -27,9 +27,7 @@ public class TableController {
                                                             @RequestParam (required = false)  Integer capacity,
                                                             @RequestParam (required = false) Boolean available,
                                                             @RequestParam(required = false) Long waiterId,
-
-                                                           @PathVariable Long branchId)
-    {
+                                                           @PathVariable Long branchId) {
        return ResponseEntity.ok(tableService.findAll(pageable,branchId,tableNumber,capacity,available,waiterId));
     }
 

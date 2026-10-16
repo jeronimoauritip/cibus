@@ -20,4 +20,12 @@ public class TableCreateDTO {
     @Min(value=1, message = "The minimun capacity is 1")
     private Integer capacity;
 
+    @NotNull(message = "The X coordinate is mandatory")
+    @Min(value = 0, message = "X coordinate cannot be negative")
+    private Integer posX;
+
+    @NotNull(message = "The Y coordinate is mandatory")
+    @Min(value = 0, message = "Y coordinate cannot be negative")
+    private Integer posY;
+
 }

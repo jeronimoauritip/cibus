@@ -13,6 +13,8 @@ public class TableResponseDTO {
     private Integer number;
     private Integer capacity;
     private Boolean available;
+    private Integer posX;
+    private Integer posY;
     private Long waiterId;
     private Long branchId;
 
