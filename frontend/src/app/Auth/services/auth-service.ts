@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RoleModel } from '../../Roles/role-model';
 import { AuthUser } from '../models/auth-user';
 import { LoginCredentials } from '../models/login-credentials';
+import { AuthResponse } from '../models/auth-response';
 
 @Injectable({providedIn:'root'})
 export class AuthService {
@@ -13,6 +14,8 @@ export class AuthService {
     private readonly _user= signal<AuthUser | null>(null)
     private readonly _loading= signal (false)
     private readonly _error= signal<string | null>(null)
+    private readonly _accessToken = signal<string | null>(null);
+    private readonly _refreshToken = signal<string | null>(null);
 
     readonly user = this._user.asReadonly()
     readonly loading = this._loading.asReadonly()
@@ -62,10 +65,10 @@ export class AuthService {
     loginWithCredentials(credentials: LoginCredentials): void {
     this._loading.set(true)
     this._error.set(null)
-
-    this.http.post<AuthUser>('/api/auth/login', credentials).subscribe({
-        next: user => {
-            this.loggedIn(user)
+    this.http.post<AuthResponse>('/api/auth', credentials).subscribe({
+        next: response => {
+            this._accessToken.set(response.AccessToken)
+            this._refreshToken.set(response.refreshToken)
             this._loading.set(false)
         },
         error: () => {
@@ -73,7 +76,7 @@ export class AuthService {
             this._loading.set(false)
         }
     })
-    }
+}
         clearError(): void {
         this._error.set(null)
     }

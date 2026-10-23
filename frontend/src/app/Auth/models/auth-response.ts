@@ -1,4 +1,4 @@
 export interface AuthResponse {
-    AccesToken: string;
+    AccessToken: string;
     refreshToken: string;
 }
