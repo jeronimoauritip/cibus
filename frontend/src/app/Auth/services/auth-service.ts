@@ -73,6 +73,10 @@ export class AuthService {
             }
         })
     }
+        clearError(): void {
+        this._error.set(null)
+    }
+
     logout ():void{
         this._user.set(null)
         localStorage.removeItem('auth_user')

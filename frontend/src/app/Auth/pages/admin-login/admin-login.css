@@ -1,0 +1,221 @@
+@font-face {
+  font-family: "Croogla";
+  src: url("/assets/fonts/croogla-bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+:host {
+  --cream: #e7dbbf;
+  --green: #205a40;
+  --header-gradient: linear-gradient(90deg, #205a40, #2d805d);
+  --field-gradient: linear-gradient(90deg, #205a40, #2d7957);
+
+  display: block;
+  font-family: "Instrument Sans", sans-serif;
+  color: var(--green);
+}
+
+* { box-sizing: border-box; }
+
+.login-page {
+  position: relative;
+  isolation: isolate;
+  min-height: max(1080px, 100svh);
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.decoration {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 417px;
+  z-index: -1;
+  background: var(--header-gradient);
+}
+
+.handle {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  width: 98px;
+  height: 31px;
+  transform: translateX(-50%);
+  background: var(--cream);
+}
+
+.handle::after {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 45px;
+  height: 61px;
+  background: var(--cream);
+}
+
+.curve {
+  position: absolute;
+  top: 103px;
+  left: 50%;
+  width: 109.61%;
+  height: 539px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: var(--cream);
+}
+
+.login {
+  width: min(612px, calc(100% - 40px));
+  margin-inline: auto;
+  padding-top: 362px;
+}
+
+.login-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  height: 80px;
+  margin: 0 0 25px;
+
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 74.78px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.divider {
+  width: 6px;
+  height: 80px;
+  flex-shrink: 0;
+  background: var(--green);
+}
+
+.cloche {
+  position: relative;
+  width: 57px;
+  height: 40px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border-bottom: 4px solid currentColor;
+}
+
+.cloche::before {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 5px;
+  width: 47px;
+  height: 28px;
+  border-radius: 50px 50px 0 0;
+  background: currentColor;
+}
+
+.cloche::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25px;
+  width: 8px;
+  height: 6px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 27px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-form input {
+  width: 100%;
+  height: 77px;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 30.72px;
+  background: var(--field-gradient);
+  color: var(--cream);
+
+  font: inherit;
+  font-size: 36.68px;
+  text-align: center;
+}
+
+.login-form input::placeholder {
+  color: var(--cream);
+  opacity: 1;
+}
+
+.login-form input:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 5px;
+}
+
+.field-error {
+  margin: 0;
+  padding: 0 24px;
+  color: #a33a3a;
+  font-size: 15px;
+  text-align: center;
+}
+
+.employee {
+  align-self: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  font: inherit;
+  font-size: 36.68px;
+  font-weight: 500;
+  line-height: 45px;
+  cursor: pointer;
+}
+
+.employee:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .login-page { min-height: 100svh; }
+  .login { padding-top: 290px; }
+  .login-title {
+    gap: 14px;
+    height: 56px;
+    font-size: clamp(36px, 9vw, 56px);
+  }
+  .divider { width: 3px; height: 52px; }
+  .cloche { zoom: 0.65; }
+  .login-form input {
+    height: 64px;
+    font-size: clamp(20px, 5vw, 28px);
+  }
+  .employee { font-size: 26px; }
+}
