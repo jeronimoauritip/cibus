@@ -1,0 +1,49 @@
+<main class="login">
+
+  <section class="login__panel">
+    <h1 class="brand" id="login-title">
+      <svg width="59" height="41" viewBox="0 0 59 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect y="37.0225" width="58.7463" height="3.97761" fill="#E7DBBF"/>
+        <path d="M5.50732 34.5747C5.50732 27.2713 8.03786 20.2671 12.5422 15.1028C17.0466 9.9386 23.1558 7.03735 29.526 7.03735C35.8961 7.03735 42.0054 9.9386 46.5098 15.1028C51.0141 20.2671 53.5447 27.2713 53.5447 34.5747H5.50732Z" fill="#E7DBBF"/>
+        <rect x="27.2314" y="4.28369" width="4.58955" height="4.89552" fill="#E7DBBF"/>
+        <rect x="22.6418" width="14.0746" height="4.58955" fill="#E7DBBF"/>
+      </svg>
+      <span>cibus</span>
+      <span class="brand__divider" aria-hidden="true"></span>
+      <span>login</span>
+    </h1>
+
+    @if (pin().length === 0) {
+      <p class="pin-label">Ingresá tu PIN</p>
+    } @else {
+      <div class="pin-dots">
+        @for (i of [1,2,3,4]; track i) {
+          <span class="dot" [class.filled]="pin().length >= i"></span>
+        }
+      </div>
+    }
+
+    <div class="keypad" role="group" aria-labelledby="pin-label">
+      @for (key of keys; track key) {
+        <button class="key" type="button" (click)="onKeyClick(key, $event)">
+          @if (key === '⊗') {
+            <span class="clear-icon" aria-hidden="true">×</span>
+          } @else if (key === '⌫') {
+            <span class="backspace-icon" aria-hidden="true"></span>
+          } @else {
+            {{ key }}
+          }
+        </button>
+      }
+    </div>
+
+    @if (auth.error()) {
+      <p class="error">{{ auth.error() }}</p>
+    }
+  </section>
+
+  <button class="admin" type="button" (click)="adminClick.emit()">
+    Soy admin/manager
+  </button>
+
+</main>

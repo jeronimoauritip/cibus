@@ -1,0 +1,201 @@
+:root {
+  --cream: #e7dbbf;
+  --green: #205a40;
+  --green-light: #389a6e;
+  --green-dark: #133425;
+}
+
+.login {
+  width: min(612.43px, 100%);
+  text-align: center;
+  margin-inline: auto;
+}
+
+.brand svg {
+  width: 3.67163rem;
+  height: 2.5625rem;
+  flex-shrink: 0;
+}
+
+
+.login__panel {
+  position: relative;
+  width: 38.27681rem;
+  height: 47.75rem;
+  padding: 77px 24px 96px;
+  border-radius: 1.92025rem;
+  background: linear-gradient(90deg, #205A40 47.25%, #389A6E 156.75%);
+  margin-inline: auto;
+}
+
+.login__panel::before,
+.login__panel::after {
+  content: "";
+  position: absolute;
+  left: 52.6%;
+  transform: translateX(-50%);
+  background: var(--green);
+}
+
+.login__panel::before {
+  top: -54px;
+  width: 84px;
+  height: 24px;
+}
+
+.login__panel::after {
+  top: -36px;
+  width: 30px;
+  height: 54px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 13.2835rem;
+  height: 4.82144rem;
+  margin: 0 auto 44px;
+  color: #E7DBBF;
+  font-family: "FONTSPRING DEMO - Croogla 4F", "Arial Rounded MT Bold", sans-serif;
+  font-size: 4.67381rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.brand__divider {
+  width: 0.375rem;
+  height: 5rem;
+  flex-shrink: 0;
+  background: #E7DBBF;
+}
+
+.pin-label {
+  margin: 0 0 13px;
+  color: #E7DBBF;
+  text-align: center;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 2.29225rem;
+  font-weight: 400;
+  opacity: 0.65;
+}
+
+.keypad {
+  width: min(315px, 100%);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.key {
+  display: grid;
+  place-items: center;
+  width: 6.375rem;
+  height: 6.19288rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.89538rem;
+  background: #E7DBBF;
+  color: #133425;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 2.75069rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+
+.key:hover  { filter: brightness(1.04); }
+.key:active { transform: translateY(1px); }
+
+.key:focus-visible,
+.admin:focus-visible {
+  outline: 3px solid var(--green-light);
+  outline-offset: 4px;
+}
+
+.clear-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  border: 3px solid #133425;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: #133425;
+}
+
+.backspace-icon {
+  width: 2.5rem;
+  height: 1.5rem;
+  background: linear-gradient(90deg, #205A40 47.25%, #389A6E 156.75%);
+  clip-path: polygon(0 50%, 30% 0, 100% 0, 100% 100%, 30% 100%);
+}
+
+.error {
+  color: #ff6b6b;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.admin {
+  display: inline-block;
+  margin-top: 14px;
+  color: #205A40;
+  text-align: center;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 2.29225rem;
+  font-weight: 500;
+  opacity: 0.85;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+@media (max-width: 650px) {
+  .login__panel {
+    min-height: auto;
+    padding: 48px 24px;
+    border-radius: 24px;
+  }
+
+  .brand {
+    gap: 16px;
+    margin-bottom: 32px;
+    font-size: clamp(32px, 9vw, 65px);
+    line-height: 1;
+    letter-spacing: -1.5px;
+  }
+
+  .brand__divider { height: 1.1em; }
+
+  .pin-label { font-size: clamp(24px, 6vw, 36.68px); }
+
+  .key   { font-size: clamp(30px, 8vw, 44.01px); }
+
+  .admin { font-size: clamp(22px, 5.5vw, 36.68px); }
+}
+
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 13px;
+  height: 2.29225rem;
+  align-items: center;
+}
+
+.dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid #E7DBBF;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.dot.filled {
+  background: #E7DBBF;
+}
