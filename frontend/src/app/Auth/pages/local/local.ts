@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core'
 import { Router } from '@angular/router'
-import { gsap } from 'gsap/gsap-core'
+import { gsap } from 'gsap'
 
 @Component({
   selector: 'app-local',
