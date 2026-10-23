@@ -1,1 +1,5 @@
-<p>login works!</p>
+@if (adminMode()) {
+  <app-admin-login />
+} @else {
+  <app-pin (adminClick)="adminMode.set(true)" />
+}
