@@ -1,4 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: "Croogla";
+  src: url("/assets/fonts/fonnts.com-croogla_4f-bold.woff") format("woff");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 body {
   margin: 0;
   min-height: 100svh;

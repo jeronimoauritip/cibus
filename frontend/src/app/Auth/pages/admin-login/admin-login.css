@@ -1,11 +1,3 @@
-@font-face {
-  font-family: "Croogla";
-  src: url("/assets/fonts/croogla-bold.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
 :host {
   --cream: #e7dbbf;
   --green: #205a40;
@@ -79,7 +71,6 @@
   gap: 24px;
   height: 80px;
   margin: 0 0 25px;
-
   font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
   font-size: 74.78px;
   font-weight: 700;
@@ -90,6 +81,7 @@
 .brand {
   display: inline-flex;
   align-items: center;
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
 }
 
 .divider {
