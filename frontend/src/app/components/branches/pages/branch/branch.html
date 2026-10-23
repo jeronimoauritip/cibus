@@ -1,46 +1,46 @@
 <div class="pagina">
-    <!-- Encabezado con logo oficial Cibus -->
+    <!-- Header with official Cibus logo -->
     <header class="encabezado">
-        <a class="logo" href="/" aria-label="Cibus, inicio">
+        <a class="logo" href="/" aria-label="Cibus, home">
             <span class="logo-bandeja" aria-hidden="true"></span>
             <span>cibus</span>
         </a>
     </header>
 
-    <!-- Silueta de la bandeja (campana/plato de restaurante) -->
+    <!-- Tray silhouette (restaurant cloche/platter) -->
     <div class="fondo-bandeja" aria-hidden="true">
         <div class="manija"></div>
         <div class="cupula"></div>
         <div class="base"></div>
     </div>
 
-    <!-- Contenido principal: Vista Nueva Sucursal -->
+    <!-- Main content: New Branch view -->
     <main class="contenido">
-        <h1 class="titulo">Nueva sucursal</h1>
+        <h1 class="titulo">New branch</h1>
 
         <form class="formulario" (submit)="$event.preventDefault(); addBranch(nameInput.value, streetInput.value, +numberInput.value); nameInput.value=''; streetInput.value=''; numberInput.value=''">
-            <!-- Nombre de la sucursal -->
+            <!-- Branch name -->
             <div class="campo-capsula">
                 <input #nameInput id="name" name="name" type="text"
-                    placeholder="Ingresá nombre de sucursal" autocomplete="off" />
+                    placeholder="Enter branch name" autocomplete="off" />
             </div>
 
-            <!-- Calle (Figma: Ingresá calle) -->
+            <!-- Street -->
             <div class="campo-capsula">
                 <input #streetInput id="street" name="street" type="text" required
-                    placeholder="Ingresá calle" autocomplete="off" />
+                    placeholder="Enter street" autocomplete="off" />
             </div>
 
-            <!-- Numeración (Figma: Ingresá numeración) -->
+            <!-- Street number -->
             <div class="campo-capsula">
                 <input #numberInput id="number" name="number" type="number" required
-                    placeholder="Ingresá numeración" autocomplete="off" />
+                    placeholder="Enter street number" autocomplete="off" />
             </div>
 
-            <!-- Botón de acción -->
+            <!-- Action button -->
             <div class="acciones">
                 <button class="btn-guardar" type="submit">
-                    Guardar sucursal
+                    Save branch
                 </button>
             </div>
         </form>
