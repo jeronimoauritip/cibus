@@ -15,7 +15,9 @@ export class AuthService {
     private readonly _loading= signal (false)
     private readonly _error= signal<string | null>(null)
     private readonly _accessToken = signal<string | null>(null);
+    readonly accessToken = this._accessToken.asReadonly();
     private readonly _refreshToken = signal<string | null>(null);
+
 
     readonly user = this._user.asReadonly()
     readonly loading = this._loading.asReadonly()
