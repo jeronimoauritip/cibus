@@ -5,6 +5,8 @@ import { RoleModel } from '../../Roles/role-model';
 import { AuthUser } from '../models/auth-user';
 import { LoginCredentials } from '../models/login-credentials';
 import { AuthResponse } from '../models/auth-response';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({providedIn:'root'})
 export class AuthService {
@@ -78,14 +80,26 @@ export class AuthService {
             this._loading.set(false)
         }
     })
-}
+    }
+    refresh(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>('/api/auth/refresh', {
+    refreshToken: this._refreshToken()
+        }).pipe(
+        tap(response => {
+      this._accessToken.set(response.AccessToken);
+      this._refreshToken.set(response.refreshToken);
+        })
+        );
+    }
         clearError(): void {
         this._error.set(null)
     }
 
-    logout ():void{
-        this._user.set(null)
-        localStorage.removeItem('auth_user')
-        this.router.navigate(['/login'])
+    logout(): void {
+    this._user.set(null);
+    this._accessToken.set(null);
+    this._refreshToken.set(null);
+    localStorage.removeItem('auth_user');
+    this.router.navigate(['/login']);
     }
 }
