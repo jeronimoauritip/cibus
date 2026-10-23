@@ -3,6 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { RoleModel } from '../../Roles/role-model';
 import { AuthUser } from '../models/auth-user';
+import { LoginCredentials } from '../models/login-credentials';
 
 @Injectable({providedIn:'root'})
 export class AuthService {
@@ -58,20 +59,20 @@ export class AuthService {
         })
         
     }
-    loginWithCredentials (email:string, password: string): void{
-        this._loading.set(true)
-        this._error.set(null)
+    loginWithCredentials(credentials: LoginCredentials): void {
+    this._loading.set(true)
+    this._error.set(null)
 
-        this.http.post<AuthUser>('/api/auth/login', { email, password }).subscribe({
-            next: user=>{
-                this.loggedIn(user)
-                this._loading.set(false)
-            },
-            error:()=>{
-                this._error.set('Wrong email or password')
-                this._loading.set(false)
-            }
-        })
+    this.http.post<AuthUser>('/api/auth/login', credentials).subscribe({
+        next: user => {
+            this.loggedIn(user)
+            this._loading.set(false)
+        },
+        error: () => {
+            this._error.set('Wrong email or password')
+            this._loading.set(false)
+        }
+    })
     }
         clearError(): void {
         this._error.set(null)

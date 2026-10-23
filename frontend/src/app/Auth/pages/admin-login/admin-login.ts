@@ -1,8 +1,7 @@
 import { Component, inject, output, signal } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
 import { email, form, FormField, minLength, required, submit } from '@angular/forms/signals';
+import { LoginCredentials } from '../../models/login-credentials';
 
 @Component({
   selector: 'app-admin-login',
@@ -17,7 +16,7 @@ export class AdminLogin {
   
   readonly minPasswordLength = 8;
 
-  private readonly model= signal ({email:'', password:''});
+  private readonly model= signal<LoginCredentials> ({email:'', password:''});
 
   protected readonly loginForm = form(this.model, (path) => {
     required(path.email,    { message: 'Enter your email.' });
@@ -29,9 +28,8 @@ export class AdminLogin {
   });
 
   onSubmit(): void {
-    submit(this.loginForm, async () => {
-      const { email, password } = this.model();
-      this.auth.loginWithCredentials(email, password);
-    });
+  submit(this.loginForm, async () => {
+    this.auth.loginWithCredentials(this.model());
+  });
   }
 }
