@@ -14,7 +14,7 @@
     </h1>
 
     @if (pin().length === 0) {
-      <p class="pin-label">Ingresá tu PIN</p>
+      <p class="pin-label">Enter your PIN</p>
     } @else {
       <div class="pin-dots">
         @for (i of [1,2,3,4]; track i) {
@@ -43,7 +43,7 @@
   </section>
 
   <button class="admin" type="button" (click)="adminClick.emit()">
-    Soy admin/manager
+    I'm an admin/manager
   </button>
 
 </main>

@@ -17,12 +17,12 @@
 
     <form class="login-form" (submit)="$event.preventDefault(); onSubmit()" novalidate>
       <div class="field">
-        <label class="sr-only" for="email">Tu mail</label>
+        <label class="sr-only" for="email">Your email</label>
         <input
           id="email"
           type="email"
           [formField]="loginForm.email"
-          placeholder="Ingresá tu mail"
+          placeholder="Enter your email"
           autocomplete="username"
         >
         @if (loginForm.email().touched() && loginForm.email().invalid()) {
@@ -33,12 +33,12 @@
       </div>
 
       <div class="field">
-        <label class="sr-only" for="password">Tu contraseña</label>
+        <label class="sr-only" for="password">Your password</label>
         <input
           id="password"
           type="password"
           [formField]="loginForm.password"
-          placeholder="Ingresá tu contraseña"
+          placeholder="Enter your password"
           autocomplete="current-password"
         >
         @if (loginForm.password().touched() && loginForm.password().invalid()) {
@@ -53,11 +53,11 @@
       }
 
       <button class="submit" type="submit" [disabled]="auth.loading()">
-        Ingresar
+        Log in
       </button>
 
       <button class="employee" type="button" (click)="employeeClick.emit()">
-        Soy empleado
+        I'm an employee
       </button>
     </form>
 

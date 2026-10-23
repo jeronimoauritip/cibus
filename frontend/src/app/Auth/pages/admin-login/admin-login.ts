@@ -20,11 +20,11 @@ export class AdminLogin {
   private readonly model= signal ({email:'', password:''});
 
   protected readonly loginForm = form(this.model, (path) => {
-    required(path.email,    { message: 'Ingresá tu mail.' });
-    email(path.email,       { message: 'Ingresá un mail válido (ej: nombre@dominio.com).' });
-    required(path.password, { message: 'Ingresá tu contraseña.' });
+    required(path.email,    { message: 'Enter your email.' });
+    email(path.email,       { message: 'Enter a valid email (e.g. name@domain.com).' });
+    required(path.password, { message: 'Enter your password.' });
     minLength(path.password, this.minPasswordLength, {
-      message: `La contraseña debe tener al menos ${this.minPasswordLength} caracteres.`,
+      message: `Password must be at least ${this.minPasswordLength} characters long.`,
     });
   });
 
