@@ -1,11 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap");
 
 @font-face {
   font-family: "Croogla";
-  src: url("/assets/fonts/Croogla4F.woff2") format("woff2"),
-       url("/assets/fonts/Croogla4F.woff") format("woff");
-  font-weight: 700;
+  src: url("/assets/fonts/fonnts.com-croogla_4f-bold.woff") format("woff");
   font-style: normal;
+  font-weight: 700;
+  font-display: swap;
 }
 :root {
   --crema: #e7dbbf;
