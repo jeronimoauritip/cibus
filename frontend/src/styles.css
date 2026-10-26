@@ -1,12 +1,60 @@
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap");
 
 :root {
+  /* Paleta Base Cibus */
   --crema: #e7dbbf;
   --crema-claro: #f8f5e9;
+  --crema-50: #fbf8f0;
+  --crema-200: #e2d4b4;
+  --crema-300: #d4c29d;
+
   --verde-oscuro: #205a40;
   --verde-fondo: #2d805d;
   --verde-claro: #389a6e;
+  --verde-900: #143b2a;
+  --verde-800: #1a4d37;
+  --verde-100: #e3efe8;
+  --verde-50: #f0f7f3;
+
   --icono: #aab79b;
+  --icono-suave: #bcc8ae;
+
+  /* Estados de Mesas & Alertas */
+  --mesa-libre: #389a6e;
+  --mesa-libre-bg: rgba(56, 154, 110, 0.15);
+  --mesa-ocupada: #c4663a;
+  --mesa-ocupada-bg: rgba(196, 102, 58, 0.15);
+
+  --texto-principal: #1b4d36;
+  --texto-secundario: #456d59;
+  --texto-tenue: #7a9485;
+  --texto-claro: #f8f5e9;
+
+  /* Radios de curvatura coherentes */
+  --radio-xs: 8px;
+  --radio-sm: 14px;
+  --radio-md: 20px;
+  --radio-lg: 26px;
+  --radio-xl: 32px;
+  --radio-pill: 9999px;
+
+  /* Sombras suaves y tintadas de verde */
+  --sombra-subtil: 0 2px 8px rgba(32, 90, 64, 0.06);
+  --sombra-card: 0 4px 16px rgba(32, 90, 64, 0.08), 0 1px 3px rgba(32, 90, 64, 0.04);
+  --sombra-card-hover: 0 10px 28px rgba(32, 90, 64, 0.14), 0 2px 6px rgba(32, 90, 64, 0.06);
+  --sombra-elevada: 0 16px 36px rgba(32, 90, 64, 0.18);
+  --sombra-dropdown: 0 12px 32px rgba(32, 90, 64, 0.22);
+
+  /* Microinteracciones y transiciones */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-rapida: 140ms;
+  --dur-normal: 220ms;
+  --dur-lenta: 360ms;
+
+  /* Tipografías */
+  --fuente-texto: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --fuente-display: "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 * {
@@ -19,9 +67,11 @@ html, body {
   width: 100%;
   min-height: 100%;
   overflow-x: hidden;
-  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--fuente-texto);
   background: var(--crema);
   color: var(--verde-oscuro);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 app-root {
@@ -30,6 +80,23 @@ app-root {
   min-height: 100vh;
 }
 
-button, input {
+button, input, select, textarea {
   font: inherit;
+}
+
+/* Enfoque accesible consistente */
+:focus-visible {
+  outline: 3px solid var(--verde-claro);
+  outline-offset: 3px;
+  border-radius: var(--radio-xs);
+}
+
+/* Modo de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
