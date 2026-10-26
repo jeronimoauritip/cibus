@@ -21,13 +21,11 @@
         <form class="formulario" (submit)="$event.preventDefault(); create(nameInput.value, descInput.value, +categorySelect.value); nameInput.value=''; descInput.value=''; categorySelect.value=''">
 
             <div class="campo-capsula">
-                <input #nameInput id="name" name="name" type="text"
-                    placeholder="Product name" autocomplete="off" required />
+                <input #nameInput id="name" name="name" type="text" placeholder="Product name" autocomplete="off" required maxlength="100" />
             </div>
 
             <div class="campo-capsula">
-                <input #descInput id="description" name="description" type="text"
-                    placeholder="Description (optional)" autocomplete="off" />
+                <input #descInput id="description" name="description" type="text" placeholder="Description (optional)" autocomplete="off" maxlength="255" />
             </div>
 
             <div class="campo-capsula">
