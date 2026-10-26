@@ -1,0 +1,14 @@
+<div class="filtros">
+  <button class="control" type="button" (click)="mostrarCategoria = !mostrarCategoria">
+    Filters ▼
+  </button>
+
+  @if (mostrarCategoria) {
+    <div class="dropdown">
+      <button class="opcion" type="button" (click)="selectCategory('')">All</button>
+      @for (cat of categories(); track cat) {
+        <button class="opcion" type="button" (click)="selectCategory(cat)">{{ cat }}</button>
+      }
+    </div>
+  }
+</div>
