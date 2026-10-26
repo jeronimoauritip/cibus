@@ -17,7 +17,8 @@ export class ProductFilterComponent implements OnInit {
 
   ngOnInit(): void {
     this.service.getCategories().subscribe({
-      next: cats => this.categories.set(cats.map(c => c.name))
+      next: cats => this.categories.set(cats.map(c => c.name)),
+      error: () => this.categories.set([])
     });
   }
 }
