@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.card {
+  background: white;
+  border-radius: 1.2rem;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  box-shadow: 0 2px 8px rgba(32, 90, 64, 0.1);
+}
+
+.card__category {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2d805d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card__name {
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #205a40;
+  margin: 0;
+}
+
+.card__description {
+  font-size: 0.95rem;
+  color: #205a40;
+  opacity: 0.7;
+  margin: 0;
+}
