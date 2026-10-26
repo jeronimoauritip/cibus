@@ -1,46 +1,98 @@
-<div class="pagina">
+<div class="page">
     <!-- Header with official Cibus logo -->
-    <header class="encabezado">
+    <header class="header">
         <a class="logo" href="/" aria-label="Cibus, home">
-            <span class="logo-bandeja" aria-hidden="true"></span>
+            <span class="logo-tray" aria-hidden="true"></span>
             <span>cibus</span>
         </a>
     </header>
 
     <!-- Tray silhouette (restaurant cloche/platter) -->
-    <div class="fondo-bandeja" aria-hidden="true">
-        <div class="manija"></div>
-        <div class="cupula"></div>
+    <div class="tray-background" aria-hidden="true">
+        <div class="handle"></div>
+        <div class="dome"></div>
         <div class="base"></div>
     </div>
 
     <!-- Main content: New Branch view -->
-    <main class="contenido">
-        <h1 class="titulo">New branch</h1>
+    <main class="content">
+        <h1 class="title">New branch</h1>
 
-        <form class="formulario" (submit)="$event.preventDefault(); addBranch(nameInput.value, streetInput.value, +numberInput.value); nameInput.value=''; streetInput.value=''; numberInput.value=''">
+        @if (successMessage()) {
+            <div class="alert-message success" role="alert">
+                {{ successMessage() }}
+            </div>
+        }
+
+        @if (errorMessage()) {
+            <div class="alert-message error" role="alert">
+                {{ errorMessage() }}
+            </div>
+        }
+
+        <form class="form" [formRoot]="branchForm" (submit)="onSubmit()" novalidate>
             <!-- Branch name -->
-            <div class="campo-capsula">
-                <input #nameInput id="name" name="name" type="text"
-                    placeholder="Enter branch name" autocomplete="off" />
+            <div class="field-group">
+                <div class="field-capsule" [class.field-error]="isFieldInvalid('name')">
+                    <input
+                        id="name"
+                        [formField]="branchForm.name"
+                        type="text"
+                        placeholder="Enter branch name"
+                        autocomplete="off"
+                    />
+                </div>
+                @if (isFieldInvalid('name')) {
+                    <span class="field-error-message" role="alert">
+                        {{ getNameErrorMessage() }}
+                    </span>
+                }
             </div>
 
             <!-- Street -->
-            <div class="campo-capsula">
-                <input #streetInput id="street" name="street" type="text" required
-                    placeholder="Enter street" autocomplete="off" />
+            <div class="field-group">
+                <div class="field-capsule" [class.field-error]="isFieldInvalid('street')">
+                    <input
+                        id="street"
+                        [formField]="branchForm.street"
+                        type="text"
+                        placeholder="Enter street"
+                        autocomplete="off"
+                    />
+                </div>
+                @if (isFieldInvalid('street')) {
+                    <span class="field-error-message" role="alert">
+                        {{ getStreetErrorMessage() }}
+                    </span>
+                }
             </div>
 
             <!-- Street number -->
-            <div class="campo-capsula">
-                <input #numberInput id="number" name="number" type="number" required
-                    placeholder="Enter street number" autocomplete="off" />
+            <div class="field-group">
+                <div class="field-capsule" [class.field-error]="isFieldInvalid('number')">
+                    <input
+                        id="number"
+                        [formField]="branchForm.number"
+                        type="number"
+                        placeholder="Enter street number"
+                        autocomplete="off"
+                    />
+                </div>
+                @if (isFieldInvalid('number')) {
+                    <span class="field-error-message" role="alert">
+                        {{ getNumberErrorMessage() }}
+                    </span>
+                }
             </div>
 
             <!-- Action button -->
-            <div class="acciones">
-                <button class="btn-guardar" type="submit">
-                    Save branch
+            <div class="actions">
+                <button class="btn-save" type="submit" [disabled]="isSubmitting()">
+                    @if (isSubmitting()) {
+                        Saving...
+                    } @else {
+                        Save branch
+                    }
                 </button>
             </div>
         </form>

@@ -1,25 +1,26 @@
 :host {
   display: block;
   min-height: 100vh;
+  --vo: #205a40;
+  --vf: #2d805d;
+  --vc: #389a6e;
+  --cr: #e7dbbf;
+  --bl: #f8f5e9;
+  --err: #991b1b;
 }
 
-.pagina {
+.page {
   position: relative;
   min-height: 100vh;
   min-height: 100svh;
   overflow-x: hidden;
   isolation: isolate;
-  background: linear-gradient(
-    100deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-fondo, #2d805d)
-  );
+  background: linear-gradient(100deg, var(--vo), var(--vf));
   display: flex;
   flex-direction: column;
 }
 
-/* Encabezado */
-.encabezado {
+.header {
   position: relative;
   z-index: 2;
   padding: 28px 30px;
@@ -29,16 +30,13 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #f8f5e9;
+  color: var(--bl);
   text-decoration: none;
-  font-size: 38px;
-  font-weight: 700;
-  line-height: 39px;
+  font: 700 38px/39px sans-serif;
   letter-spacing: -1.5px;
 }
 
-/* Símbolo de bandeja de restaurante recreado con CSS */
-.logo-bandeja {
+.logo-tray {
   position: relative;
   width: 27px;
   height: 16px;
@@ -46,7 +44,7 @@
   border-bottom: 3px solid currentColor;
 }
 
-.logo-bandeja::before {
+.logo-tray::before {
   content: "";
   position: absolute;
   inset: 1px 2px 3px;
@@ -54,7 +52,7 @@
   background: currentColor;
 }
 
-.logo-bandeja::after {
+.logo-tray::after {
   content: "";
   position: absolute;
   top: -3px;
@@ -65,35 +63,25 @@
   background: currentColor;
 }
 
-/* Fondo con forma de bandeja / campana */
-.fondo-bandeja {
+.tray-background {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
 
-.manija {
+.handle {
   position: absolute;
   top: 48px;
   left: 50%;
   width: 98px;
   height: 85px;
   transform: translateX(-50%);
-  background: var(--crema, #e7dbbf);
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 36%,
-    70% 36%,
-    70% 100%,
-    25% 100%,
-    25% 36%,
-    0 36%
-  );
+  background: var(--cr);
+  clip-path: polygon(0 0, 100% 0, 100% 36%, 70% 36%, 70% 100%, 25% 100%, 25% 36%, 0 36%);
 }
 
-.cupula {
+.dome {
   position: absolute;
   top: 103px;
   left: 50%;
@@ -102,20 +90,16 @@
   height: 539px;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: var(--crema, #e7dbbf);
+  background: var(--cr);
 }
 
 .base {
   position: absolute;
-  top: 322px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: var(--crema, #e7dbbf);
+  inset: 322px 0 0;
+  background: var(--cr);
 }
 
-/* Contenido del formulario */
-.contenido {
+.content {
   position: relative;
   z-index: 2;
   width: min(842px, calc(100% - 48px));
@@ -125,22 +109,18 @@
   align-items: center;
 }
 
-.titulo {
-  margin: 0 0 28px 0;
-  font-family:
-    "FONTSPRING DEMO - Croogla 4F",
-    "Croogla 4F",
-    "Arial Rounded MT Bold",
-    sans-serif;
+.title {
+  margin: 0 0 28px;
+  font-family: "FONTSPRING DEMO - Croogla 4F", "Croogla 4F", "Arial Rounded MT Bold", sans-serif;
   font-size: clamp(38px, 6vw, 79px);
   font-weight: 700;
   line-height: 1.05;
   text-align: center;
   letter-spacing: -2px;
-  color: var(--verde-oscuro, #205a40);
+  color: var(--vo);
 }
 
-.formulario {
+.form {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -148,94 +128,96 @@
   align-items: center;
 }
 
-/* Cápsula de los inputs basada en el diseño de Figma */
-.campo-capsula {
+.field-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-capsule {
   display: flex;
   align-items: center;
   width: 100%;
   height: 91px;
   padding: 0 38px;
   border-radius: 29px;
-  background: linear-gradient(
-    90deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-claro, #389a6e)
-  );
+  background: linear-gradient(90deg, var(--vo), var(--vc));
   box-shadow: 0 4px 18px rgba(32, 90, 64, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s, box-shadow 0.2s, outline 0.2s;
 }
 
-.campo-capsula:focus-within {
-  outline: 3px solid var(--verde-oscuro, #205a40);
+.field-capsule:focus-within {
+  outline: 3px solid var(--vo);
   outline-offset: 4px;
   transform: translateY(-1px);
 }
 
-.campo-capsula input {
+.field-capsule.field-error {
+  outline: 3px solid #b91c1c;
+  outline-offset: 3px;
+  box-shadow: 0 4px 20px rgba(185, 28, 28, 0.3);
+}
+
+.field-capsule input {
   width: 100%;
   min-width: 0;
   padding: 0;
   border: 0;
-  outline: none;
+  outline: 0;
   background: transparent;
-  color: var(--crema, #e7dbbf);
-  font-family: "Instrument Sans", sans-serif;
-  font-size: 32px;
-  line-height: 42px;
+  color: var(--cr);
+  font: 32px/42px "Instrument Sans", sans-serif;
 }
 
-.campo-capsula input::placeholder {
-  color: var(--crema, #e7dbbf);
+.field-capsule input::placeholder {
+  color: var(--cr);
   opacity: 0.85;
 }
 
-/* Controles de acción */
-.acciones {
+.field-error-message {
+  color: var(--err);
+  font-size: 15px;
+  font-weight: 700;
+  padding-left: 24px;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.actions {
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
 
-.btn-guardar {
+.btn-save {
   width: 100%;
   max-width: 420px;
   height: 78px;
   padding: 0 32px;
-  border: none;
+  border: 0;
   border-radius: 29px;
-  background: linear-gradient(
-    100deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-fondo, #2d805d)
-  );
-  color: #f8f5e9;
-  font-family: "Instrument Sans", sans-serif;
-  font-size: 26px;
-  font-weight: 700;
+  background: linear-gradient(100deg, var(--vo), var(--vf));
+  color: var(--bl);
+  font: 700 26px "Instrument Sans", sans-serif;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(32, 90, 64, 0.35);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.btn-guardar:hover:not(:disabled) {
+.btn-save:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 26px rgba(32, 90, 64, 0.45);
   filter: brightness(1.08);
 }
 
-.btn-guardar:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
-.btn-guardar:disabled {
-  opacity: 0.5;
+.btn-save:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
   box-shadow: none;
 }
 
-/* Mensajes de retroalimentación */
-.mensaje-alerta {
+.alert-message {
   width: 100%;
   padding: 16px 24px;
   border-radius: 18px;
@@ -245,15 +227,15 @@
   animation: fadeIn 0.3s ease-in;
 }
 
-.mensaje-alerta.exito {
+.alert-message.success {
   background: rgba(45, 128, 93, 0.15);
-  color: var(--verde-oscuro, #205a40);
-  border: 2px solid var(--verde-fondo, #2d805d);
+  color: var(--vo);
+  border: 2px solid var(--vf);
 }
 
-.mensaje-alerta.error {
+.alert-message.error {
   background: rgba(220, 38, 38, 0.12);
-  color: #991b1b;
+  color: var(--err);
   border: 2px solid #ef4444;
 }
 
@@ -262,48 +244,15 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Adaptación responsive */
 @media (max-width: 700px) {
-  .encabezado {
-    padding: 20px 22px;
-  }
-
-  .logo {
-    font-size: 30px;
-  }
-
-  .contenido {
-    margin-top: 10px;
-  }
-
-  .titulo {
-    font-size: clamp(32px, 8vw, 48px);
-    margin-bottom: 20px;
-  }
-
-  .campo-capsula {
-    height: 68px;
-    padding: 0 22px;
-    border-radius: 22px;
-  }
-
-  .campo-capsula input {
-    font-size: 20px;
-    line-height: 28px;
-  }
-
-  .btn-guardar {
-    height: 60px;
-    font-size: 20px;
-    border-radius: 22px;
-  }
-
-  .cupula {
-    top: 90px;
-    height: 420px;
-  }
-
-  .base {
-    top: 250px;
-  }
+  .header { padding: 20px 22px; }
+  .logo { font-size: 30px; }
+  .content { margin-top: 10px; }
+  .title { font-size: clamp(32px, 8vw, 48px); margin-bottom: 20px; }
+  .field-capsule { height: 68px; padding: 0 22px; border-radius: 22px; }
+  .field-capsule input { font-size: 20px; line-height: 28px; }
+  .field-error-message { font-size: 13px; padding-left: 16px; }
+  .btn-save { height: 60px; font-size: 20px; border-radius: 22px; }
+  .dome { top: 90px; height: 420px; }
+  .base { top: 250px; }
 }
