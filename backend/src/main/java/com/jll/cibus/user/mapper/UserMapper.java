@@ -13,6 +13,7 @@ public class UserMapper implements IMapper<UserEntity,UserRequestDTO,UserRespons
 
     private final ModelMapper modelMapper;
 
+
     public UserEntity toEntity (UserRequestDTO dto) {
         return modelMapper.map(dto, UserEntity.class);
     }
