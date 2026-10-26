@@ -2,8 +2,10 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ProductService } from '../../service/product-service';
 import { FiltroProducto } from '../../models/filtro-producto';
 import { Product } from '../../models/product';
+import { ProductCardComponent } from '../../components/product-card-component/product-card-component';
+import { ProductFilterComponent } from '../../components/product-filter-component/product-filter-component';
 @Component({
-  imports: [],
+  imports: [ProductCardComponent, ProductFilterComponent],
   selector: 'app-product-list-component',
   styleUrl: './product-list-component.css',
   templateUrl: './product-list-component.html',
@@ -20,5 +22,5 @@ export class ProductListComponent {
   )?? []
 );
   readonly loading= computed(()=> this.service.productos.isLoading() );
-  readonly error= computed(()=> this.service.productos.error );
-}
+  readonly error = computed(() => this.service.productos.error());
+ }
