@@ -83,12 +83,27 @@
 }
 
 .manija {
-  display: none;
+  position: absolute;
+  top: 11.5%;
+  left: 50%;
+  width: 6.125rem;
+  height: 1.95rem;
+  transform: translateX(-50%);
+  background: var(--cream);
 }
 
+.manija::after {
+  content: "";
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  width: 2.8rem;
+  height: 3.8rem;
+  background: var(--cream);
+}
 .cupula {
   position: absolute;
-  top: 62%;
+  top: 25%;
   left: 50%;
   width: 109.61%;
   height: 129%;
