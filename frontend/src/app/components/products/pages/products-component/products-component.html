@@ -1,0 +1,58 @@
+<div class="pagina">
+
+    <header class="encabezado">
+        <a class="logo" href="/" aria-label="Cibus, home">
+            <span class="logo-bandeja" aria-hidden="true"></span>
+            <span>cibus</span>
+        </a>
+    </header>
+
+  
+    <div class="fondo-bandeja" aria-hidden="true">
+        <div class="manija"></div>
+        <div class="cupula"></div>
+        <div class="base"></div>
+    </div>
+
+
+    <main class="contenido">
+        <h1 class="titulo">New product</h1>
+
+        <form class="formulario" (submit)="$event.preventDefault(); create(nameInput.value, descInput.value, +categorySelect.value); nameInput.value=''; descInput.value=''; categorySelect.value=''">
+
+            <div class="campo-capsula">
+                <input #nameInput id="name" name="name" type="text"
+                    placeholder="Product name" autocomplete="off" required />
+            </div>
+
+            <div class="campo-capsula">
+                <input #descInput id="description" name="description" type="text"
+                    placeholder="Description (optional)" autocomplete="off" />
+            </div>
+
+            <div class="campo-capsula">
+                <select #categorySelect id="category" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    @for (cat of categories(); track cat.id) {
+                        <option [value]="cat.id">{{ cat.name }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="acciones">
+                <button class="btn-guardar" type="submit" [disabled]="loading()">
+                    Save product
+                </button>
+            </div>
+
+        </form>
+
+        @if (success()) {
+            <p class="mensaje-alerta exito">Product created successfully</p>
+        }
+        @if (error()) {
+            <p class="mensaje-alerta error">{{ error() }}</p>
+        }
+
+    </main>
+</div>
