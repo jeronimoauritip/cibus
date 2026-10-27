@@ -1,0 +1,55 @@
+<form class="filtro" (submit)="$event.preventDefault()">
+  <label class="buscador">
+    <svg class="buscador__icono" viewBox="0 0 28 30" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="8" />
+      <path d="M16 17L26 28" />
+    </svg>
+    <input type="search" placeholder="Search product" aria-label="Search product"
+      [formField]="filtro.name" />
+  </label>
+
+  <div class="controles">
+    <button class="control" type="button">
+      Sort by
+      <span class="arrow" aria-hidden="true"></span>
+    </button>
+
+    <div class="filtros">
+      <button class="control" type="button" (click)="abierto.set(!abierto())">
+        Filters
+        <span class="arrow" [class.rotated]="abierto()" aria-hidden="true"></span>
+      </button>
+
+      @if (abierto()) {
+        <div class="dropdown">
+          <button class="opcion" type="button" [class.activa]="sinFiltro()"
+            (click)="filter.set({ name: '', category: '' }); abierto.set(false)">
+            All
+          </button>
+
+          @if (categories().length > 0) {
+            <p class="grupo">Category</p>
+            @for (cat of categories(); track cat.id) {
+              <label class="opcion">
+                <input type="radio" [value]="cat.name"
+                  [formField]="filtro.category" (change)="abierto.set(false)" />
+                {{ cat.name }}
+              </label>
+            }
+          }
+
+          @if (names().length > 0) {
+            <p class="grupo">Name</p>
+            @for (n of names(); track n) {
+              <label class="opcion">
+                <input type="radio" [value]="n"
+                  [formField]="filtro.name" (change)="abierto.set(false)" />
+                {{ n }}
+              </label>
+            }
+          }
+        </div>
+      }
+    </div>
+  </div>
+</form>
