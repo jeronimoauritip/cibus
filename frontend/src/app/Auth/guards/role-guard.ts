@@ -8,9 +8,10 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth   = inject(AuthService)
   const router = inject(Router)
 
-  const permitRoles = route.data['roles'] as RoleModel['role'][]
+  const permitRoles = route.data['roles'] as RoleModel['role'][] | undefined
+  const role = auth.role()
 
-  if (permitRoles.includes(auth.role() as RoleModel['role'])) {
+  if (permitRoles?.length && role && permitRoles.includes(role)) {
     return true
   }
 
