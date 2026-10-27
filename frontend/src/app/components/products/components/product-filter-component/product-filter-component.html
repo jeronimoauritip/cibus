@@ -9,11 +9,15 @@
   </label>
 
   <div class="controles">
-    <button class="control" type="button">Sort by ▼</button>
+    <button class="control" type="button">
+      Sort by
+      <span class="arrow" aria-hidden="true"></span>
+    </button>
 
     <div class="filtros">
       <button class="control" type="button" (click)="abierto.set(!abierto())">
-        Filters ▼
+        Filters
+        <span class="arrow" [class.rotated]="abierto()" aria-hidden="true"></span>
       </button>
 
       @if (abierto()) {
