@@ -1,30 +1,22 @@
 :host {
-  --cream: #e7dbbf;
-  --green: #205a40;
   --header-gradient: linear-gradient(90deg, #205a40, #2d805d);
   --field-gradient: linear-gradient(90deg, #205a40, #2d7957);
-
-  position: fixed;
-  inset: 0;
   display: block;
   font-family: "Instrument Sans", sans-serif;
-  color: var(--green);
 }
 
 .pagina {
   position: relative;
-  isolation: isolate;
-  display: grid;
-  grid-template-rows: 34% 1fr;
-  height: 100%;
+  width: 100%;
+  min-height: 100vh;
   overflow-x: hidden;
-  overflow-y: auto;
-  background: var(--cream);
+  isolation: isolate;
+  min-height: 100vh;
+  isolation: isolate;
 }
 
 
 .contenido {
-  grid-row: 2;
   align-self: start;
   width: min(38.25rem, calc(100% - 2.5rem));
   margin-inline: auto;
@@ -62,7 +54,7 @@
 }
 
 .campo-capsula select option {
-  background: #205a40;
+  background: var(--dark-green);
   color: var(--cream);
 }
 
@@ -82,7 +74,7 @@
   padding: 0.6rem 2.5rem;
   border: 0;
   border-radius: 1.92rem;
-  background: #2d805d;
+  background: var(--dark-green);
   color: var(--cream);
   font: inherit;
   font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
@@ -112,7 +104,7 @@
 
 .mensaje-alerta.exito {
   background: rgba(45, 128, 93, 0.15);
-  color: var(--green);
+  color: var(--dark-green);
   border: 2px solid #2d805d;
 }
 

@@ -10,7 +10,6 @@
   min-height: 100vh;
   overflow-x: hidden;
   isolation: isolate;
-  background: --cream;
   min-height: 100vh;
   isolation: isolate;
 }
@@ -42,11 +41,7 @@ form {
   padding: 0 38px;
   gap: 1.5rem;
   border-radius: 29px;
-  background: linear-gradient(
-    90deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-claro, #389a6e)
-  );
+  background: var(--dark-green, #205a40);
   box-shadow: 0 4px 18px rgba(32, 90, 64, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -65,14 +60,14 @@ form {
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--crema, #e7dbbf);
+  color: var(--cream, #e7dbbf);
   font-family: "Instrument Sans", sans-serif;
   font-size: 32px;
   line-height: 42px;
 }
 
 .form-field input::placeholder {
-  color: var(--crema, #e7dbbf);
+  color: var(--cream, #e7dbbf);
   opacity: 0.85;
 }
 
@@ -85,12 +80,12 @@ form {
 }
 
 .form-field select option {
-  background-color: var(--verde-claro, #389a6e); /* Ajustalo al verde exacto de tu diseño */
-  color: var(--crema, #e7dbbf);
+  background-color: var(--light-green, #389a6e);
+  color: var(--cream, #e7dbbf);
 }
 
 label {
-  color: var(--crema, #e7dbbf);
+  color: var(--cream, #e7dbbf);
   opacity: 0.85;
 }
 
@@ -109,11 +104,7 @@ label {
   padding: 0 32px;
   border: none;
   border-radius: 29px;
-  background: linear-gradient(
-    100deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-fondo, #2d805d)
-  );
+  background: var(--dark-green);
   color: #f8f5e9;
   font-family: "Instrument Sans", sans-serif;
   font-size: 26px;
