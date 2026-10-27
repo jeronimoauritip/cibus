@@ -49,32 +49,35 @@ export class AuthService {
         localStorage.setItem('auth_user', JSON.stringify(user))
         this.router.navigate(['/'])
     }
+    private onAuthSuccess(response: AuthResponse): void {
+        this._accessToken.set(response.AccessToken)
+        this._refreshToken.set(response.refreshToken)
+        const payload = JSON.parse(atob(response.AccessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+        const name = ((payload.authorities as string[]).find(a => a.startsWith('ROLE_')) ?? '').replace('ROLE_', '')
+        const role = (name.charAt(0) + name.slice(1).toLowerCase()) as RoleModel['role']
+        this.loggedIn({ role: { role } } as AuthUser)
+        this._loading.set(false)
+    }
     loginWithPin( pin:string):void{
 
          this._loading.set(true) 
         this._error.set(null) 
 
-        this.http.post<AuthUser>('/api/auth/pin',{ pin}).subscribe({
-            next:user=> {
-                this.loggedIn(user)
-                this._loading.set(false)
-            },
+          this.http.post<AuthResponse>('/api/auth',{ username: pin, password: pin }).subscribe({
+            next:response=> this.onAuthSuccess(response),
             error:()=>{
                 this._error.set('WRONG PIN')
                 this._loading.set(false)
             }
         })
+
         
     }
     loginWithCredentials(credentials: LoginCredentials): void {
     this._loading.set(true)
     this._error.set(null)
-    this.http.post<AuthResponse>('/api/auth', credentials).subscribe({
-        next: response => {
-            this._accessToken.set(response.AccessToken)
-            this._refreshToken.set(response.refreshToken)
-            this._loading.set(false)
-        },
+    this.http.post<AuthResponse>('/api/auth', { username: credentials.email, password: credentials.password }).subscribe({
+        next: response => this.onAuthSuccess(response),
         error: () => {
             this._error.set('Wrong email or password')
             this._loading.set(false)
