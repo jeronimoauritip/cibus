@@ -1,23 +1,7 @@
-* {
-  box-sizing: border-box;
-}
-
 :host {
   display: block;
   width: 100%;
   min-height: 100vh;
-}
-
-body {
-  margin: 0;
-  font-family: "Instrument Sans", sans-serif;
-  background-color: #e7dbbf;
-  color: #205a40;
-}
-
-button,
-input {
-  font: inherit;
 }
 
 /* Contenido principal */
