@@ -14,6 +14,6 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   if (permitRoles?.length && role && permitRoles.includes(role)) {
     return true
   }
-
+// '/tables' doesn't exist in the frontend yet; this redirect is intentional and will be valid once that feature is added.
   return router.createUrlTree(['/tables'])
 }
