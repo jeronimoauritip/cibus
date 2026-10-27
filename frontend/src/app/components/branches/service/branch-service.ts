@@ -10,18 +10,23 @@ export class BranchService {
 
 
     public findAll(): Observable<Branch[]> {
-        return this.http.get<Branch[]>(this.url)
+        return this.http.get<Branch[]>(this.url);
+    }
+
+    public findById(id: number): Observable<Branch> {
+        return this.http.get<Branch>(`${this.url}/${id}`);
     }
 
     public create(branch: Branch): Observable<Branch> {
-        return this.http.post<Branch>(this.url, branch)
+        return this.http.post<Branch>(this.url, branch);
     }
 
     public update(branch: Branch): Observable<Branch> {
-        return this.http.put<Branch>(this.url, branch)
+        return this.http.put<Branch>(`${this.url}/${branch.id}`, branch);
     }
 
-    public delete(branch: Branch): Observable<Branch> {
-        return this.http.delete<Branch>(this.url)
+    public delete(branchOrId: Branch | number): Observable<void> {
+        const id = typeof branchOrId === 'number' ? branchOrId : branchOrId.id;
+        return this.http.delete<void>(`${this.url}/${id}`);
     }
 }

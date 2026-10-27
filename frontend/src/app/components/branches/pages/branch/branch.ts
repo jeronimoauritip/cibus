@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { form, required, min, max, pattern, FormField, FormRoot } from '@angular/forms/signals';
+import { RouterLink } from '@angular/router';
 import { BranchService } from '../../service/branch-service';
 import { Branch } from '../../models/branch.model';
 
@@ -10,7 +11,7 @@ export interface BranchFormModel {
 }
 
 @Component({
-  imports: [FormField, FormRoot],
+  imports: [FormField, FormRoot, RouterLink],
   selector: 'app-branch',
   styleUrl: './branch.css',
   templateUrl: './branch.html',
