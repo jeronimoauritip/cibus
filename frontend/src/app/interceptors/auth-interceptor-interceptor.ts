@@ -12,23 +12,27 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req;
 
+    const retryWithCurrentToken = () =>
+    next(req.clone({ setHeaders: { Authorization: `Bearer ${auth.accessToken()}` } }));
+
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !isAuthUrl) {
-        return auth.refresh().pipe(
-          switchMap(() => {
-            const retryReq = req.clone({
-              setHeaders: { Authorization: `Bearer ${auth.accessToken()}` }
-            });
-            return next(retryReq);
-          }),
-          catchError(refreshError => {
-            auth.logout();
-            return throwError(() => refreshError);
-          })
-        );
+      if (error.status !== 401 || isAuthUrl) {
+        return throwError(() => error);
       }
-      return throwError(() => error);
+
+      const current = auth.accessToken();
+      if (current && current !== token) {
+        return retryWithCurrentToken();
+      }
+
+      return auth.refresh().pipe(
+        switchMap(() => retryWithCurrentToken()),
+        catchError(refreshError => {
+          auth.logout();
+          return throwError(() => refreshError);
+        })
+      );
     })
   );
 };
