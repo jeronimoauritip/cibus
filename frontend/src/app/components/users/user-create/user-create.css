@@ -1,0 +1,359 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  font-family: "Instrument Sans", sans-serif;
+  background-color: #e7dbbf;
+  color: #205a40;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  isolation: isolate;
+  background: linear-gradient(100deg, #205a40, #2d805d);
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+/* Encabezado */
+
+.header {
+  position: relative;
+  z-index: 10;
+  padding: 24px 30px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #f8f5e9;
+  text-decoration: none;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+/* Símbolo de bandeja del logo */
+
+.tray-logo {
+  position: relative;
+  width: 24px;
+  height: 14px;
+  border-bottom: 3px solid currentColor;
+}
+
+.tray-logo::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px 2px;
+  border-radius: 12px 12px 0 0;
+  background: currentColor;
+}
+
+.tray-logo::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 10px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Fondo con forma de campana / bandeja */
+
+.tray-background {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.handle {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 70px;
+  height: 45px;
+  transform: translateX(-50%);
+  background-color: #e7dbbf;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 40%,
+    68% 40%,
+    68% 100%,
+    32% 100%,
+    32% 40%,
+    0 40%
+  );
+}
+
+.dome {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  width: 130%;
+  height: 550px;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 0 0;
+  background-color: #e7dbbf;
+}
+
+.base {
+  position: absolute;
+  top: 300px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #e7dbbf;
+}
+
+/* Contenido principal */
+
+.content {
+  position: relative;
+  z-index: 5;
+  width: min(680px, calc(100% - 48px));
+  margin: 40px auto 0;
+}
+
+h1 {
+  margin: 0 0 28px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  letter-spacing: -1.5px;
+  color: #205a40;
+}
+
+/*Form*/
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.form-field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 91px;
+  padding: 0 38px;
+  gap: 1.5rem;
+  border-radius: 29px;
+  background: linear-gradient(
+    90deg,
+    var(--verde-oscuro, #205a40),
+    var(--verde-claro, #389a6e)
+  );
+  box-shadow: 0 4px 18px rgba(32, 90, 64, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-field:focus-within {
+  outline: 3px solid var(--verde-oscuro, #205a40);
+  outline-offset: 4px;
+  transform: translateY(-1px);
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--crema, #e7dbbf);
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 32px;
+  line-height: 42px;
+}
+
+.form-field input::placeholder {
+  color: var(--crema, #e7dbbf);
+  opacity: 0.85;
+}
+
+.form-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-field select option {
+  background-color: var(--verde-claro, #389a6e); /* Ajustalo al verde exacto de tu diseño */
+  color: var(--crema, #e7dbbf);
+}
+
+label {
+  color: var(--crema, #e7dbbf);
+  opacity: 0.85;
+}
+
+/* Controles de acción */
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.save-btn {
+  width: 100%;
+  max-width: 420px;
+  height: 78px;
+  padding: 0 32px;
+  border: none;
+  border-radius: 29px;
+  background: linear-gradient(
+    100deg,
+    var(--verde-oscuro, #205a40),
+    var(--verde-fondo, #2d805d)
+  );
+  color: #f8f5e9;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(32, 90, 64, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(32, 90, 64, 0.45);
+  filter: brightness(1.08);
+}
+
+.save-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Mensajes de retroalimentación */
+.errors {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 18px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in;
+  background: rgba(220, 38, 38, 0.12);
+  color: #991b1b;
+  border: 2px solid #ef4444;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   Responsive Design (Media Queries)
+   ========================================= */
+@media (max-width: 768px) {
+  .content {
+    margin-top: 24px;
+  }
+  h1 {
+    font-size: 42px;
+    margin-bottom: 20px;
+  }
+  .form-field {
+    height: 75px;
+    padding: 0 24px;
+    gap: 1rem;
+    border-radius: 22px;
+  }
+  .form-field input,
+  .form-field select {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  .save-btn {
+    height: 65px;
+    font-size: 22px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 16px 20px;
+  }
+  .logo {
+    font-size: 24px;
+  }
+  .handle {
+    top: 30px;
+  }
+  .dome {
+    top: 70px; 
+  }
+  h1 {
+    font-size: 32px;
+  }
+  form {
+    gap: 16px;
+  }
+  .form-field {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    height: auto;
+    padding: 16px 20px;
+    gap: 4px;
+    border-radius: 20px;
+  }
+  label {
+    font-size: 14px;
+  }
+  .form-field input,
+  .form-field select {
+    font-size: 20px;
+  }
+  .save-btn {
+    height: 55px;
+    font-size: 18px;
+    border-radius: 20px;
+  }
+  .errors {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+}

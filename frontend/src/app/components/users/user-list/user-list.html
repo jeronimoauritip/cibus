@@ -20,11 +20,7 @@
       </svg>
       <input id="search" name="search" type="search" placeholder="Enter name or ID" autocomplete="off" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"/>
     </form>
-    
-    <!-- Controles Desplegables -->
     <div class="controls" aria-label="List options">
-      
-      <!-- Sort By -->
       <div class="dropdown-wrapper">
         <button class="control" type="button" (click)="toggleSortMenu($event)">
           Sort by
@@ -37,8 +33,6 @@
           </div>
         }
       </div>
-
-      <!-- Filters -->
       <div class="dropdown-wrapper">
         <button class="control" type="button" (click)="toggleFilterMenu($event)">
           Filters
@@ -59,10 +53,7 @@
           </div>
         }
       </div>
-
     </div>
-
-    <!-- Lista de Empleados -->
     <section class="employee-section" aria-label="Employees grid">
       @if (isLoading()) {
         <div class="state-message">Loading employees...</div>
