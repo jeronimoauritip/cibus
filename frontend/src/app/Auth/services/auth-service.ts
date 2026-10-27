@@ -5,8 +5,22 @@ import { RoleModel } from '../../Roles/role-model';
 import { AuthUser } from '../models/auth-user';
 import { LoginCredentials } from '../models/login-credentials';
 import { AuthResponse } from '../models/auth-response';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
+
+const REFRESH_KEY = 'refresh_token'
+const LEGACY_USER_KEY = 'auth_user'
+
+function decodeJwt(token: string): { authorities?: string[]; exp?: number } | null {
+    try {
+        const part = token.split('.')[1]
+        if (!part) return null
+        const b64 = part.replace(/-/g, '+').replace(/_/g, '/')
+        return JSON.parse(atob(b64.padEnd(Math.ceil(b64.length / 4) * 4, '=')))
+    } catch {
+        return null
+    }
+}
 
 @Injectable({providedIn:'root'})
 export class AuthService {
@@ -35,29 +49,36 @@ export class AuthService {
     }
     constructor()
     {
-        const saved = localStorage.getItem('auth_user')
-        if (saved){
-            try{
-                this._user.set(JSON.parse(saved)as AuthUser)
-            }catch{
-                localStorage.removeItem('auth_user')
-            }
-        }
+        localStorage.removeItem(LEGACY_USER_KEY)
+        this._refreshToken.set(localStorage.getItem(REFRESH_KEY))
     }
-    private loggedIn (user: AuthUser):void{
-        this._user.set(user)
-        localStorage.setItem('auth_user', JSON.stringify(user))
-        this.router.navigate(['/'])
-    }
-    private onAuthSuccess(response: AuthResponse): void {
+
+    private setSession(response: AuthResponse): boolean {
         const token = response.AccessToken ?? response.accessToken ?? ''
+        const payload = token ? decodeJwt(token) : null
+        const roleName = (payload?.authorities ?? []).find(a => a.startsWith('ROLE_'))?.replace('ROLE_', '')
+        if (!payload || !roleName) {
+            this.clearSession()
+            return false
+        }
+
         this._accessToken.set(token)
-        this._refreshToken.set(response.refreshToken)
-        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
-        const name = ((payload.authorities as string[]).find(a => a.startsWith('ROLE_')) ?? '').replace('ROLE_', '')
-        const role = (name.charAt(0) + name.slice(1).toLowerCase()) as RoleModel['role']
-        this.loggedIn({ role: { role } } as AuthUser)
+        if (response.refreshToken) {
+            this._refreshToken.set(response.refreshToken)
+            localStorage.setItem(REFRESH_KEY, response.refreshToken)
+        }
+        const role = (roleName.charAt(0) + roleName.slice(1).toLowerCase()) as RoleModel['role']
+        this._user.set({ role: { role } } as AuthUser)
+        return true
+    }
+
+    private onAuthSuccess(response: AuthResponse): void {
         this._loading.set(false)
+        if (this.setSession(response)) {
+            this.router.navigate(['/'])
+        } else {
+            this._error.set('Invalid server response')
+        }
     }
 
     loginWithPin( pin:string):void{
@@ -92,25 +113,36 @@ export class AuthService {
     })
     }
     refresh(): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>('/api/auth/refresh', {
-        refreshToken: this._refreshToken()
-    }).pipe(
-        tap(response => {
-            const token = response.AccessToken ?? response.accessToken ?? '';
-            this._accessToken.set(token);
-            this._refreshToken.set(response.refreshToken);
-        })
-    );
+        const refreshToken = this._refreshToken()
+        if (!refreshToken) return throwError(() => new Error('No refresh token'))
+        return this.http.post<AuthResponse>('/api/auth/refresh', { refreshToken }).pipe(
+            tap(response => {
+                if (!this.setSession(response)) throw new Error('Invalid refresh response')
+            })
+        )
+    }
+
+    restoreSession(): Promise<void> {
+        if (!this._refreshToken()) return Promise.resolve()
+        return firstValueFrom(this.refresh()).then(
+            () => undefined,
+            () => this.clearSession()
+        )
     }
         clearError(): void {
         this._error.set(null)
     }
 
+    private clearSession(): void {
+        this._user.set(null)
+        this._accessToken.set(null)
+        this._refreshToken.set(null)
+        localStorage.removeItem(REFRESH_KEY)
+        localStorage.removeItem(LEGACY_USER_KEY)
+    }
+
     logout(): void {
-    this._user.set(null);
-    this._accessToken.set(null);
-    this._refreshToken.set(null);
-    localStorage.removeItem('auth_user');
-    this.router.navigate(['/login']);
+        this.clearSession()
+        this.router.navigate(['/login'])
     }
 }
