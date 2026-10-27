@@ -28,7 +28,7 @@ input {
   min-height: 100vh;
   overflow-x: hidden;
   isolation: isolate;
-  background: linear-gradient(100deg, #205a40, #2d805d);
+  background: --cream;
   min-height: 100vh;
   isolation: isolate;
 }

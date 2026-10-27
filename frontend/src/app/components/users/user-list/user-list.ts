@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../user.service';
 import { Page, User } from '../user.model';
+import { HeaderComponent } from '../../header-component/header-component';
 
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, HeaderComponent],
   selector: 'app-user-list',
   styleUrl: './user-list.css',
   templateUrl: './user-list.html',

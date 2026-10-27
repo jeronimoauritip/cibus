@@ -103,6 +103,25 @@
   isolation: isolate;
 }
 
+.title {
+  font-family: "Croogla", sans-serif;
+  position: absolute;
+  top: 110px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+}
+
+.title * {
+  pointer-events: auto; 
+}
+
+.title:empty {
+  display: none;
+}
+
 /* =========================================
    Responsive Design (Media Queries)
    ========================================= */
