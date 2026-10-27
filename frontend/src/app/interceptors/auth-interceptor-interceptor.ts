@@ -5,19 +5,20 @@ import { AuthService } from '../Auth/services/auth-service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
+  const isAuthUrl = req.url.includes('/api/auth');
   const token = auth.accessToken();
 
-  const authReq = token
+  const authReq = token && !isAuthUrl
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req;
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !req.url.includes('/api/auth')) {
+      if (error.status === 401 && !isAuthUrl) {
         return auth.refresh().pipe(
-          switchMap(response => {
+          switchMap(() => {
             const retryReq = req.clone({
-              setHeaders: { Authorization: `Bearer ${response.AccessToken}` }
+              setHeaders: { Authorization: `Bearer ${auth.accessToken()}` }
             });
             return next(retryReq);
           }),
