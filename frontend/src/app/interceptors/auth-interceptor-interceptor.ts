@@ -26,13 +26,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return retryWithCurrentToken();
       }
 
-      return auth.refresh().pipe(
-        switchMap(() => retryWithCurrentToken()),
+          return auth.refresh().pipe(
         catchError(refreshError => {
           auth.logout();
           return throwError(() => refreshError);
-        })
+        }),
+        switchMap(() => retryWithCurrentToken())
       );
+
     })
   );
 };
