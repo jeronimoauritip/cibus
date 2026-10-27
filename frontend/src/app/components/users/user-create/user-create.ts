@@ -3,9 +3,10 @@ import { UserService } from '../user.service';
 import { Router } from '@angular/router';
 import { UserRequest } from '../user.model';
 import { email, form, FormField, minLength, required } from '@angular/forms/signals';
+import { HeaderComponent } from '../../header-component/header-component';
 
 @Component({
-  imports: [FormField],
+  imports: [FormField, HeaderComponent],
   selector: 'app-user-create',
   styleUrl: './user-create.css',
   templateUrl: './user-create.html',

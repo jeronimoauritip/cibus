@@ -1,23 +1,7 @@
-* {
-  box-sizing: border-box;
-}
-
 :host {
   display: block;
   width: 100%;
   min-height: 100vh;
-}
-
-body {
-  margin: 0;
-  font-family: "Instrument Sans", sans-serif;
-  background-color: #e7dbbf;
-  color: #205a40;
-}
-
-button,
-input {
-  font: inherit;
 }
 
 .container {
@@ -26,106 +10,9 @@ input {
   min-height: 100vh;
   overflow-x: hidden;
   isolation: isolate;
-  background: linear-gradient(100deg, #205a40, #2d805d);
+  background: --cream;
   min-height: 100vh;
   isolation: isolate;
-}
-
-/* Encabezado */
-
-.header {
-  position: relative;
-  z-index: 10;
-  padding: 24px 30px;
-}
-
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #f8f5e9;
-  text-decoration: none;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -1px;
-}
-
-/* Símbolo de bandeja del logo */
-
-.tray-logo {
-  position: relative;
-  width: 24px;
-  height: 14px;
-  border-bottom: 3px solid currentColor;
-}
-
-.tray-logo::before {
-  content: "";
-  position: absolute;
-  inset: 1px 1px 2px;
-  border-radius: 12px 12px 0 0;
-  background: currentColor;
-}
-
-.tray-logo::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: 10px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-/* Fondo con forma de campana / bandeja */
-
-.tray-background {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.handle {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  width: 70px;
-  height: 45px;
-  transform: translateX(-50%);
-  background-color: #e7dbbf;
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 40%,
-    68% 40%,
-    68% 100%,
-    32% 100%,
-    32% 40%,
-    0 40%
-  );
-}
-
-.dome {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  width: 130%;
-  height: 550px;
-  transform: translateX(-50%);
-  border-radius: 50% 50% 0 0;
-  background-color: #e7dbbf;
-}
-
-.base {
-  position: absolute;
-  top: 300px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: #e7dbbf;
 }
 
 /* Contenido principal */
@@ -135,17 +22,6 @@ input {
   z-index: 5;
   width: min(680px, calc(100% - 48px));
   margin: 40px auto 0;
-}
-
-h1 {
-  margin: 0 0 28px;
-  font-family: "Instrument Sans", sans-serif;
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1.1;
-  text-align: center;
-  letter-spacing: -1.5px;
-  color: #205a40;
 }
 
 /*Form*/
@@ -289,10 +165,6 @@ label {
   .content {
     margin-top: 24px;
   }
-  h1 {
-    font-size: 42px;
-    margin-bottom: 20px;
-  }
   .form-field {
     height: 75px;
     padding: 0 24px;
@@ -312,21 +184,6 @@ label {
 }
 
 @media (max-width: 480px) {
-  .header {
-    padding: 16px 20px;
-  }
-  .logo {
-    font-size: 24px;
-  }
-  .handle {
-    top: 30px;
-  }
-  .dome {
-    top: 70px; 
-  }
-  h1 {
-    font-size: 32px;
-  }
   form {
     gap: 16px;
   }

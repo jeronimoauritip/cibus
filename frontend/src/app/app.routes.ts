@@ -10,6 +10,5 @@ export const routes: Routes = [
     { path: 'users', component: UserList },
     { path: 'users/new', component: UserCreate },
     { path: 'branches', component: BranchComponent },
-    { path: 'product/new', component: ProductsComponent },
-    { path: 'header', component: HeaderComponent }
+    { path: 'product/new', component: ProductsComponent }
 ];

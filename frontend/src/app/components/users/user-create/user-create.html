@@ -1,17 +1,8 @@
+<app-header-component>
+  New Employee
+</app-header-component>
 <div class="container">
-  <header class="header">
-    <a class="logo" href="#" aria-label="Cibus, home">
-      <span class="tray-logo" aria-hidden="true"></span>
-      <span>cibus</span>
-    </a>
-  </header>
-  <div class="tray-background" aria-hidden="true">
-    <div class="handle"></div>
-    <div class="dome"></div>
-    <div class="base"></div>
-  </div>
   <main class="content">
-    <h1>New Employee</h1>
     <form (ngSubmit)="onSubmit()">
     @if (errorMessage()) {
       <div class="errors">
