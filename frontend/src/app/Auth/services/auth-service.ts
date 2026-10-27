@@ -69,27 +69,33 @@ export class AuthService {
     loginWithCredentials(credentials: LoginCredentials): void {
     this._loading.set(true)
     this._error.set(null)
-    this.http.post<AuthResponse>('/api/auth', credentials).subscribe({
+    this.http.post<AuthResponse>('/api/auth', {
+        username: credentials.email,
+        email: credentials.email,
+        password: credentials.password
+    }).subscribe({
         next: response => {
-            this._accessToken.set(response.AccessToken)
-            this._refreshToken.set(response.refreshToken)
-            this._loading.set(false)
+            const token = response.AccessToken ?? response.accessToken ?? '';
+            this._accessToken.set(token);
+            this._refreshToken.set(response.refreshToken);
+            this._loading.set(false);
         },
         error: () => {
-            this._error.set('Wrong email or password')
-            this._loading.set(false)
+            this._error.set('Wrong email or password');
+            this._loading.set(false);
         }
     })
     }
     refresh(): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('/api/auth/refresh', {
-    refreshToken: this._refreshToken()
-        }).pipe(
+        refreshToken: this._refreshToken()
+    }).pipe(
         tap(response => {
-      this._accessToken.set(response.AccessToken);
-      this._refreshToken.set(response.refreshToken);
+            const token = response.AccessToken ?? response.accessToken ?? '';
+            this._accessToken.set(token);
+            this._refreshToken.set(response.refreshToken);
         })
-        );
+    );
     }
         clearError(): void {
         this._error.set(null)

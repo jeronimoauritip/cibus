@@ -39,7 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws
             Exception {
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth", "/api/auth/**", "/error").permitAll()
                         // Users
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority("USER_READ")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority("USER_UPDATE")
