@@ -1,0 +1,8 @@
+<p>product-card-component works!</p>
+<article class="card">
+  <div class="card__category">{{ product().categoryName }}</div>
+  <h2 class="card__name">{{ product().name }}</h2>
+  @if (product().description) {
+    <p class="card__description">{{ product().description }}</p>
+  }
+</article>

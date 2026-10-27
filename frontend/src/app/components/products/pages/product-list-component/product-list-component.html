@@ -1,0 +1,29 @@
+<div class="pagina">
+  <header class="encabezado">
+    <a class="logo" href="/" aria-label="Cibus, home">
+      <span class="logo-bandeja" aria-hidden="true"></span>
+      <span>cibus</span>
+    </a>
+  </header>
+  <div class="fondo-bandeja" aria-hidden="true">
+    <div class="manija"></div>
+    <div class="cupula"></div>
+  </div>
+  <main class="contenido">
+    <h1 class="titulo">List of products</h1>
+    <app-product-filter-component [(filter)]="filter" />
+    <div class="lista">
+      @if (loading()) {
+        <p class="mensaje">Loading...</p>
+      } @else if (error()) {
+        <p class="mensaje error">Could not load products</p>
+      } @else {
+        @for (product of filteredProducts(); track product.id) {
+          <app-product-card [product]="product" />
+        } @empty {
+          <p class="mensaje">No products found</p>
+        }
+      }
+    </div>
+  </main>
+</div>
