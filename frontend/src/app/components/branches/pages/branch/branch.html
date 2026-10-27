@@ -1,22 +1,9 @@
+<app-header-component>
+  New Branch
+</app-header-component>
 <div class="pagina">
-    <!-- Encabezado con logo oficial Cibus -->
-    <header class="encabezado">
-        <a class="logo" href="/" aria-label="Cibus, inicio">
-            <span class="logo-bandeja" aria-hidden="true"></span>
-            <span>cibus</span>
-        </a>
-    </header>
-
-    <!-- Silueta de la bandeja (campana/plato de restaurante) -->
-    <div class="fondo-bandeja" aria-hidden="true">
-        <div class="manija"></div>
-        <div class="cupula"></div>
-        <div class="base"></div>
-    </div>
-
     <!-- Contenido principal: Vista Nueva Sucursal -->
     <main class="contenido">
-        <h1 class="titulo">Nueva sucursal</h1>
 
         <form class="formulario" (submit)="$event.preventDefault(); addBranch(nameInput.value, streetInput.value, +numberInput.value); nameInput.value=''; streetInput.value=''; numberInput.value=''">
             <!-- Nombre de la sucursal -->

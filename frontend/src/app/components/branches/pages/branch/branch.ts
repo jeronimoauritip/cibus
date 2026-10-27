@@ -1,9 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { BranchService } from '../../service/branch-service';
 import { Branch } from '../../models/branch.model';
+import { HeaderComponent } from '../../../header-component/header-component';
 
 @Component({
-  imports: [],
+  imports: [HeaderComponent],
   selector: 'app-branch',
   styleUrl: './branch.css',
   templateUrl: './branch.html',
