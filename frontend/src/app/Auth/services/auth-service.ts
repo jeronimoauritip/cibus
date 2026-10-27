@@ -50,14 +50,16 @@ export class AuthService {
         this.router.navigate(['/'])
     }
     private onAuthSuccess(response: AuthResponse): void {
-        this._accessToken.set(response.AccessToken)
+        const token = response.AccessToken ?? response.accessToken ?? ''
+        this._accessToken.set(token)
         this._refreshToken.set(response.refreshToken)
-        const payload = JSON.parse(atob(response.AccessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
         const name = ((payload.authorities as string[]).find(a => a.startsWith('ROLE_')) ?? '').replace('ROLE_', '')
         const role = (name.charAt(0) + name.slice(1).toLowerCase()) as RoleModel['role']
         this.loggedIn({ role: { role } } as AuthUser)
         this._loading.set(false)
     }
+
     loginWithPin( pin:string):void{
 
          this._loading.set(true) 
@@ -76,23 +78,29 @@ export class AuthService {
     loginWithCredentials(credentials: LoginCredentials): void {
     this._loading.set(true)
     this._error.set(null)
-    this.http.post<AuthResponse>('/api/auth', { username: credentials.email, password: credentials.password }).subscribe({
+    this.http.post<AuthResponse>('/api/auth', {
+        username: credentials.email,
+        email: credentials.email,
+        password: credentials.password
+    }).subscribe({
         next: response => this.onAuthSuccess(response),
+
         error: () => {
-            this._error.set('Wrong email or password')
-            this._loading.set(false)
+            this._error.set('Wrong email or password');
+            this._loading.set(false);
         }
     })
     }
     refresh(): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('/api/auth/refresh', {
-    refreshToken: this._refreshToken()
-        }).pipe(
+        refreshToken: this._refreshToken()
+    }).pipe(
         tap(response => {
-      this._accessToken.set(response.AccessToken);
-      this._refreshToken.set(response.refreshToken);
+            const token = response.AccessToken ?? response.accessToken ?? '';
+            this._accessToken.set(token);
+            this._refreshToken.set(response.refreshToken);
         })
-        );
+    );
     }
         clearError(): void {
         this._error.set(null)
