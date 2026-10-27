@@ -1,16 +1,6 @@
+<app-header-component> Products </app-header-component>
 <div class="pagina">
-  <header class="encabezado">
-    <a class="logo" href="/" aria-label="Cibus, home">
-      <span class="logo-bandeja" aria-hidden="true"></span>
-      <span>cibus</span>
-    </a>
-  </header>
-  <div class="fondo-bandeja" aria-hidden="true">
-    <div class="manija"></div>
-    <div class="cupula"></div>
-  </div>
   <main class="contenido">
-    <h1 class="titulo">List of products</h1>
     <app-product-filter-component [(filter)]="filter" />
     <div class="lista">
       @if (loading()) {

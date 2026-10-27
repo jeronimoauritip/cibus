@@ -4,8 +4,11 @@ import { FiltroProducto } from '../../models/filtro-producto';
 import { Product } from '../../models/product';
 import { ProductCardComponent } from '../../components/product-card-component/product-card-component';
 import { ProductFilterComponent } from '../../components/product-filter-component/product-filter-component';
+import { HeaderComponent } from '../../../header-component/header-component';
+
+
 @Component({
-  imports: [ProductCardComponent, ProductFilterComponent],
+  imports: [ProductCardComponent, ProductFilterComponent, HeaderComponent],
   selector: 'app-product-list-component',
   styleUrl: './product-list-component.css',
   templateUrl: './product-list-component.html',
