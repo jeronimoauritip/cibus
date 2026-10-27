@@ -6,7 +6,7 @@ import { AuthUser } from '../models/auth-user';
 import { LoginCredentials } from '../models/login-credentials';
 import { AuthResponse } from '../models/auth-response';
 import { Observable, firstValueFrom, throwError } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { finalize, share, tap } from 'rxjs/operators';
 
 const REFRESH_KEY = 'refresh_token'
 const LEGACY_USER_KEY = 'auth_user'
@@ -33,6 +33,7 @@ export class AuthService {
     private readonly _accessToken = signal<string | null>(null);
     readonly accessToken = this._accessToken.asReadonly();
     private readonly _refreshToken = signal<string | null>(null);
+    private refreshInFlight$: Observable<AuthResponse> | null = null
 
 
     readonly user = this._user.asReadonly()
@@ -112,14 +113,18 @@ export class AuthService {
         }
     })
     }
-    refresh(): Observable<AuthResponse> {
+        refresh(): Observable<AuthResponse> {
+        if (this.refreshInFlight$) return this.refreshInFlight$
         const refreshToken = this._refreshToken()
         if (!refreshToken) return throwError(() => new Error('No refresh token'))
-        return this.http.post<AuthResponse>('/api/auth/refresh', { refreshToken }).pipe(
+        this.refreshInFlight$ = this.http.post<AuthResponse>('/api/auth/refresh', { refreshToken }).pipe(
             tap(response => {
                 if (!this.setSession(response)) throw new Error('Invalid refresh response')
-            })
+            }),
+            finalize(() => { this.refreshInFlight$ = null }),
+            share()
         )
+        return this.refreshInFlight$
     }
 
     restoreSession(): Promise<void> {
@@ -142,7 +147,9 @@ export class AuthService {
     }
 
     logout(): void {
+        if (!this._accessToken() && !this._refreshToken()) return
         this.clearSession()
         this.router.navigate(['/login'])
     }
+
 }
