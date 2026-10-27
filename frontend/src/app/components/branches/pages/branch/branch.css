@@ -9,7 +9,6 @@
   min-height: 100svh;
   overflow-x: hidden;
   isolation: isolate;
-  background: --crema;
   display: flex;
   flex-direction: column;
 }
@@ -43,8 +42,8 @@
   border-radius: 29px;
   background: linear-gradient(
     90deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-claro, #389a6e)
+    var(--dark-green, #205a40),
+    var(--light-green, #389a6e)
   );
   box-shadow: 0 4px 18px rgba(32, 90, 64, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -63,14 +62,14 @@
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--crema, #e7dbbf);
+  color: var(--cream, #e7dbbf);
   font-family: "Instrument Sans", sans-serif;
   font-size: 32px;
   line-height: 42px;
 }
 
 .campo-capsula input::placeholder {
-  color: var(--crema, #e7dbbf);
+  color: var(--cream, #e7dbbf);
   opacity: 0.85;
 }
 
@@ -91,8 +90,8 @@
   border-radius: 29px;
   background: linear-gradient(
     100deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-fondo, #2d805d)
+    var(--dark-green, #205a40),
+    var(--light-green, #2d805d)
   );
   color: #f8f5e9;
   font-family: "Instrument Sans", sans-serif;
@@ -132,7 +131,7 @@
 
 .mensaje-alerta.exito {
   background: rgba(45, 128, 93, 0.15);
-  color: var(--verde-oscuro, #205a40);
+  color: var(--dark-green, #205a40);
   border: 2px solid var(--verde-fondo, #2d805d);
 }
 

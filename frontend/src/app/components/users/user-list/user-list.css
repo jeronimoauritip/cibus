@@ -12,7 +12,6 @@
   min-height: 100vh;
   overflow-x: hidden;
   isolation: isolate;
-  background: --cream;
   min-height: 100vh;
   isolation: isolate;
 }
@@ -32,12 +31,12 @@
   height: 64px;
   padding: 0 24px;
   border-radius: 20px;
-  background-color: #205a40;
+  background-color: var(--dark-green);
 }
 
 .search-icon {
   flex: 0 0 22px;
-  color: #aab79b;
+  color: var(--icon);
   width: 24px; 
   height: 27px; 
   fill: none;   
@@ -56,7 +55,7 @@
 }
 
 .searcher input::placeholder {
-  color: #aab79b;
+  color: var(--icon);
   opacity: 1;
 }
 
@@ -82,7 +81,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #205a40;
+  color: var(--dark-green);
   font-size: 24px;
   font-weight: 400;
   cursor: pointer;
@@ -112,8 +111,8 @@
   z-index: 100;
   min-width: 220px;
   margin-top: 8px;
-  background-color: #e7dbbf;
-  border: 2px solid #205a40;
+  background-color: var(--cream);
+  border: 2px solid var(--dark-green);
   border-radius: 14px;
   padding: 8px 0;
   box-shadow: 0 8px 20px rgba(32, 90, 64, 0.25);
@@ -128,7 +127,7 @@
   padding: 10px 18px;
   border: 0;
   background: transparent;
-  color: #205a40;
+  color: var(--dark-green);
   font-size: 16px;
   font-weight: 600;
   text-align: left;
@@ -136,15 +135,15 @@
 }
 
 .dropdown-item:hover {
-  background-color: #205a40;
-  color: #e7dbbf;
+  background-color: var(--dark-green);
+  color: var(--cream);
 }
 
 .dropdown-divider {
   padding: 10px 18px 4px;
   font-size: 12px;
   text-transform: uppercase;
-  color: #389a6e;
+  color: var(--light-green);
   font-weight: 700;
   letter-spacing: 0.5px;
 }
@@ -155,7 +154,7 @@
 
 .clear-filters:hover {
   background-color: #900c3f;
-  color: #fff;
+  color: white;
 }
 
 .readers-only {
@@ -178,7 +177,7 @@
 .state-message, .error-message {
   text-align: center;
   font-size: 22px;
-  color: #205a40;
+  color: var(--dark-green);
   padding: 40px 0;
   font-weight: 600;
 }
@@ -196,7 +195,7 @@
   gap: 20px;
   background-color: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(4px);
-  border: 2px solid #205a40;
+  border: 2px solid var(--dark-green);
   border-radius: 20px;
   padding: 18px 24px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -211,8 +210,8 @@
   flex: 0 0 54px;
   height: 54px;
   border-radius: 50%;
-  background-color: #205a40;
-  color: #e7dbbf;
+  background-color: var(--dark-green);
+  color: var(--cream);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,25 +231,25 @@
   margin: 0 0 4px 0;
   font-size: 24px;
   font-weight: 700;
-  color: #205a40;
+  color: var(--dark-green);
 }
 
 .employee-detail {
   margin: 0;
   font-size: 15px;
-  color: #2d805d;
+  color: var(--light-green);
 }
 
 .employee-detail span {
   font-weight: 600;
-  color: #205a40;
+  color: var(--dark-green);
 }
 
 .employee-badge {
   padding: 6px 16px;
   border-radius: 12px;
-  background-color: #205a40;
-  color: #e7dbbf;
+  background-color: var(--dark-green);
+  color: var(--cream);
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;

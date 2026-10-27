@@ -105,7 +105,7 @@ label {
   border: none;
   border-radius: 29px;
   background: var(--dark-green);
-  color: #f8f5e9;
+  color: var(--cream);
   font-family: "Instrument Sans", sans-serif;
   font-size: 26px;
   font-weight: 700;
