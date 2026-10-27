@@ -132,68 +132,6 @@
   text-align: center;
 }
 
-.buscador {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  height: 91px;
-  padding: 0 38px;
-  border-radius: 29px;
-  background: var(--field-gradient);
-  cursor: text;
-}
-.controles {
-  display: flex;
-  gap: 1.5rem;
-  align-self: flex-start;
-}
-
-.control {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--green);
-  font: inherit;
-  font-size: 1.1rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-.buscador__icono {
-  flex-shrink: 0;
-  width: 24px;
-  height: 27px;
-  stroke: #a5b28e;
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-
-.buscador input {
-  width: 100%;
-  min-width: 0;
-  padding: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--cream);
-  font-family: "Instrument Sans", sans-serif;
-  font-size: 34px;
-  font-weight: 400;
-}
-
-.buscador input::placeholder {
-  color: var(--cream);
-  opacity: 1;
-}
-
-.buscador:focus-within {
-  outline: 2px solid var(--green);
-  outline-offset: 4px;
-}
-
 .lista {
   width: 100%;
   display: grid;
@@ -214,7 +152,4 @@
 
 @media (max-width: 40rem) {
   .titulo { font-size: 3rem; }
-  .buscador { height: 56px; padding: 0 20px; border-radius: 18px; }
-  .buscador input { font-size: 18px; }
-  .buscador__icono { width: 18px; height: 20px; }
 }

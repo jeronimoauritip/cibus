@@ -11,18 +11,7 @@
   </div>
   <main class="contenido">
     <h1 class="titulo">List of products</h1>
-    <label class="buscador">
-      <svg class="buscador__icono" viewBox="0 0 28 30" fill="none" aria-hidden="true">
-        <circle cx="10" cy="10" r="8" />
-        <path d="M16 17L26 28" />
-      </svg>
-      <input type="search" name="producto" placeholder="Search product" aria-label="Search product"
-  [value]="filter().name"
-  (input)="filter.update(f => ({ ...f, name: $any($event.target).value }))" />
-    </label>
-    <div class="controles">
- <app-product-filter-component [(filter)]="filter" />
-</div>
+    <app-product-filter-component [(filter)]="filter" />
     <div class="lista">
       @if (loading()) {
         <p class="mensaje">Loading...</p>

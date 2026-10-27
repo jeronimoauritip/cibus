@@ -9,6 +9,7 @@ import { Product } from '../models/product';
 export class ProductService {
     private readonly http= inject(HttpClient);
     readonly productos = httpResource<Product[]>(() => '/api/products');
+    readonly categorias = httpResource<ProductCategory[]>(() => '/api/product-categories');
     create (product: ProductRequest): Observable<ProductRequest>{
         return this.http.post<ProductRequest>('/api/products',product);
     }
