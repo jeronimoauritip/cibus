@@ -1,0 +1,89 @@
+<div class="container">
+  <header class="header">
+    <a class="logo" href="#" aria-label="Cibus, home">
+      <span class="tray-logo" aria-hidden="true"></span>
+      <span>cibus</span>
+    </a>
+  </header>
+  <div class="tray-background" aria-hidden="true">
+    <div class="handle"></div>
+    <div class="dome"></div>
+    <div class="base"></div>
+  </div>
+  <main class="content">
+    <h1>Employee list</h1>
+    <form class="searcher" (ngSubmit)="onSearch()">
+      <label class="readers-only" for="search">Search employee</label>
+      <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
+        <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="3"/>
+        <path d="M14 15L22 25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <input id="search" name="search" type="search" placeholder="Enter name or ID" autocomplete="off" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"/>
+    </form>
+    <div class="controls" aria-label="List options">
+      <div class="dropdown-wrapper">
+        <button class="control" type="button" (click)="toggleSortMenu($event)">
+          Sort by
+          <span class="arrow" [class.rotated]="isSortOpen()" aria-hidden="true"></span>
+        </button>
+        @if (isSortOpen()) {
+          <div class="dropdown-menu">
+            <button type="button" class="dropdown-item" (click)="applySort('firstName,asc')">Name (A-Z)</button>
+            <button type="button" class="dropdown-item" (click)="applySort('firstName,desc')">Name (Z-A)</button>
+          </div>
+        }
+      </div>
+      <div class="dropdown-wrapper">
+        <button class="control" type="button" (click)="toggleFilterMenu($event)">
+          Filters
+          <span class="arrow" [class.rotated]="isFilterOpen()" aria-hidden="true"></span>
+        </button>
+        @if (isFilterOpen()) {
+          <div class="dropdown-menu">
+            <button type="button" class="dropdown-item clear-filters" (click)="applyFilter('clear')">Clear all filters</button>
+            
+            <div class="dropdown-divider">Roles</div>
+            <button type="button" class="dropdown-item" (click)="applyFilter('role', 1)">Admin</button>
+            <button type="button" class="dropdown-item" (click)="applyFilter('role', 2)">Manager</button>
+            <button type="button" class="dropdown-item" (click)="applyFilter('role', 3)">Employee</button>
+
+            <div class="dropdown-divider">Branches</div>
+            <button type="button" class="dropdown-item" (click)="applyFilter('branch', 1)">Branch 1</button>
+            <button type="button" class="dropdown-item" (click)="applyFilter('branch', 2)">Branch 2</button>
+          </div>
+        }
+      </div>
+    </div>
+    <section class="employee-section" aria-label="Employees grid">
+      @if (isLoading()) {
+        <div class="state-message">Loading employees...</div>
+      } @else if (errorMessage()) {
+        <div class="error-message">
+          {{ errorMessage() }}
+        </div>
+      } @else if (!usersPage()?.content?.length) {
+        <div class="state-message">No employees found.</div>
+      } @else {
+        <div class="employee-list">
+          @for (user of usersPage()?.content; track user.id) {
+            <article class="employee-card">
+              <div class="employee-avatar">
+                {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+              </div>
+              <div class="employee-info">
+                <h2 class="employee-name">{{ user.firstName }} {{ user.lastName }}</h2>
+                <p class="employee-detail"><span>ID / DNI:</span> {{ user.dni }}</p>
+                <p class="employee-detail"><span>Email:</span> {{ user.email }}</p>
+                <p class="employee-detail"><span>Phone:</span> {{ user.phoneNumber }}</p>
+                <p class="employee-detail"><span>Branch:</span> {{ user.branchName || user.branchId }}</p>
+              </div>
+              <div class="employee-badge">
+                {{ user.role }}
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

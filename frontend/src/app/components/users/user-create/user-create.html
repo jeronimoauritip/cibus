@@ -1,0 +1,125 @@
+<div class="container">
+  <header class="header">
+    <a class="logo" href="#" aria-label="Cibus, home">
+      <span class="tray-logo" aria-hidden="true"></span>
+      <span>cibus</span>
+    </a>
+  </header>
+  <div class="tray-background" aria-hidden="true">
+    <div class="handle"></div>
+    <div class="dome"></div>
+    <div class="base"></div>
+  </div>
+  <main class="content">
+    <h1>New Employee</h1>
+    <form (ngSubmit)="onSubmit()">
+    @if (errorMessage()) {
+      <div class="errors">
+        {{ errorMessage() }}
+      </div>
+    }
+    <div class="form-field">
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" [formField]="form.firstName" />
+      @if (form.firstName().invalid() && form.firstName().touched()) {
+        <div class="errors">
+          @for (error of form.firstName().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-field">
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" [formField]="form.lastName" />
+      @if (form.lastName().invalid() && form.lastName().touched()) {
+        <div class="errors">
+          @for (error of form.lastName().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-field">
+      <label for="dni">DNI</label>
+      <input type="number" id="dni" [formField]="form.dni" />
+      @if (form.dni().invalid() && form.dni().touched()) {
+        <div class="errors">
+          @for (error of form.dni().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-field">
+      <label for="phoneNumber">Phone Number</label>
+      <input type="text" id="phoneNumber" [formField]="form.phoneNumber" />
+      @if (form.phoneNumber().invalid() && form.phoneNumber().touched()) {
+        <div class="errors">
+          @for (error of form.phoneNumber().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-field">
+      <label for="email">Email</label>
+      <input type="email" id="email" [formField]="form.email" />
+      @if (form.email().invalid() && form.email().touched()) {
+        <div class="errors">
+          @for (error of form.email().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-field">
+      <label for="branchId">Branch ID</label>
+      <input type="number" id="branchId" [formField]="form.branchId" />
+      @if (form.branchId().invalid() && form.branchId().touched()) {
+        <div class="errors">
+          @for (error of form.branchId().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-field">
+      <label for="role">Role</label>
+      <select id="role" [formField]="form.role">
+        <option value="" disabled>Select a role</option>
+        @for (role of roles(); track role) {
+          <option [value]="role">{{ role }}</option>
+        }
+      </select>
+      @if (form.role().invalid() && form.role().touched()) {
+        <div class="errors">
+          @for (error of form.role().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-field">
+      <label for="pin">PIN</label>
+      <input type="password" id="pin" [formField]="form.pin" />
+      @if (form.pin().invalid() && form.pin().touched()) {
+        <div class="errors">
+          @for (error of form.pin().errors(); track $index) {
+            <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+      }
+    </div>
+    <div class="actions">
+        <button class="save-btn" type="submit" [disabled]="!isFormValid() || isSubmitting()">
+          @if (isSubmitting()) {
+            Creating user...
+          } @else {
+            Create User
+          }
+        </button>
+    </div>
+  </form>
+  </main>
+</div>
