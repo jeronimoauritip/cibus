@@ -14,8 +14,8 @@ export const routes: Routes = [
     { path: 'users', component: UserList },
     { path: 'users/new', component: UserCreate },
     { path: 'branches', component: BranchComponent },
+  { path: 'products', component: ProductListComponent },
     { path: 'products/new', component: ProductsComponent },
     { path: 'list-of-products', component: ProductListComponent },
-
     { path: '**', redirectTo: '' }
 ];

@@ -9,109 +9,8 @@
   min-height: 100svh;
   overflow-x: hidden;
   isolation: isolate;
-  background: linear-gradient(
-    100deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-fondo, #2d805d)
-  );
   display: flex;
   flex-direction: column;
-}
-
-/* Encabezado */
-.encabezado {
-  position: relative;
-  z-index: 2;
-  padding: 28px 30px;
-}
-
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #f8f5e9;
-  text-decoration: none;
-  font-size: 38px;
-  font-weight: 700;
-  line-height: 39px;
-  letter-spacing: -1.5px;
-}
-
-/* Símbolo de bandeja de restaurante recreado con CSS */
-.logo-bandeja {
-  position: relative;
-  width: 27px;
-  height: 16px;
-  margin-top: 6px;
-  border-bottom: 3px solid currentColor;
-}
-
-.logo-bandeja::before {
-  content: "";
-  position: absolute;
-  inset: 1px 2px 3px;
-  border-radius: 20px 20px 0 0;
-  background: currentColor;
-}
-
-.logo-bandeja::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: 11px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-/* Fondo con forma de bandeja / campana */
-.fondo-bandeja {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.manija {
-  position: absolute;
-  top: 48px;
-  left: 50%;
-  width: 98px;
-  height: 85px;
-  transform: translateX(-50%);
-  background: var(--crema, #e7dbbf);
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 36%,
-    70% 36%,
-    70% 100%,
-    25% 100%,
-    25% 36%,
-    0 36%
-  );
-}
-
-.cupula {
-  position: absolute;
-  top: 103px;
-  left: 50%;
-  width: 1403px;
-  max-width: 130vw;
-  height: 539px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: var(--crema, #e7dbbf);
-}
-
-.base {
-  position: absolute;
-  top: 322px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: var(--crema, #e7dbbf);
 }
 
 /* Contenido del formulario */
@@ -123,21 +22,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.titulo {
-  margin: 0 0 28px 0;
-  font-family:
-    "FONTSPRING DEMO - Croogla 4F",
-    "Croogla 4F",
-    "Arial Rounded MT Bold",
-    sans-serif;
-  font-size: clamp(38px, 6vw, 79px);
-  font-weight: 700;
-  line-height: 1.05;
-  text-align: center;
-  letter-spacing: -2px;
-  color: var(--verde-oscuro, #205a40);
 }
 
 .formulario {
@@ -158,8 +42,8 @@
   border-radius: 29px;
   background: linear-gradient(
     90deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-claro, #389a6e)
+    var(--dark-green, #205a40),
+    var(--light-green, #389a6e)
   );
   box-shadow: 0 4px 18px rgba(32, 90, 64, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -178,14 +62,14 @@
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--crema, #e7dbbf);
+  color: var(--cream, #e7dbbf);
   font-family: "Instrument Sans", sans-serif;
   font-size: 32px;
   line-height: 42px;
 }
 
 .campo-capsula input::placeholder {
-  color: var(--crema, #e7dbbf);
+  color: var(--cream, #e7dbbf);
   opacity: 0.85;
 }
 
@@ -206,8 +90,8 @@
   border-radius: 29px;
   background: linear-gradient(
     100deg,
-    var(--verde-oscuro, #205a40),
-    var(--verde-fondo, #2d805d)
+    var(--dark-green, #205a40),
+    var(--light-green, #2d805d)
   );
   color: #f8f5e9;
   font-family: "Instrument Sans", sans-serif;
@@ -247,7 +131,7 @@
 
 .mensaje-alerta.exito {
   background: rgba(45, 128, 93, 0.15);
-  color: var(--verde-oscuro, #205a40);
+  color: var(--dark-green, #205a40);
   border: 2px solid var(--verde-fondo, #2d805d);
 }
 
@@ -264,21 +148,9 @@
 
 /* Adaptación responsive */
 @media (max-width: 700px) {
-  .encabezado {
-    padding: 20px 22px;
-  }
-
-  .logo {
-    font-size: 30px;
-  }
 
   .contenido {
     margin-top: 10px;
-  }
-
-  .titulo {
-    font-size: clamp(32px, 8vw, 48px);
-    margin-bottom: 20px;
   }
 
   .campo-capsula {
@@ -298,12 +170,4 @@
     border-radius: 22px;
   }
 
-  .cupula {
-    top: 90px;
-    height: 420px;
-  }
-
-  .base {
-    top: 250px;
-  }
 }

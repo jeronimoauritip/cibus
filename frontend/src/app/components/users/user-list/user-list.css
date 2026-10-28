@@ -1,26 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap");
-
-* {
-  box-sizing: border-box;
-}
-
 :host {
   display: block;
   width: 100%;
   min-height: 100vh;
 }
 
-body {
-  margin: 0;
-  font-family: "Instrument Sans", sans-serif;
-  background-color: #e7dbbf;
-  color: #205a40;
-}
-
-button,
-input {
-  font: inherit;
-}
+/* Contenido principal */
 
 .container {
   position: relative;
@@ -28,126 +12,15 @@ input {
   min-height: 100vh;
   overflow-x: hidden;
   isolation: isolate;
-  background: linear-gradient(100deg, #205a40, #2d805d);
   min-height: 100vh;
   isolation: isolate;
 }
-
-/* Encabezado */
-
-.header {
-  position: relative;
-  z-index: 10;
-  padding: 24px 30px;
-}
-
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #f8f5e9;
-  text-decoration: none;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -1px;
-}
-
-/* Símbolo de bandeja del logo */
-
-.tray-logo {
-  position: relative;
-  width: 24px;
-  height: 14px;
-  border-bottom: 3px solid currentColor;
-}
-
-.tray-logo::before {
-  content: "";
-  position: absolute;
-  inset: 1px 1px 2px;
-  border-radius: 12px 12px 0 0;
-  background: currentColor;
-}
-
-.tray-logo::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: 10px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-/* Fondo con forma de campana / bandeja */
-
-.tray-background {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.handle {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  width: 70px;
-  height: 45px;
-  transform: translateX(-50%);
-  background-color: #e7dbbf;
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 40%,
-    68% 40%,
-    68% 100%,
-    32% 100%,
-    32% 40%,
-    0 40%
-  );
-}
-
-.dome {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  width: 130%;
-  height: 550px;
-  transform: translateX(-50%);
-  border-radius: 50% 50% 0 0;
-  background-color: #e7dbbf;
-}
-
-.base {
-  position: absolute;
-  top: 300px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: #e7dbbf;
-}
-
-/* Contenido principal */
 
 .content {
   position: relative;
   z-index: 5;
   width: min(680px, calc(100% - 48px));
-  margin: 40px auto 0;
-}
-
-h1 {
-  margin: 0 0 28px;
-  font-family: "Instrument Sans", sans-serif;
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1.1;
-  text-align: center;
-  letter-spacing: -1.5px;
-  color: #205a40;
+  margin: 0px auto 0;
 }
 
 .searcher {
@@ -158,12 +31,12 @@ h1 {
   height: 64px;
   padding: 0 24px;
   border-radius: 20px;
-  background-color: #205a40;
+  background-color: var(--dark-green);
 }
 
 .search-icon {
   flex: 0 0 22px;
-  color: #aab79b;
+  color: var(--icon);
   width: 24px; 
   height: 27px; 
   fill: none;   
@@ -182,7 +55,7 @@ h1 {
 }
 
 .searcher input::placeholder {
-  color: #aab79b;
+  color: var(--icon);
   opacity: 1;
 }
 
@@ -208,7 +81,7 @@ h1 {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #205a40;
+  color: var(--dark-green);
   font-size: 24px;
   font-weight: 400;
   cursor: pointer;
@@ -238,8 +111,8 @@ h1 {
   z-index: 100;
   min-width: 220px;
   margin-top: 8px;
-  background-color: #e7dbbf;
-  border: 2px solid #205a40;
+  background-color: var(--cream);
+  border: 2px solid var(--dark-green);
   border-radius: 14px;
   padding: 8px 0;
   box-shadow: 0 8px 20px rgba(32, 90, 64, 0.25);
@@ -254,7 +127,7 @@ h1 {
   padding: 10px 18px;
   border: 0;
   background: transparent;
-  color: #205a40;
+  color: var(--dark-green);
   font-size: 16px;
   font-weight: 600;
   text-align: left;
@@ -262,15 +135,15 @@ h1 {
 }
 
 .dropdown-item:hover {
-  background-color: #205a40;
-  color: #e7dbbf;
+  background-color: var(--dark-green);
+  color: var(--cream);
 }
 
 .dropdown-divider {
   padding: 10px 18px 4px;
   font-size: 12px;
   text-transform: uppercase;
-  color: #389a6e;
+  color: var(--light-green);
   font-weight: 700;
   letter-spacing: 0.5px;
 }
@@ -281,7 +154,7 @@ h1 {
 
 .clear-filters:hover {
   background-color: #900c3f;
-  color: #fff;
+  color: white;
 }
 
 .readers-only {
@@ -304,7 +177,7 @@ h1 {
 .state-message, .error-message {
   text-align: center;
   font-size: 22px;
-  color: #205a40;
+  color: var(--dark-green);
   padding: 40px 0;
   font-weight: 600;
 }
@@ -322,7 +195,7 @@ h1 {
   gap: 20px;
   background-color: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(4px);
-  border: 2px solid #205a40;
+  border: 2px solid var(--dark-green);
   border-radius: 20px;
   padding: 18px 24px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -337,8 +210,8 @@ h1 {
   flex: 0 0 54px;
   height: 54px;
   border-radius: 50%;
-  background-color: #205a40;
-  color: #e7dbbf;
+  background-color: var(--dark-green);
+  color: var(--cream);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -358,25 +231,25 @@ h1 {
   margin: 0 0 4px 0;
   font-size: 24px;
   font-weight: 700;
-  color: #205a40;
+  color: var(--dark-green);
 }
 
 .employee-detail {
   margin: 0;
   font-size: 15px;
-  color: #2d805d;
+  color: var(--light-green);
 }
 
 .employee-detail span {
   font-weight: 600;
-  color: #205a40;
+  color: var(--dark-green);
 }
 
 .employee-badge {
   padding: 6px 16px;
   border-radius: 12px;
-  background-color: #205a40;
-  color: #e7dbbf;
+  background-color: var(--dark-green);
+  color: var(--cream);
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
@@ -389,11 +262,6 @@ h1 {
 @media (max-width: 768px) {
   .content {
     margin-top: 24px;
-  }
-
-  h1 {
-    font-size: 42px;
-    margin-bottom: 20px;
   }
 
   .searcher {
@@ -421,27 +289,6 @@ h1 {
 }
 
 @media (max-width: 480px) {
-  .header {
-    padding: 16px 20px;
-  }
-
-  .logo {
-    font-size: 24px;
-  }
-
-  .handle {
-    top: 30px;
-  }
-
-  .dome {
-    top: 70px;
-  }
-
-  h1 {
-    font-size: 32px;
-    margin-bottom: 16px;
-  }
-
   .searcher {
     height: 48px;
     padding: 0 16px;

@@ -1,114 +1,18 @@
 :host {
-  --cream: #e7dbbf;
-  --green: #205a40;
   --header-gradient: linear-gradient(90deg, #205a40, #2d805d);
   --field-gradient: linear-gradient(100deg, #205a40, #2d805d);
-
   position: fixed;
   inset: 0;
   display: block;
   font-family: "Instrument Sans", sans-serif;
-  color: var(--green);
 }
-
-* { box-sizing: border-box; }
 
 .pagina {
   position: relative;
   isolation: isolate;
-  display: grid;
-  grid-template-rows: 28% 1fr;
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  background: var(--cream);
-}
-
-.encabezado {
-  position: absolute;
-  inset: 0 0 auto;
-  height: 38%;
-  z-index: -1;
-  background: var(--header-gradient);
-  display: flex;
-  align-items: flex-start;
-  padding: 28px 30px;
-}
-
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--cream);
-  text-decoration: none;
-  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
-  font-size: 2.4rem;
-  font-weight: 700;
-}
-
-.logo-bandeja {
-  position: relative;
-  width: 27px;
-  height: 16px;
-  margin-top: 6px;
-  border-bottom: 3px solid currentColor;
-}
-
-.logo-bandeja::before {
-  content: "";
-  position: absolute;
-  inset: 1px 2px 3px;
-  border-radius: 20px 20px 0 0;
-  background: currentColor;
-}
-
-.logo-bandeja::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: 11px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.fondo-bandeja {
-  position: absolute;
-  inset: 0 0 auto;
-  height: 38%;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.manija {
-  position: absolute;
-  top: 11.5%;
-  left: 50%;
-  width: 6.125rem;
-  height: 1.95rem;
-  transform: translateX(-50%);
-  background: var(--cream);
-}
-
-.manija::after {
-  content: "";
-  position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  width: 2.8rem;
-  height: 3.8rem;
-  background: var(--cream);
-}
-
-.cupula {
-  position: absolute;
-  top: 25%;
-  left: 50%;
-  width: 109.61%;
-  height: 129%;
-  border-radius: 50%;
-  transform: translateX(-50%);
   background: var(--cream);
 }
 
@@ -124,14 +28,6 @@
   padding-bottom: 2rem;
 }
 
-.titulo {
-  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
-  font-size: 4.67rem;
-  font-weight: 700;
-  margin: 0 0 0.8rem;
-  text-align: center;
-}
-
 .lista {
   width: 100%;
   display: grid;
@@ -141,15 +37,11 @@
 
 .mensaje {
   font-size: 1.2rem;
-  color: var(--green);
+  color: var(--dark-green);
   opacity: 0.6;
 }
 
 .mensaje.error {
   color: #991b1b;
   opacity: 1;
-}
-
-@media (max-width: 40rem) {
-  .titulo { font-size: 3rem; }
 }

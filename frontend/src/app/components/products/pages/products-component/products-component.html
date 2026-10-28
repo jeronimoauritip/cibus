@@ -1,22 +1,7 @@
+<app-header-component> New Product </app-header-component>
 <div class="pagina">
 
-    <header class="encabezado">
-        <a class="logo" href="/" aria-label="Cibus, home">
-            <span class="logo-bandeja" aria-hidden="true"></span>
-            <span>cibus</span>
-        </a>
-    </header>
-
-  
-    <div class="fondo-bandeja" aria-hidden="true">
-        <div class="manija"></div>
-        <div class="cupula"></div>
-        <div class="base"></div>
-    </div>
-
-
     <main class="contenido">
-        <h1 class="titulo">New product</h1>
 
         <form class="formulario" (submit)="$event.preventDefault(); create(nameInput.value, descInput.value, +categorySelect.value); nameInput.value=''; descInput.value=''; categorySelect.value=''">
 
