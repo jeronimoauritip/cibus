@@ -7,7 +7,7 @@
   font-family: "Instrument Sans", sans-serif;
 }
 
-.pagina {
+.page {
   position: relative;
   isolation: isolate;
   height: 100%;
@@ -16,7 +16,7 @@
   background: var(--cream);
 }
 
-.contenido {
+.content {
   grid-row: 2;
   align-self: start;
   width: min(60rem, calc(100% - 2.5rem));
@@ -28,20 +28,20 @@
   padding-bottom: 2rem;
 }
 
-.lista {
+.list {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
   gap: 1rem;
 }
 
-.mensaje {
+.message {
   font-size: 1.2rem;
   color: var(--dark-green);
   opacity: 0.6;
 }
 
-.mensaje.error {
+.message.error {
   color: #991b1b;
   opacity: 1;
 }

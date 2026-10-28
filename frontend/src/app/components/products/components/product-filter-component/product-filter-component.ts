@@ -1,6 +1,6 @@
 import { Component, computed, inject, model, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
-import { FiltroProducto } from '../../models/filtro-producto';
+import { ProductFilter } from '../../models/product-filter';
 import { ProductService } from '../../service/product-service';
 
 @Component({
@@ -11,13 +11,13 @@ import { ProductService } from '../../service/product-service';
 })
 export class ProductFilterComponent {
   private readonly service = inject(ProductService);
-  readonly filter = model.required<FiltroProducto>();
-  readonly filtro = form(this.filter);
-  readonly abierto = signal(false);
+  readonly filter = model.required<ProductFilter>();
+  readonly filterForm = form(this.filter);
+  readonly isOpen = signal(false);
 
-  readonly categories = computed(() => this.service.categorias.value() ?? []);
+  readonly categories = computed(() => this.service.categories.value() ?? []);
   readonly names = computed(() =>
-    Array.from(new Set((this.service.productos.value() ?? []).map(p => p.name)))
+    Array.from(new Set((this.service.products.value() ?? []).map(p => p.name)))
   );
-  readonly sinFiltro = computed(() => this.filter().name === '' && this.filter().category === '');
+  readonly hasNoFilter = computed(() => this.filter().name === '' && this.filter().category === '');
 }

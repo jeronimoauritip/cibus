@@ -1,4 +1,4 @@
-export interface FiltroProducto {
+export interface ProductFilter {
     name: string;
     category:string;
 }

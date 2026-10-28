@@ -1,19 +1,19 @@
 <app-header-component> New Product </app-header-component>
-<div class="pagina">
+<div class="page">
 
-    <main class="contenido">
+    <main class="content">
 
-        <form class="formulario" (submit)="$event.preventDefault(); create(nameInput.value, descInput.value, +categorySelect.value); nameInput.value=''; descInput.value=''; categorySelect.value=''">
+        <form class="form" (submit)="$event.preventDefault(); create(nameInput.value, descInput.value, +categorySelect.value); nameInput.value=''; descInput.value=''; categorySelect.value=''">
 
-            <div class="campo-capsula">
+            <div class="pill-field">
                 <input #nameInput id="name" name="name" type="text" placeholder="Product name" autocomplete="off" required maxlength="100" />
             </div>
 
-            <div class="campo-capsula">
+            <div class="pill-field">
                 <input #descInput id="description" name="description" type="text" placeholder="Description (optional)" autocomplete="off" maxlength="255" />
             </div>
 
-            <div class="campo-capsula">
+            <div class="pill-field">
                 <select #categorySelect id="category" name="category" required>
                     <option value="" disabled selected>Select a category</option>
                     @for (cat of categories(); track cat.id) {
@@ -22,8 +22,8 @@
                 </select>
             </div>
 
-            <div class="acciones">
-                <button class="btn-guardar" type="submit" [disabled]="loading()">
+            <div class="actions">
+                <button class="btn-save" type="submit" [disabled]="loading()">
                     Save product
                 </button>
             </div>
@@ -31,10 +31,10 @@
         </form>
 
         @if (success()) {
-            <p class="mensaje-alerta exito">Product created successfully</p>
+            <p class="alert-message success">Product created successfully</p>
         }
         @if (error()) {
-            <p class="mensaje-alerta error">{{ error() }}</p>
+            <p class="alert-message error">{{ error() }}</p>
         }
 
     </main>

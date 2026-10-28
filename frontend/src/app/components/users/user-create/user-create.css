@@ -89,7 +89,7 @@ label {
   opacity: 0.85;
 }
 
-/* Controles de acción */
+/* Action controls */
 .actions {
   width: 100%;
   display: flex;
@@ -130,7 +130,7 @@ label {
   box-shadow: none;
 }
 
-/* Mensajes de retroalimentación */
+/* Feedback messages */
 .errors {
   width: 100%;
   padding: 16px 24px;

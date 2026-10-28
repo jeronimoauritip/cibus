@@ -1,49 +1,49 @@
-<form class="filtro" (submit)="$event.preventDefault()">
-  <label class="buscador">
-    <svg class="buscador__icono" viewBox="0 0 28 30" fill="none" aria-hidden="true">
+<form class="filter" (submit)="$event.preventDefault()">
+  <label class="search">
+    <svg class="search__icon" viewBox="0 0 28 30" fill="none" aria-hidden="true">
       <circle cx="10" cy="10" r="8" />
       <path d="M16 17L26 28" />
     </svg>
     <input type="search" placeholder="Search product" aria-label="Search product"
-      [formField]="filtro.name" />
+      [formField]="filterForm.name" />
   </label>
 
-  <div class="controles">
+  <div class="controls">
     <button class="control" type="button">
       Sort by
       <span class="arrow" aria-hidden="true"></span>
     </button>
 
-    <div class="filtros">
-      <button class="control" type="button" (click)="abierto.set(!abierto())">
+    <div class="filters">
+      <button class="control" type="button" (click)="isOpen.set(!isOpen())">
         Filters
-        <span class="arrow" [class.rotated]="abierto()" aria-hidden="true"></span>
+        <span class="arrow" [class.rotated]="isOpen()" aria-hidden="true"></span>
       </button>
 
-      @if (abierto()) {
+      @if (isOpen()) {
         <div class="dropdown">
-          <button class="opcion" type="button" [class.activa]="sinFiltro()"
-            (click)="filter.set({ name: '', category: '' }); abierto.set(false)">
+          <button class="option" type="button" [class.active]="hasNoFilter()"
+            (click)="filter.set({ name: '', category: '' }); isOpen.set(false)">
             All
           </button>
 
           @if (categories().length > 0) {
-            <p class="grupo">Category</p>
+            <p class="group">Category</p>
             @for (cat of categories(); track cat.id) {
-              <label class="opcion">
+              <label class="option">
                 <input type="radio" [value]="cat.name"
-                  [formField]="filtro.category" (change)="abierto.set(false)" />
+                  [formField]="filterForm.category" (change)="isOpen.set(false)" />
                 {{ cat.name }}
               </label>
             }
           }
 
           @if (names().length > 0) {
-            <p class="grupo">Name</p>
+            <p class="group">Name</p>
             @for (n of names(); track n) {
-              <label class="opcion">
+              <label class="option">
                 <input type="radio" [value]="n"
-                  [formField]="filtro.name" (change)="abierto.set(false)" />
+                  [formField]="filterForm.name" (change)="isOpen.set(false)" />
                 {{ n }}
               </label>
             }

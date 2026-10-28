@@ -8,8 +8,8 @@ import { Product } from '../models/product';
 @Injectable({providedIn:'root'})
 export class ProductService {
     private readonly http= inject(HttpClient);
-    readonly productos = httpResource<Product[]>(() => '/api/products');
-    readonly categorias = httpResource<ProductCategory[]>(() => '/api/product-categories');
+    readonly products = httpResource<Product[]>(() => '/api/products');
+    readonly categories = httpResource<ProductCategory[]>(() => '/api/product-categories');
     create (product: ProductRequest): Observable<ProductRequest>{
         return this.http.post<ProductRequest>('/api/products',product);
     }

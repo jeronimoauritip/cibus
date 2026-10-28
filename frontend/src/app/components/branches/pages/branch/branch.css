@@ -3,7 +3,7 @@
   min-height: 100vh;
 }
 
-.pagina {
+.page {
   position: relative;
   min-height: 100vh;
   min-height: 100svh;
@@ -13,8 +13,8 @@
   flex-direction: column;
 }
 
-/* Contenido del formulario */
-.contenido {
+/* Form content */
+.content {
   position: relative;
   z-index: 2;
   width: min(842px, calc(100% - 48px));
@@ -24,7 +24,7 @@
   align-items: center;
 }
 
-.formulario {
+.form {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -32,8 +32,8 @@
   align-items: center;
 }
 
-/* Cápsula de los inputs basada en el diseño de Figma */
-.campo-capsula {
+/* Pill-shaped inputs based on the Figma design */
+.pill-field {
   display: flex;
   align-items: center;
   width: 100%;
@@ -49,13 +49,13 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.campo-capsula:focus-within {
+.pill-field:focus-within {
   outline: 3px solid var(--verde-oscuro, #205a40);
   outline-offset: 4px;
   transform: translateY(-1px);
 }
 
-.campo-capsula input {
+.pill-field input {
   width: 100%;
   min-width: 0;
   padding: 0;
@@ -68,20 +68,20 @@
   line-height: 42px;
 }
 
-.campo-capsula input::placeholder {
+.pill-field input::placeholder {
   color: var(--cream, #e7dbbf);
   opacity: 0.85;
 }
 
-/* Controles de acción */
-.acciones {
+/* Action controls */
+.actions {
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
 
-.btn-guardar {
+.btn-save {
   width: 100%;
   max-width: 420px;
   height: 78px;
@@ -102,24 +102,24 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.btn-guardar:hover:not(:disabled) {
+.btn-save:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 26px rgba(32, 90, 64, 0.45);
   filter: brightness(1.08);
 }
 
-.btn-guardar:active:not(:disabled) {
+.btn-save:active:not(:disabled) {
   transform: translateY(1px);
 }
 
-.btn-guardar:disabled {
+.btn-save:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   box-shadow: none;
 }
 
-/* Mensajes de retroalimentación */
-.mensaje-alerta {
+/* Feedback messages */
+.alert-message {
   width: 100%;
   padding: 16px 24px;
   border-radius: 18px;
@@ -129,13 +129,13 @@
   animation: fadeIn 0.3s ease-in;
 }
 
-.mensaje-alerta.exito {
+.alert-message.success {
   background: rgba(45, 128, 93, 0.15);
   color: var(--dark-green, #205a40);
   border: 2px solid var(--verde-fondo, #2d805d);
 }
 
-.mensaje-alerta.error {
+.alert-message.error {
   background: rgba(220, 38, 38, 0.12);
   color: #991b1b;
   border: 2px solid #ef4444;
@@ -146,25 +146,25 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Adaptación responsive */
+/* Responsive adaptation */
 @media (max-width: 700px) {
 
-  .contenido {
+  .content {
     margin-top: 10px;
   }
 
-  .campo-capsula {
+  .pill-field {
     height: 68px;
     padding: 0 22px;
     border-radius: 22px;
   }
 
-  .campo-capsula input {
+  .pill-field input {
     font-size: 20px;
     line-height: 28px;
   }
 
-  .btn-guardar {
+  .btn-save {
     height: 60px;
     font-size: 20px;
     border-radius: 22px;

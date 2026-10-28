@@ -59,7 +59,7 @@
   opacity: 1;
 }
 
-/* Orden y filtros */
+/* Sort and filters */
 
 .controls {
   display: flex;
@@ -102,7 +102,7 @@
   transform: rotate(180deg);
 }
 
-/* Menús Desplegables */
+/* Dropdown menus */
 
 .dropdown-menu {
   position: absolute;

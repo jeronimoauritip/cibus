@@ -5,7 +5,7 @@
   font-family: "Instrument Sans", sans-serif;
 }
 
-.pagina {
+.page {
   position: relative;
   width: 100%;
   min-height: 100vh;
@@ -16,7 +16,7 @@
 }
 
 
-.contenido {
+.content {
   align-self: start;
   width: min(38.25rem, calc(100% - 2.5rem));
   margin-inline: auto;
@@ -26,15 +26,15 @@
 }
 
 
-.formulario {
+.form {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.7rem;
 }
 
-.campo-capsula input,
-.campo-capsula select {
+.pill-field input,
+.pill-field select {
   width: 100%;
   height: 4.8rem;
   padding: 0.75rem 1.5rem;
@@ -48,29 +48,29 @@
   cursor: pointer;
 }
 
-.campo-capsula input::placeholder {
+.pill-field input::placeholder {
   color: var(--cream);
   opacity: 1;
 }
 
-.campo-capsula select option {
+.pill-field select option {
   background: var(--dark-green);
   color: var(--cream);
 }
 
-.campo-capsula input:focus-visible,
-.campo-capsula select:focus-visible {
+.pill-field input:focus-visible,
+.pill-field select:focus-visible {
   outline: 0.1875rem solid var(--green);
   outline-offset: 0.3rem;
 }
 
-.acciones {
+.actions {
   display: flex;
   justify-content: center;
   margin-top: 0.5rem;
 }
 
-.btn-guardar {
+.btn-save {
   padding: 0.6rem 2.5rem;
   border: 0;
   border-radius: 1.92rem;
@@ -83,17 +83,17 @@
   transition: all 0.2s ease;
 }
 
-.btn-guardar:hover:not(:disabled) {
+.btn-save:hover:not(:disabled) {
   filter: brightness(1.1);
   transform: translateY(-1px);
 }
 
-.btn-guardar:disabled {
+.btn-save:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.mensaje-alerta {
+.alert-message {
   width: 100%;
   margin-top: 1rem;
   padding: 1rem 1.5rem;
@@ -102,21 +102,21 @@
   text-align: center;
 }
 
-.mensaje-alerta.exito {
+.alert-message.success {
   background: rgba(45, 128, 93, 0.15);
   color: var(--dark-green);
   border: 2px solid #2d805d;
 }
 
-.mensaje-alerta.error {
+.alert-message.error {
   background: rgba(220, 38, 38, 0.1);
   color: #991b1b;
   border: 2px solid #ef4444;
 }
 
 @media (max-width: 40rem) {
-  .campo-capsula input,
-  .campo-capsula select {
+  .pill-field input,
+  .pill-field select {
     height: 4rem;
     font-size: 1.5rem;
   }

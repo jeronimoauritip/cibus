@@ -1,17 +1,17 @@
 <app-header-component> Products </app-header-component>
-<div class="pagina">
-  <main class="contenido">
+<div class="page">
+  <main class="content">
     <app-product-filter-component [(filter)]="filter" />
-    <div class="lista">
+    <div class="list">
       @if (loading()) {
-        <p class="mensaje">Loading...</p>
+        <p class="message">Loading...</p>
       } @else if (error()) {
-        <p class="mensaje error">Could not load products</p>
+        <p class="message error">Could not load products</p>
       } @else {
         @for (product of filteredProducts(); track product.id) {
           <app-product-card [product]="product" />
         } @empty {
-          <p class="mensaje">No products found</p>
+          <p class="message">No products found</p>
         }
       }
     </div>
