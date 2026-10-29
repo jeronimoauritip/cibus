@@ -1,0 +1,50 @@
+<app-header-component>Product detail</app-header-component>
+
+<div class="page">
+  <main class="content">
+
+    @if (loading()) {
+      <p class="message">Loading...</p>
+    } @else if (error()) {
+      <p class="message error">Could not load product</p>
+    } @else {
+      <button class="pd-back" (click)="onBack()">← Back</button>
+
+      <section class="pd-card">
+        <div class="pd-field">
+          <label class="pd-label" for="pd-name">Name</label>
+          <input class="pd-input" id="pd-name" type="text" [(ngModel)]="name" />
+        </div>
+
+        <div class="pd-field">
+          <label class="pd-label" for="pd-description">Description</label>
+          <textarea class="pd-textarea" id="pd-description" [(ngModel)]="description"></textarea>
+        </div>
+
+        <div class="pd-field pd-row">
+          <div>
+            <label class="pd-label" for="pd-price">Price</label>
+            <input class="pd-input" id="pd-price" type="number" min="0" [(ngModel)]="price" />
+          </div>
+          <button type="button" class="pd-switch" role="switch"
+                  [attr.aria-checked]="available" (click)="available = !available">
+            <span class="pd-switch-track"></span>Available
+          </button>
+        </div>
+
+        <div class="pd-field">
+          <span class="pd-label">Category</span>
+          <div class="pd-readonly">{{ product()?.categoryName }}</div>
+        </div>
+
+        <div class="pd-actions">
+          <button class="pd-btn pd-btn--secondary" (click)="onBack()">Cancel</button>
+          <button class="pd-btn pd-btn--primary" [disabled]="saving()" (click)="onSave()">
+            {{ saving() ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </section>
+    }
+
+  </main>
+</div>
