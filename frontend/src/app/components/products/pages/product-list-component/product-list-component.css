@@ -1,0 +1,47 @@
+:host {
+  --header-gradient: linear-gradient(90deg, #205a40, #2d805d);
+  --field-gradient: linear-gradient(100deg, #205a40, #2d805d);
+  position: fixed;
+  inset: 0;
+  display: block;
+  font-family: "Instrument Sans", sans-serif;
+}
+
+.page {
+  position: relative;
+  isolation: isolate;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--cream);
+}
+
+.content {
+  grid-row: 2;
+  align-self: start;
+  width: min(60rem, calc(100% - 2.5rem));
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+.list {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.message {
+  font-size: 1.2rem;
+  color: var(--dark-green);
+  opacity: 0.6;
+}
+
+.message.error {
+  color: #991b1b;
+  opacity: 1;
+}

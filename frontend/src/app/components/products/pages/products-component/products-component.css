@@ -1,0 +1,123 @@
+:host {
+  --header-gradient: linear-gradient(90deg, #205a40, #2d805d);
+  --field-gradient: linear-gradient(90deg, #205a40, #2d7957);
+  display: block;
+  font-family: "Instrument Sans", sans-serif;
+}
+
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  isolation: isolate;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+
+.content {
+  align-self: start;
+  width: min(38.25rem, calc(100% - 2.5rem));
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.7rem;
+}
+
+.pill-field input,
+.pill-field select {
+  width: 100%;
+  height: 4.8rem;
+  padding: 0.75rem 1.5rem;
+  border: 0;
+  border-radius: 1.92rem;
+  background: var(--field-gradient);
+  color: var(--cream);
+  font: inherit;
+  font-size: 2.3rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.pill-field input::placeholder {
+  color: var(--cream);
+  opacity: 1;
+}
+
+.pill-field select option {
+  background: var(--dark-green);
+  color: var(--cream);
+}
+
+.pill-field input:focus-visible,
+.pill-field select:focus-visible {
+  outline: 0.1875rem solid var(--green);
+  outline-offset: 0.3rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.btn-save {
+  padding: 0.6rem 2.5rem;
+  border: 0;
+  border-radius: 1.92rem;
+  background: var(--dark-green);
+  color: var(--cream);
+  font: inherit;
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.alert-message {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.alert-message.success {
+  background: rgba(45, 128, 93, 0.15);
+  color: var(--dark-green);
+  border: 2px solid #2d805d;
+}
+
+.alert-message.error {
+  background: rgba(220, 38, 38, 0.1);
+  color: #991b1b;
+  border: 2px solid #ef4444;
+}
+
+@media (max-width: 40rem) {
+  .pill-field input,
+  .pill-field select {
+    height: 4rem;
+    font-size: 1.5rem;
+  }
+}

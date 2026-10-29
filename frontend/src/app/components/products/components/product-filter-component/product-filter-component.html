@@ -1,0 +1,55 @@
+<form class="filter" (submit)="$event.preventDefault()">
+  <label class="search">
+    <svg class="search__icon" viewBox="0 0 28 30" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="8" />
+      <path d="M16 17L26 28" />
+    </svg>
+    <input type="search" placeholder="Search product" aria-label="Search product"
+      [formField]="filterForm.name" />
+  </label>
+
+  <div class="controls">
+    <button class="control" type="button">
+      Sort by
+      <span class="arrow" aria-hidden="true"></span>
+    </button>
+
+    <div class="filters">
+      <button class="control" type="button" (click)="isOpen.set(!isOpen())">
+        Filters
+        <span class="arrow" [class.rotated]="isOpen()" aria-hidden="true"></span>
+      </button>
+
+      @if (isOpen()) {
+        <div class="dropdown">
+          <button class="option" type="button" [class.active]="hasNoFilter()"
+            (click)="filter.set({ name: '', category: '' }); isOpen.set(false)">
+            All
+          </button>
+
+          @if (categories().length > 0) {
+            <p class="group">Category</p>
+            @for (cat of categories(); track cat.id) {
+              <label class="option">
+                <input type="radio" [value]="cat.name"
+                  [formField]="filterForm.category" (change)="isOpen.set(false)" />
+                {{ cat.name }}
+              </label>
+            }
+          }
+
+          @if (names().length > 0) {
+            <p class="group">Name</p>
+            @for (n of names(); track n) {
+              <label class="option">
+                <input type="radio" [value]="n"
+                  [formField]="filterForm.name" (change)="isOpen.set(false)" />
+                {{ n }}
+              </label>
+            }
+          }
+        </div>
+      }
+    </div>
+  </div>
+</form>

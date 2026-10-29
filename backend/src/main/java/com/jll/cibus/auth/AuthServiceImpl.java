@@ -8,21 +8,27 @@ import com.jll.cibus.common.exception.UnauthorizedOperationException;
 import com.jll.cibus.credential.entity.CredentialsEntity;
 import com.jll.cibus.credential.repository.CredentialsRepository;
 import com.jll.cibus.role.enums.Roles;
+import com.jll.cibus.user.dto.UserResponseDTO;
 import com.jll.cibus.user.entity.UserEntity;
+import com.jll.cibus.user.mapper.UserMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
     private final CredentialsRepository credentialsRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserMapper userMapper;
+
 
     @Override
     public AuthResponse authenticate(AuthRequest input) {
@@ -54,13 +60,23 @@ public class AuthServiceImpl implements AuthService {
         credentialsRepository.save(user);
         return new AuthResponse(newAccessToken, newRefreshToken);
     }
+
     @Override
     public UserEntity getAuthenticatedUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UnauthorizedOperationException("User not authenticated");
         }
-        String username = (String) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        if ("anonymousUser".equals(username)) {
+            throw new UnauthorizedOperationException("Invalid token");
+        }
         CredentialsEntity credentials = credentialsRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Credentials not found"));
         UserEntity user = credentials.getUser();
@@ -69,6 +85,12 @@ public class AuthServiceImpl implements AuthService {
         }
         return user;
     }
+
+    @Override
+    public UserResponseDTO getAuthenticatedUserDTO(){
+        return userMapper.toDTO(getAuthenticatedUser());
+    }
+
     @Override
     public void authenticateUserBelongsInBranch(Long branchId){
         if(branchId == null){

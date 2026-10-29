@@ -1,0 +1,65 @@
+<main class="login-page">
+  <div class="decoration" aria-hidden="true">
+    <div class="handle"></div>
+    <div class="curve"></div>
+  </div>
+
+  <section class="login" aria-labelledby="login-title">
+    <h1 class="login-title" id="login-title">
+      <span class="brand">
+        <span class="cloche" aria-hidden="true"></span>
+        <span>cibus</span>
+      </span>
+
+      <span class="divider" aria-hidden="true"></span>
+      <span>login</span>
+    </h1>
+
+    <form class="login-form" (submit)="$event.preventDefault(); onSubmit()" novalidate>
+      <div class="field">
+        <label class="sr-only" for="email">Your email</label>
+        <input
+          id="email"
+          type="email"
+          [formField]="loginForm.email"
+          placeholder="Enter your email"
+          autocomplete="username"
+        >
+        @if (loginForm.email().touched() && loginForm.email().invalid()) {
+          @for (e of loginForm.email().errors(); track e.kind) {
+            <p class="field-error">{{ e.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label class="sr-only" for="password">Your password</label>
+        <input
+          id="password"
+          type="password"
+          [formField]="loginForm.password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        >
+        @if (loginForm.password().touched() && loginForm.password().invalid()) {
+          @for (e of loginForm.password().errors(); track e.kind) {
+            <p class="field-error">{{ e.message }}</p>
+          }
+        }
+      </div>
+
+      @if (auth.error()) {
+        <p class="field-error">{{ auth.error() }}</p>
+      }
+
+      <button class="submit" type="submit" [disabled]="auth.loading()">
+        Log in
+      </button>
+
+      <button class="employee" type="button" (click)="employeeClick.emit()">
+        I'm an employee
+      </button>
+    </form>
+
+  </section>
+</main>

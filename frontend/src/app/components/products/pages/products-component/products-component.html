@@ -1,0 +1,41 @@
+<app-header-component> New Product </app-header-component>
+<div class="page">
+
+    <main class="content">
+
+        <form class="form" (submit)="$event.preventDefault(); create(nameInput.value, descInput.value, +categorySelect.value); nameInput.value=''; descInput.value=''; categorySelect.value=''">
+
+            <div class="pill-field">
+                <input #nameInput id="name" name="name" type="text" placeholder="Product name" autocomplete="off" required maxlength="100" />
+            </div>
+
+            <div class="pill-field">
+                <input #descInput id="description" name="description" type="text" placeholder="Description (optional)" autocomplete="off" maxlength="255" />
+            </div>
+
+            <div class="pill-field">
+                <select #categorySelect id="category" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    @for (cat of categories(); track cat.id) {
+                        <option [value]="cat.id">{{ cat.name }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="actions">
+                <button class="btn-save" type="submit" [disabled]="loading()">
+                    Save product
+                </button>
+            </div>
+
+        </form>
+
+        @if (success()) {
+            <p class="alert-message success">Product created successfully</p>
+        }
+        @if (error()) {
+            <p class="alert-message error">{{ error() }}</p>
+        }
+
+    </main>
+</div>

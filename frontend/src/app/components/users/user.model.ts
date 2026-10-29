@@ -52,7 +52,7 @@ export interface Page<T> {
   empty: boolean;
 }
 
-// Filtros opcionales para la búsqueda paginada
+// Optional filters for the paginated search
 export interface UserFilterParams {
   page?: number;
   size?: number;
@@ -65,7 +65,7 @@ export interface UserFilterParams {
   userRoleId?: number;
 }
 
-// Solicitud para resetear PIN
+// Request to reset the PIN
 export interface ResetPinRequest {
   newPin: string;
 }

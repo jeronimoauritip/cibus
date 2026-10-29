@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../user.service';
 import { Page, User } from '../user.model';
+import { HeaderComponent } from '../../header-component/header-component';
 
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, HeaderComponent],
   selector: 'app-user-list',
   styleUrl: './user-list.css',
   templateUrl: './user-list.html',
@@ -20,11 +21,11 @@ export class UserList implements OnInit {
   isLoading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
 
-  // Signals para los menús desplegables
+  // Signals for the dropdown menus
   isSortOpen = signal<boolean>(false);
   isFilterOpen = signal<boolean>(false);
 
-  // Signals para guardar los criterios seleccionados
+  // Signals to store the selected criteria
   currentSort = signal<string | undefined>(undefined);
   currentRoleId = signal<number | undefined>(undefined);
   currentBranchId = signal<number | undefined>(undefined);
@@ -37,7 +38,7 @@ export class UserList implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    // Construimos los filtros con los valores actuales
+    // Build the filters from the current values
     const filters: any = {
       name: this.searchTerm(),
       sort: this.currentSort(),
@@ -52,7 +53,7 @@ export class UserList implements OnInit {
           this.usersPage.set(page);
         },
         error: (err) => {
-          console.error('Objeto de error completo:', err);
+          console.error('Full error object:', err);
           this.errorMessage.set(`Failed to load users: ${err.error?.message || err.message}`);
         }
       });
@@ -62,12 +63,12 @@ export class UserList implements OnInit {
     this.loadUsers();
   }
 
-  // --- Lógica de Desplegables ---
+  // --- Dropdown logic ---
 
   toggleSortMenu(event: MouseEvent): void {
-    event.stopPropagation(); // Evita que el clic cierre el menú inmediatamente
+    event.stopPropagation(); // Prevents the click from closing the menu immediately
     this.isSortOpen.update(prev => !prev);
-    this.isFilterOpen.set(false); // Cierra el otro menú
+    this.isFilterOpen.set(false); // Close the other menu
   }
 
   toggleFilterMenu(event: MouseEvent): void {
@@ -96,7 +97,7 @@ export class UserList implements OnInit {
     this.loadUsers();
   }
 
-  // Cierra los menús si se hace clic en cualquier otra parte de la pantalla
+  // Close the menus when clicking anywhere else on the screen
   @HostListener('document:click')
   closeMenus(): void {
     this.isSortOpen.set(false);

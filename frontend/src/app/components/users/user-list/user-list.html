@@ -1,17 +1,6 @@
+<app-header-component> Employee list </app-header-component>
 <div class="container">
-  <header class="header">
-    <a class="logo" href="#" aria-label="Cibus, home">
-      <span class="tray-logo" aria-hidden="true"></span>
-      <span>cibus</span>
-    </a>
-  </header>
-  <div class="tray-background" aria-hidden="true">
-    <div class="handle"></div>
-    <div class="dome"></div>
-    <div class="base"></div>
-  </div>
   <main class="content">
-    <h1>Employee list</h1>
     <form class="searcher" (ngSubmit)="onSearch()">
       <label class="readers-only" for="search">Search employee</label>
       <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
@@ -20,11 +9,7 @@
       </svg>
       <input id="search" name="search" type="search" placeholder="Enter name or ID" autocomplete="off" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"/>
     </form>
-    
-    <!-- Controles Desplegables -->
     <div class="controls" aria-label="List options">
-      
-      <!-- Sort By -->
       <div class="dropdown-wrapper">
         <button class="control" type="button" (click)="toggleSortMenu($event)">
           Sort by
@@ -37,8 +22,6 @@
           </div>
         }
       </div>
-
-      <!-- Filters -->
       <div class="dropdown-wrapper">
         <button class="control" type="button" (click)="toggleFilterMenu($event)">
           Filters
@@ -59,10 +42,7 @@
           </div>
         }
       </div>
-
     </div>
-
-    <!-- Lista de Empleados -->
     <section class="employee-section" aria-label="Employees grid">
       @if (isLoading()) {
         <div class="state-message">Loading employees...</div>

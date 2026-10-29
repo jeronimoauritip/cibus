@@ -1,0 +1,5 @@
+@if (adminMode()) {
+    <app-admin-login (employeeClick)="adminMode.set(false)" />
+} @else {
+  <app-pin (adminClick)="adminMode.set(true)" />
+}

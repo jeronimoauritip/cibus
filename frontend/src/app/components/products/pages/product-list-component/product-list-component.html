@@ -1,0 +1,19 @@
+<app-header-component> Products </app-header-component>
+<div class="page">
+  <main class="content">
+    <app-product-filter-component [(filter)]="filter" />
+    <div class="list">
+      @if (loading()) {
+        <p class="message">Loading...</p>
+      } @else if (error()) {
+        <p class="message error">Could not load products</p>
+      } @else {
+        @for (product of filteredProducts(); track product.id) {
+          <app-product-card [product]="product" />
+        } @empty {
+          <p class="message">No products found</p>
+        }
+      }
+    </div>
+  </main>
+</div>
