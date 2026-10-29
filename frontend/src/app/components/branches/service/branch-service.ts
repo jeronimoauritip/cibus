@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, Service } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Branch } from '../models/branch.model';
 
-@Service()
+@Injectable({ providedIn: 'root' })
 export class BranchService {
     private readonly http = inject(HttpClient)
     private readonly url = 'http://localhost:8080/api/branches'

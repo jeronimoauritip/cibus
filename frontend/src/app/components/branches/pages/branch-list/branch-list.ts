@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { BranchService } from '../../service/branch-service';
 import { Branch } from '../../models/branch.model';
+import { HeaderComponent } from '../../../header-component/header-component';
 
 type SortOption = 'name-asc' | 'name-desc' | 'address-asc';
 
 @Component({
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, HeaderComponent],
   selector: 'app-branch-list',
   styleUrl: './branch-list.css',
   templateUrl: './branch-list.html',
@@ -136,4 +137,3 @@ export class BranchListComponent implements OnInit {
 }
 
 export { BranchListComponent as BranchList };
-

@@ -1,7 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
 :host {
   display: block;
   width: 100%;
@@ -12,24 +8,67 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  min-height: 100svh;
   overflow-x: hidden;
-  isolation: isolate;
   display: flex;
   flex-direction: column;
 }
 
-/* Form content */
+/* Main content */
 .content {
   position: relative;
   z-index: 5;
   width: min(680px, calc(100% - 48px));
-  margin: 40px auto 60px;
+  margin: 30px auto 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* Title row with back button */
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+/* Back button to Branches List */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 16px;
+  background-color: var(--dark-green);
+  color: var(--cream);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(32, 90, 64, 0.18);
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-back:hover {
+  background-color: #17422f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(32, 90, 64, 0.25);
+}
+
+.back-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Form */
 .form {
   width: 100%;
   display: flex;
@@ -38,46 +77,65 @@
   align-items: center;
 }
 
-/* Pill-shaped inputs based on the Figma design */
-.pill-field {
+.field-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Capsule inputs based on Figma design */
+.field-capsule {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 91px;
-  padding: 0 38px;
-  border-radius: 29px;
-  background: linear-gradient(90deg,
-      var(--dark-green, #205a40),
-      var(--light-green, #389a6e));
-  box-shadow: 0 4px 18px rgba(32, 90, 64, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 64px;
+  padding: 0 24px;
+  border-radius: 20px;
+  background-color: var(--dark-green);
+  box-shadow: 0 4px 14px rgba(32, 90, 64, 0.14);
+  transition: transform 0.2s, box-shadow 0.2s, outline 0.2s;
 }
 
-.pill-field:focus-within {
-  outline: 3px solid var(--verde-oscuro, #205a40);
-  outline-offset: 4px;
+.field-capsule:focus-within {
+  outline: 3px solid var(--dark-green);
+  outline-offset: 3px;
   transform: translateY(-1px);
 }
 
-.pill-field input {
+.field-capsule.field-error {
+  outline: 3px solid #b91c1c;
+  outline-offset: 3px;
+  box-shadow: 0 4px 18px rgba(185, 28, 28, 0.25);
+}
+
+.field-capsule input {
   width: 100%;
   min-width: 0;
   padding: 0;
   border: 0;
   outline: 0;
   background: transparent;
-  color: var(--cream, #e7dbbf);
-  font-family: "Instrument Sans", sans-serif;
-  font-size: 32px;
-  line-height: 42px;
+  color: var(--cream);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
 }
 
-.pill-field input::placeholder {
-  color: var(--cream, #e7dbbf);
-  opacity: 0.85;
+.field-capsule input::placeholder {
+  color: var(--icon);
+  opacity: 1;
 }
 
-/* Action controls */
+.field-error-message {
+  color: #991b1b;
+  font-size: 14px;
+  font-weight: 600;
+  padding-left: 20px;
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* Actions */
 .actions {
   width: 100%;
   display: flex;
@@ -87,17 +145,14 @@
 
 .btn-save {
   width: 100%;
-  max-width: 420px;
-  height: 78px;
-  padding: 0 32px;
-  border: none;
-  border-radius: 29px;
-  background: linear-gradient(100deg,
-      var(--dark-green, #205a40),
-      var(--light-green, #2d805d));
-  color: #f8f5e9;
-  font-family: "Instrument Sans", sans-serif;
-  font-size: 26px;
+  max-width: 320px;
+  height: 60px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 20px;
+  background-color: var(--dark-green);
+  color: var(--cream);
+  font-size: 20px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(32, 90, 64, 0.25);
@@ -105,12 +160,9 @@
 }
 
 .btn-save:hover:not(:disabled) {
+  background-color: #17422f;
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(32, 90, 64, 0.35);
-}
-
-.btn-save:active:not(:disabled) {
-  transform: translateY(1px);
 }
 
 .btn-save:disabled {
@@ -132,9 +184,9 @@
 }
 
 .alert-message.success {
-  background: rgba(45, 128, 93, 0.15);
-  color: var(--dark-green, #205a40);
-  border: 2px solid var(--verde-fondo, #2d805d);
+  background: rgba(32, 90, 64, 0.15);
+  color: var(--dark-green);
+  border: 1px solid var(--dark-green);
 }
 
 .alert-message.error {
@@ -148,7 +200,6 @@
     opacity: 0;
     transform: translateY(-4px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -157,26 +208,34 @@
 
 /* Responsive adaptation */
 @media (max-width: 700px) {
-
   .content {
-    margin-top: 10px;
+    margin-top: 16px;
   }
 
-  .pill-field {
-    height: 68px;
-    padding: 0 22px;
-    border-radius: 22px;
+  .title-container {
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
-  .pill-field input {
-    font-size: 20px;
-    line-height: 28px;
+  .btn-back {
+    height: 42px;
+    font-size: 14px;
+    padding: 0 14px;
+  }
+
+  .field-capsule {
+    height: 56px;
+    padding: 0 18px;
+    border-radius: 16px;
+  }
+
+  .field-capsule input {
+    font-size: 18px;
   }
 
   .btn-save {
-    height: 60px;
-    font-size: 20px;
-    border-radius: 22px;
+    height: 54px;
+    font-size: 18px;
+    border-radius: 16px;
   }
-
 }

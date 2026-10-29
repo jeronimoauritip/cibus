@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { BranchComponent } from './branch';
@@ -16,13 +17,14 @@ describe('BranchComponent Signal Forms Validations', () => {
       findAll: () => of([]),
       create: (branch: Branch) => of({ id: 1, ...branch }),
       update: (branch: Branch) => of(branch),
-      delete: (branch: Branch) => of(branch),
+      delete: () => of(undefined),
     };
 
     await TestBed.configureTestingModule({
       imports: [BranchComponent],
       providers: [
         provideHttpClient(),
+        provideRouter([]),
         { provide: BranchService, useValue: branchServiceMock },
       ],
     }).compileComponents();
@@ -101,4 +103,3 @@ describe('BranchComponent Signal Forms Validations', () => {
     expect(component.successMessage()).toBe('Branch created successfully!');
   });
 });
-

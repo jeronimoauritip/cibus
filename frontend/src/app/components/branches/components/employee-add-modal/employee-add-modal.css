@@ -1,0 +1,267 @@
+* {
+  box-sizing: border-box;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(20, 48, 35, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-card {
+  width: min(640px, 100%);
+  max-height: 82vh;
+  background-color: var(--cream, #e7dbbf);
+  border: 2px solid var(--dark-green, #205a40);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 16px 40px rgba(32, 90, 64, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: var(--dark-green, #205a40);
+  font-family: "Instrument Sans", sans-serif;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--dark-green, #205a40);
+}
+
+.modal-subtitle {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--light-green, #389a6e);
+}
+
+.btn-close {
+  flex: 0 0 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: var(--dark-green, #205a40);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-close:hover {
+  background-color: rgba(32, 90, 64, 0.12);
+  transform: scale(1.08);
+}
+
+.btn-close svg {
+  width: 22px;
+  height: 22px;
+}
+
+.modal-searcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 54px;
+  padding: 0 20px;
+  border-radius: 18px;
+  background-color: var(--dark-green, #205a40);
+}
+
+.search-icon {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 22px;
+  color: var(--icon, #aab79b);
+  fill: none;
+}
+
+.modal-searcher input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--cream, #e7dbbf);
+  font: 400 18px "Instrument Sans", sans-serif;
+}
+
+.modal-searcher input::placeholder {
+  color: var(--icon, #aab79b);
+}
+
+.modal-searcher input::-webkit-search-decoration,
+.modal-searcher input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  display: none;
+}
+
+.btn-clear {
+  border: 0;
+  background: transparent;
+  color: var(--cream, #e7dbbf);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.btn-clear svg {
+  width: 18px;
+  height: 18px;
+}
+
+.modal-body {
+  overflow-y: auto;
+  padding-right: 4px;
+  max-height: 52vh;
+}
+
+.employee-directory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.directory-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background-color: rgba(255, 255, 255, 0.45);
+  border: 2px solid var(--dark-green, #205a40);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.directory-row.current-branch {
+  background-color: rgba(56, 154, 110, 0.14);
+}
+
+.employee-avatar {
+  flex: 0 0 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: var(--dark-green, #205a40);
+  color: var(--cream, #e7dbbf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.employee-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.employee-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark-green, #205a40);
+}
+
+.employee-role {
+  font-size: 14px;
+  color: var(--light-green, #389a6e);
+  font-weight: 600;
+}
+
+.branch-assignment {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.branch-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--light-green, #389a6e);
+}
+
+.branch-badge {
+  padding: 6px 14px;
+  border-radius: 12px;
+  background-color: var(--dark-green, #205a40);
+  color: var(--cream, #e7dbbf);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.branch-badge.unassigned {
+  background-color: rgba(32, 90, 64, 0.2);
+  color: var(--dark-green, #205a40);
+}
+
+.state-message {
+  text-align: center;
+  padding: 32px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark-green, #205a40);
+}
+
+.state-message.error {
+  color: #900c3f;
+}
+
+.btn-retry {
+  margin-left: 10px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 0;
+  background-color: #900c3f;
+  color: #fff;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 560px) {
+  .modal-card {
+    padding: 20px;
+  }
+
+  .directory-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .branch-assignment {
+    align-items: flex-start;
+  }
+}
+

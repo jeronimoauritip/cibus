@@ -1,29 +1,14 @@
-<div class="container">
-  <!-- Encabezado con Logo Cibus -->
-  <header class="header">
-    <a class="logo" routerLink="/branches" aria-label="Cibus, home">
-      <span class="tray-logo" aria-hidden="true"></span>
-      <span>cibus</span>
-    </a>
-  </header>
+<app-header-component> Branch list </app-header-component>
 
-  <!-- Fondo de campana / bandeja de restaurante -->
-  <div class="tray-background" aria-hidden="true">
-    <div class="handle"></div>
-    <div class="dome"></div>
-    <div class="base"></div>
-  </div>
-
+<div class="page">
   <main class="content">
-    <h1>Branch list</h1>
-
-    <!-- Barra de búsqueda con botón New branch a la derecha -->
+    <!-- Search bar with New branch button -->
     <div class="search-row">
       <form class="searcher" (submit)="$event.preventDefault()">
         <label class="readers-only" for="search">Search branch</label>
         <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
-          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="3" />
-          <path d="M14 15L22 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          <circle cx="9" cy="9" r="7" />
+          <path d="M14 15L22 25" />
         </svg>
         <input
           id="search"
@@ -36,7 +21,7 @@
         />
         @if (searchTerm()) {
           <button type="button" class="btn-clear-search" (click)="searchTerm.set('')" aria-label="Clear search">
-            <svg class="clear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="clear-icon" viewBox="0 0 24 24" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -44,9 +29,9 @@
         }
       </form>
 
-      <!-- Botón New Branch a la derecha del cuadro de búsqueda -->
+      <!-- New Branch button -->
       <a class="btn-new-branch" routerLink="/branches/new" aria-label="New branch">
-        <svg class="plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="plus-icon" viewBox="0 0 24 24" aria-hidden="true">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -54,7 +39,7 @@
       </a>
     </div>
 
-    <!-- Controles Desplegables (Misma estética que employee list) -->
+    <!-- Dropdown Controls -->
     <div class="controls" aria-label="List options">
       <div class="dropdown-wrapper">
         <button class="control" type="button" (click)="toggleSortMenu($event)">
@@ -85,14 +70,14 @@
       </div>
     </div>
 
-    <!-- Mensajes de feedback -->
+    <!-- Feedback messages -->
     @if (successMessage()) {
       <div class="state-message feedback-success" role="alert">
         {{ successMessage() }}
       </div>
     }
 
-    <!-- Sección de Lista de Sucursales (Estética de employee-card) -->
+    <!-- Branches List Section -->
     <section class="branch-section" aria-label="Branches list">
       @if (isLoading()) {
         <div class="state-message">Loading branches...</div>
@@ -113,26 +98,34 @@
         <div class="branch-list">
           @for (branch of filteredBranches(); track branch.id || branch.name) {
             <article class="branch-card">
-              <!-- Avatar con iniciales o icono gastronómico/sucursal -->
+              <!-- Avatar with initial -->
               <div class="branch-avatar">
                 {{ branch.name.charAt(0) }}
               </div>
 
-              <!-- Información de la sucursal -->
+              <!-- Branch info -->
               <div class="branch-info">
                 <h2 class="branch-name">{{ branch.name }}</h2>
                 <p class="branch-detail"><span>Street:</span> {{ branch.street }}</p>
                 <p class="branch-detail"><span>Number:</span> {{ branch.number }}</p>
               </div>
 
-              <!-- Badge ID -->
+              <!-- Badge ID & Employees link -->
               @if (branch.id) {
+                <a
+                  class="btn-employees"
+                  [routerLink]="['/branches', branch.id, 'employees']"
+                  title="Manage branch employees"
+                  aria-label="Manage branch employees"
+                >
+                  Employees
+                </a>
                 <div class="branch-badge">
                   #{{ branch.id }}
                 </div>
               }
 
-              <!-- Botón eliminar -->
+              <!-- Delete button -->
               @if (branch.id) {
                 <button
                   type="button"
@@ -142,7 +135,7 @@
                   title="Delete branch"
                   aria-label="Delete branch"
                 >
-                  <svg class="trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="trash-icon" viewBox="0 0 24 24" aria-hidden="true">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                     <line x1="10" y1="11" x2="10" y2="17"></line>

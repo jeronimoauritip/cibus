@@ -1,0 +1,304 @@
+* {
+  box-sizing: border-box;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(20, 48, 35, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-card {
+  width: min(520px, 100%);
+  background-color: var(--cream, #e7dbbf);
+  border: 2px solid var(--dark-green, #205a40);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 16px 40px rgba(32, 90, 64, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: var(--dark-green, #205a40);
+  font-family: "Instrument Sans", sans-serif;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.employee-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.employee-avatar {
+  flex: 0 0 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: var(--dark-green, #205a40);
+  color: var(--cream, #e7dbbf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dark-green, #205a40);
+}
+
+.modal-subtitle {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--light-green, #389a6e);
+}
+
+.modal-subtitle strong {
+  color: var(--dark-green, #205a40);
+  text-transform: uppercase;
+}
+
+.btn-close {
+  flex: 0 0 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: var(--dark-green, #205a40);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-close:hover {
+  background-color: rgba(32, 90, 64, 0.12);
+  transform: scale(1.08);
+}
+
+.btn-close svg {
+  width: 22px;
+  height: 22px;
+}
+
+.role-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark-green, #205a40);
+  padding-left: 4px;
+}
+
+.role-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.field-capsule {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 18px;
+  background-color: var(--dark-green, #205a40);
+  box-shadow: 0 4px 12px rgba(32, 90, 64, 0.14);
+}
+
+.field-capsule select,
+.field-capsule input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--cream, #e7dbbf);
+  font: 600 18px "Instrument Sans", sans-serif;
+}
+
+.field-capsule select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 24px;
+}
+
+.field-capsule select option {
+  background-color: var(--dark-green, #205a40);
+  color: var(--cream, #e7dbbf);
+}
+
+.field-capsule input::placeholder {
+  color: var(--icon, #aab79b);
+}
+
+.select-arrow {
+  position: absolute;
+  right: 18px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid var(--cream, #e7dbbf);
+  pointer-events: none;
+}
+
+.pin-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-save-role {
+  flex: 0 0 auto;
+  height: 56px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 18px;
+  background-color: var(--light-green, #389a6e);
+  color: var(--cream, #e7dbbf);
+  font: 700 16px "Instrument Sans", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-save-role:hover:not(:disabled) {
+  background-color: #2d805d;
+  transform: translateY(-1px);
+}
+
+.btn-save-role:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-divider {
+  height: 1px;
+  background-color: rgba(32, 90, 64, 0.2);
+}
+
+.danger-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  background-color: rgba(144, 12, 63, 0.08);
+  border: 1.5px solid rgba(144, 12, 63, 0.3);
+}
+
+.danger-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.danger-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #900c3f;
+}
+
+.danger-desc {
+  font-size: 13px;
+  color: var(--dark-green, #205a40);
+  opacity: 0.85;
+}
+
+.btn-delete-employee {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  background-color: #900c3f;
+  color: #ffffff;
+  font: 600 15px "Instrument Sans", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-delete-employee:hover:not(:disabled) {
+  background-color: #700931;
+  transform: translateY(-1px);
+}
+
+.btn-delete-employee:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trash-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.alert-message.error {
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(220, 38, 38, 0.12);
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 540px) {
+  .modal-card {
+    padding: 20px;
+  }
+
+  .role-row,
+  .danger-zone {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-save-role,
+  .btn-delete-employee {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
