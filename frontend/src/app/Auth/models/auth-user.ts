@@ -1,7 +1,8 @@
+import { User } from "../../components/users/user.model";
 import { RoleModel } from "../../Roles/role-model";
-import { UserModel } from "../../Users/user-model";
 
-export interface AuthUser extends Omit<UserModel,'role'>{
+
+export interface AuthUser extends Omit<User,'role'>{
     role:RoleModel;
 }
 export type RoleWithCredentials= 'Admin'|'Manager'
