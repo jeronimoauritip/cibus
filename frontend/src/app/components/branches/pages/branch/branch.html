@@ -1,33 +1,95 @@
 <app-header-component> New Branch </app-header-component>
+
 <div class="page">
-    <!-- Contenido principal: Vista Nueva Sucursal -->
-    <main class="content">
+  <main class="content">
+    <!-- Back button -->
+    <div class="title-container">
+      <a routerLink="/branches" class="btn-back" title="Back to branches" aria-label="Back to branches">
+        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Branches list</span>
+      </a>
+    </div>
 
-        <form class="form" (submit)="$event.preventDefault(); addBranch(nameInput.value, streetInput.value, +numberInput.value); nameInput.value=''; streetInput.value=''; numberInput.value=''">
-            <!-- Nombre de la sucursal -->
-            <div class="pill-field">
-                <input #nameInput id="name" name="name" type="text"
-                    placeholder="Enter branch name" autocomplete="off" />
-            </div>
+    @if (successMessage()) {
+      <div class="alert-message success" role="alert">
+        {{ successMessage() }}
+      </div>
+    }
 
-            <!-- Street (Figma: Enter street) -->
-            <div class="pill-field">
-                <input #streetInput id="street" name="street" type="text" required
-                    placeholder="Enter street" autocomplete="off" />
-            </div>
+    @if (errorMessage()) {
+      <div class="alert-message error" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
 
-            <!-- Number (Figma: Enter number) -->
-            <div class="pill-field">
-                <input #numberInput id="number" name="number" type="number" required
-                    placeholder="Enter number" autocomplete="off" />
-            </div>
+    <form class="form" [formRoot]="branchForm" (submit)="onSubmit()" novalidate>
+      <!-- Branch name -->
+      <div class="field-group">
+        <div class="field-capsule" [class.field-error]="isFieldInvalid('name')">
+          <input
+            id="name"
+            [formField]="branchForm.name"
+            type="text"
+            placeholder="Enter branch name"
+            autocomplete="off"
+          />
+        </div>
+        @if (isFieldInvalid('name')) {
+          <span class="field-error-message" role="alert">
+            {{ getNameErrorMessage() }}
+          </span>
+        }
+      </div>
 
-            <!-- Action button -->
-            <div class="actions">
-                <button class="btn-save" type="submit">
-                    Guardar sucursal
-                </button>
-            </div>
-        </form>
-    </main>
+      <!-- Street -->
+      <div class="field-group">
+        <div class="field-capsule" [class.field-error]="isFieldInvalid('street')">
+          <input
+            id="street"
+            [formField]="branchForm.street"
+            type="text"
+            placeholder="Enter street"
+            autocomplete="off"
+          />
+        </div>
+        @if (isFieldInvalid('street')) {
+          <span class="field-error-message" role="alert">
+            {{ getStreetErrorMessage() }}
+          </span>
+        }
+      </div>
+
+      <!-- Street number -->
+      <div class="field-group">
+        <div class="field-capsule" [class.field-error]="isFieldInvalid('number')">
+          <input
+            id="number"
+            [formField]="branchForm.number"
+            type="number"
+            placeholder="Enter street number"
+            autocomplete="off"
+          />
+        </div>
+        @if (isFieldInvalid('number')) {
+          <span class="field-error-message" role="alert">
+            {{ getNumberErrorMessage() }}
+          </span>
+        }
+      </div>
+
+      <!-- Action button -->
+      <div class="actions">
+        <button class="btn-save" type="submit" [disabled]="isSubmitting()">
+          @if (isSubmitting()) {
+            Saving...
+          } @else {
+            Save branch
+          }
+        </button>
+      </div>
+    </form>
+  </main>
 </div>

@@ -1,0 +1,87 @@
+@if (isOpen()) {
+  <div class="modal-backdrop" (click)="onBackdropClick($event)" role="dialog" aria-modal="true" aria-labelledby="add-modal-title">
+    <div class="modal-card">
+      <!-- Header -->
+      <div class="modal-header">
+        <div>
+          <h2 id="add-modal-title" class="modal-title">All Employees &amp; Branches</h2>
+          <p class="modal-subtitle">Directory of employees and their currently assigned branch</p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-close"
+          (click)="close()"
+          aria-label="Close modal"
+          title="Close"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Search bar inside modal using double data binding [(ngModel)] -->
+      <div class="modal-searcher">
+        <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
+          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="3" />
+          <path d="M14 15L22 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        </svg>
+        <input
+          type="search"
+          name="modalSearch"
+          placeholder="Search employee or branch..."
+          autocomplete="off"
+          [(ngModel)]="modalSearchTerm"
+          aria-label="Search employee or branch"
+        />
+        @if (modalSearchTerm()) {
+          <button type="button" class="btn-clear" (click)="modalSearchTerm.set('')" aria-label="Clear search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        }
+      </div>
+
+      <!-- List of all employees and their assigned branch -->
+      <div class="modal-body">
+        @if (isLoading()) {
+          <div class="state-message">Loading employees...</div>
+        } @else if (errorMessage()) {
+          <div class="state-message error">
+            {{ errorMessage() }}
+            <button type="button" class="btn-retry" (click)="loadAllEmployees()">Retry</button>
+          </div>
+        } @else if (!filteredEmployees().length) {
+          <div class="state-message">No employees found.</div>
+        } @else {
+          <div class="employee-directory-list">
+            @for (emp of filteredEmployees(); track emp.id) {
+              <div class="directory-row" [class.current-branch]="currentBranchId() !== null && emp.branchId === currentBranchId()">
+                <div class="employee-avatar">
+                  {{ emp.firstName.charAt(0) }}{{ emp.lastName.charAt(0) }}
+                </div>
+
+                <div class="employee-main">
+                  <span class="employee-name">{{ emp.firstName }} {{ emp.lastName }}</span>
+                  <span class="employee-role">{{ emp.role }} &bull; DNI: {{ emp.dni }}</span>
+                </div>
+
+                <div class="branch-assignment">
+                  <span class="branch-label">Branch</span>
+                  <span class="branch-badge" [class.unassigned]="!emp.branchName && !emp.branchId">
+                    {{ emp.branchName || (emp.branchId ? 'Branch #' + emp.branchId : 'Unassigned') }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
