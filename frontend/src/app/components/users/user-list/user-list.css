@@ -256,6 +256,24 @@
   letter-spacing: 0.5px;
 }
 
+.toolbar__new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: var(--background-green);
+  color: var(--cream);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-left: auto; 
+}
+
 /* =========================================
    Responsive Design (Media Queries)
    ========================================= */

@@ -42,6 +42,9 @@
           </div>
         }
       </div>
+      <button type="button" class="toolbar__new" [routerLink]="['/users/new']">
+        <span aria-hidden="true">+</span> New employee
+      </button>
     </div>
     <section class="employee-section" aria-label="Employees grid">
       @if (isLoading()) {
@@ -55,7 +58,7 @@
       } @else {
         <div class="employee-list">
           @for (user of usersPage()?.content; track user.id) {
-            <article class="employee-card">
+            <article class="employee-card" [routerLink]="['/users', user.id]">
               <div class="employee-avatar">
                 {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
               </div>

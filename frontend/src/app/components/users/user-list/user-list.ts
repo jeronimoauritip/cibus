@@ -4,10 +4,11 @@ import { finalize } from 'rxjs/operators';
 import { UserService } from '../user.service';
 import { Page, User } from '../user.model';
 import { HeaderComponent } from '../../header-component/header-component';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
-  imports: [FormsModule, HeaderComponent],
+  imports: [FormsModule, HeaderComponent, RouterLink],
   selector: 'app-user-list',
   styleUrl: './user-list.css',
   templateUrl: './user-list.html',
