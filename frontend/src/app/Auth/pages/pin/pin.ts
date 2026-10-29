@@ -1,7 +1,10 @@
 import { Component, HostListener, inject, output, signal } from '@angular/core'
 import { AuthService } from '../../services/auth-service'
+import { HeaderComponent } from '../../../components/header-component/header-component'
+
 
 @Component({
+  imports: [HeaderComponent],
   selector: 'app-pin',
   styleUrl: './pin.css',
   templateUrl: './pin.html',
