@@ -40,8 +40,9 @@ export class ProductListComponent {
   readonly error = computed(() => this.service.products.error());
 
   onEdit(product: Product): void {
-    
-  }
+  this.router.navigate(['/admin/menu', product.id]);
+}
+
 
   onDelete(product: Product): void {
     
