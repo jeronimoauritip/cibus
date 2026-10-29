@@ -351,8 +351,8 @@
 .btn-employees {
   padding: 6px 16px;
   border-radius: 12px;
-  background-color: #2d805d;
-  color: #e7dbbf;
+  background-color: var(--background-green);
+  color: var(--cream);
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
@@ -360,7 +360,7 @@
 }
 
 .btn-employees:hover {
-  background-color: #205a40;
+  background-color: var(--dark-green);
   transform: translateY(-1px);
 }
 

@@ -1,5 +1,5 @@
 <app-header-component>
-  {{ branch()?.name ? branch()!.name + ' Employees' : 'Branch Employees' }}
+  {{ branch()?.name ? branch()!.name + ' employees' : 'Branch employees' }}
 </app-header-component>
 
 <div class="page">
@@ -7,7 +7,7 @@
     <!-- Top navigation row -->
     <div class="title-container">
       <a routerLink="/branches" class="btn-back" title="Back to branches" aria-label="Back to branches">
-        <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -20,14 +20,14 @@
       <form class="searcher" (submit)="$event.preventDefault()">
         <label class="readers-only" for="employeeSearch">Search employee by name</label>
         <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
-          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="3" />
-          <path d="M14 15L22 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          <circle cx="9" cy="9" r="7" />
+          <path d="M14 15L22 25" />
         </svg>
         <input
           id="employeeSearch"
           name="employeeSearch"
           type="search"
-          placeholder="Search employee by name"
+          placeholder="Enter name"
           autocomplete="off"
           [(ngModel)]="searchTerm"
         />
@@ -38,7 +38,7 @@
             (click)="searchTerm.set('')"
             aria-label="Clear search"
           >
-            <svg class="clear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="clear-icon" viewBox="0 0 24 24" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -52,7 +52,7 @@
         (click)="openAddModal()"
         aria-label="Add employee"
       >
-        <svg class="plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="plus-icon" viewBox="0 0 24 24" aria-hidden="true">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -117,7 +117,7 @@
                 title="Edit employee"
                 aria-label="Edit employee"
               >
-                <svg class="pencil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="pencil-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 20h9"></path>
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                 </svg>
@@ -146,4 +146,3 @@
   [(isOpen)]="isAddModalOpen"
   [currentBranchId]="parsedBranchId()"
 />
-

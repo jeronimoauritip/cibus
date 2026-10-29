@@ -7,7 +7,7 @@ import {User, UserRequest, UserUpdate, ChangeRoleRequest, ChangePasswordRequest,
 export class UserService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = "http://localhost:8080/api/users";
+  private readonly apiUrl = '/api/users';
 
 
   getAll(filters?: UserFilterParams): Observable<Page<User>> {

@@ -1,32 +1,31 @@
-* {
-  box-sizing: border-box;
+:host {
+  display: contents;
 }
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background-color: rgba(20, 48, 35, 0.55);
+  background-color: rgba(32, 90, 64, 0.45);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.2s ease-in;
 }
 
 .modal-card {
   width: min(520px, 100%);
-  background-color: var(--cream, #e7dbbf);
-  border: 2px solid var(--dark-green, #205a40);
-  border-radius: 24px;
+  background-color: var(--cream);
+  border: 2px solid var(--dark-green);
+  border-radius: 20px;
   padding: 28px;
-  box-shadow: 0 16px 40px rgba(32, 90, 64, 0.35);
+  box-shadow: 0 8px 24px rgba(32, 90, 64, 0.28);
   display: flex;
   flex-direction: column;
   gap: 20px;
-  color: var(--dark-green, #205a40);
-  font-family: "Instrument Sans", sans-serif;
+  color: var(--dark-green);
 }
 
 .modal-header {
@@ -39,39 +38,45 @@
 .employee-summary {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .employee-avatar {
-  flex: 0 0 52px;
-  height: 52px;
+  flex: 0 0 54px;
+  height: 54px;
   border-radius: 50%;
-  background-color: var(--dark-green, #205a40);
-  color: var(--cream, #e7dbbf);
+  background-color: var(--dark-green);
+  color: var(--cream);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.modal-title {
+.employee-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.employee-name {
   margin: 0;
   font-size: 24px;
   font-weight: 700;
-  color: var(--dark-green, #205a40);
+  color: var(--dark-green);
 }
 
-.modal-subtitle {
-  margin: 4px 0 0;
+.employee-detail {
+  margin: 0;
   font-size: 15px;
-  color: var(--light-green, #389a6e);
+  color: var(--light-green);
 }
 
-.modal-subtitle strong {
-  color: var(--dark-green, #205a40);
-  text-transform: uppercase;
+.employee-detail span {
+  font-weight: 600;
+  color: var(--dark-green);
 }
 
 .btn-close {
@@ -80,7 +85,7 @@
   border-radius: 50%;
   border: 0;
   background: transparent;
-  color: var(--dark-green, #205a40);
+  color: var(--dark-green);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -90,53 +95,73 @@
 
 .btn-close:hover {
   background-color: rgba(32, 90, 64, 0.12);
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
-.btn-close svg {
+.close-icon {
   width: 22px;
   height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.role-form {
+/* Form matching branch.css and user-create.css */
+.form {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-.section-label {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--dark-green, #205a40);
-  padding-left: 4px;
-}
-
-.role-row {
+.field-group {
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .field-capsule {
-  flex: 1;
   position: relative;
   display: flex;
   align-items: center;
-  height: 56px;
-  padding: 0 20px;
-  border-radius: 18px;
-  background-color: var(--dark-green, #205a40);
-  box-shadow: 0 4px 12px rgba(32, 90, 64, 0.14);
+  gap: 16px;
+  width: 100%;
+  height: 64px;
+  padding: 0 24px;
+  border-radius: 20px;
+  background-color: var(--dark-green);
+  box-shadow: 0 4px 14px rgba(32, 90, 64, 0.14);
+  transition: transform 0.2s, box-shadow 0.2s, outline 0.2s;
+}
+
+.field-capsule:focus-within {
+  outline: 3px solid var(--dark-green);
+  outline-offset: 3px;
+  transform: translateY(-1px);
+}
+
+.field-capsule label {
+  color: var(--cream);
+  opacity: 0.85;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .field-capsule select,
 .field-capsule input {
   width: 100%;
+  min-width: 0;
+  padding: 0;
   border: 0;
   outline: 0;
   background: transparent;
-  color: var(--cream, #e7dbbf);
-  font: 600 18px "Instrument Sans", sans-serif;
+  color: var(--cream);
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .field-capsule select {
@@ -148,135 +173,109 @@
 }
 
 .field-capsule select option {
-  background-color: var(--dark-green, #205a40);
-  color: var(--cream, #e7dbbf);
+  background-color: var(--light-green);
+  color: var(--cream);
 }
 
 .field-capsule input::placeholder {
-  color: var(--icon, #aab79b);
+  color: var(--icon);
+  opacity: 1;
 }
 
-.select-arrow {
+.arrow {
   position: absolute;
-  right: 18px;
+  right: 24px;
   width: 0;
   height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid var(--cream, #e7dbbf);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid var(--cream);
   pointer-events: none;
 }
 
-.pin-group {
+/* Action buttons matching branch.css */
+.actions {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   margin-top: 4px;
 }
 
-.btn-save-role {
-  flex: 0 0 auto;
-  height: 56px;
-  padding: 0 22px;
-  border: 0;
-  border-radius: 18px;
-  background-color: var(--light-green, #389a6e);
-  color: var(--cream, #e7dbbf);
-  font: 700 16px "Instrument Sans", sans-serif;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
-
-.btn-save-role:hover:not(:disabled) {
-  background-color: #2d805d;
-  transform: translateY(-1px);
-}
-
-.btn-save-role:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.modal-divider {
-  height: 1px;
-  background-color: rgba(32, 90, 64, 0.2);
-}
-
-.danger-zone {
-  display: flex;
+.btn-save,
+.btn-delete-employee {
+  flex: 1;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 18px;
-  background-color: rgba(144, 12, 63, 0.08);
-  border: 1.5px solid rgba(144, 12, 63, 0.3);
-}
-
-.danger-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.danger-title {
-  font-size: 16px;
+  justify-content: center;
+  gap: 8px;
+  height: 60px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 20px;
+  font-size: 18px;
   font-weight: 700;
-  color: #900c3f;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.danger-desc {
-  font-size: 13px;
-  color: var(--dark-green, #205a40);
-  opacity: 0.85;
+.btn-save {
+  background-color: var(--dark-green);
+  color: var(--cream);
+  box-shadow: 0 4px 14px rgba(32, 90, 64, 0.25);
+}
+
+.btn-save:hover:not(:disabled) {
+  background-color: #17422f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(32, 90, 64, 0.35);
 }
 
 .btn-delete-employee {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 48px;
-  padding: 0 18px;
-  border: 0;
-  border-radius: 14px;
   background-color: #900c3f;
-  color: #ffffff;
-  font: 600 15px "Instrument Sans", sans-serif;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  color: var(--cream);
+  box-shadow: 0 4px 14px rgba(144, 12, 63, 0.25);
 }
 
 .btn-delete-employee:hover:not(:disabled) {
   background-color: #700931;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(144, 12, 63, 0.35);
 }
 
+.btn-save:disabled,
 .btn-delete-employee:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .trash-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .alert-message.error {
-  padding: 12px 16px;
-  border-radius: 14px;
-  font-size: 14px;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 16px;
+  font-size: 16px;
   font-weight: 600;
   text-align: center;
   background: rgba(220, 38, 38, 0.12);
   color: #991b1b;
   border: 1px solid #ef4444;
+  animation: fadeIn 0.2s ease-in;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
@@ -289,16 +288,20 @@
     padding: 20px;
   }
 
-  .role-row,
-  .danger-zone {
-    flex-direction: column;
-    align-items: stretch;
+  .field-capsule {
+    height: 56px;
+    padding: 0 18px;
+    border-radius: 16px;
   }
 
-  .btn-save-role,
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
   .btn-delete-employee {
     width: 100%;
-    justify-content: center;
+    height: 54px;
+    border-radius: 16px;
   }
 }
-
