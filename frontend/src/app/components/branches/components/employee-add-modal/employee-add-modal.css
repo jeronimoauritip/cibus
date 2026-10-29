@@ -1,53 +1,46 @@
-* {
-  box-sizing: border-box;
+:host {
+  display: contents;
 }
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background-color: rgba(20, 48, 35, 0.55);
+  background-color: rgba(32, 90, 64, 0.45);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.2s ease-in;
 }
 
 .modal-card {
-  width: min(640px, 100%);
+  width: min(680px, 100%);
   max-height: 82vh;
-  background-color: var(--cream, #e7dbbf);
-  border: 2px solid var(--dark-green, #205a40);
-  border-radius: 24px;
+  background-color: var(--cream);
+  border: 2px solid var(--dark-green);
+  border-radius: 20px;
   padding: 28px;
-  box-shadow: 0 16px 40px rgba(32, 90, 64, 0.35);
+  box-shadow: 0 8px 24px rgba(32, 90, 64, 0.28);
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  color: var(--dark-green, #205a40);
-  font-family: "Instrument Sans", sans-serif;
+  gap: 20px;
+  color: var(--dark-green);
 }
 
 .modal-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
 
 .modal-title {
   margin: 0;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--dark-green, #205a40);
-}
-
-.modal-subtitle {
-  margin: 4px 0 0;
-  font-size: 15px;
-  color: var(--light-green, #389a6e);
+  color: var(--dark-green);
 }
 
 .btn-close {
@@ -56,7 +49,7 @@
   border-radius: 50%;
   border: 0;
   background: transparent;
-  color: var(--dark-green, #205a40);
+  color: var(--dark-green);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -66,109 +59,153 @@
 
 .btn-close:hover {
   background-color: rgba(32, 90, 64, 0.12);
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
-.btn-close svg {
+.close-icon {
   width: 22px;
   height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.modal-searcher {
+/* Search bar matching branch-list.css and user-list.css */
+.searcher {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 54px;
-  padding: 0 20px;
-  border-radius: 18px;
-  background-color: var(--dark-green, #205a40);
+  width: 100%;
+  height: 64px;
+  padding: 0 24px;
+  border-radius: 20px;
+  background-color: var(--dark-green);
 }
 
 .search-icon {
-  flex: 0 0 20px;
-  width: 20px;
-  height: 22px;
-  color: var(--icon, #aab79b);
+  flex: 0 0 22px;
+  width: 24px;
+  height: 27px;
+  color: var(--icon);
   fill: none;
+  stroke: currentColor;
+  stroke-width: 3px;
+  stroke-linecap: round;
 }
 
-.modal-searcher input {
+.searcher input {
   width: 100%;
+  min-width: 0;
+  padding: 0;
   border: 0;
-  outline: 0;
+  outline: none;
   background: transparent;
-  color: var(--cream, #e7dbbf);
-  font: 400 18px "Instrument Sans", sans-serif;
+  color: var(--cream);
+  font-size: 24px;
+  font-weight: 400;
 }
 
-.modal-searcher input::placeholder {
-  color: var(--icon, #aab79b);
+.searcher input::placeholder {
+  color: var(--icon);
+  opacity: 1;
 }
 
-.modal-searcher input::-webkit-search-decoration,
-.modal-searcher input::-webkit-search-cancel-button {
+.searcher input::-webkit-search-decoration,
+.searcher input::-webkit-search-cancel-button,
+.searcher input::-webkit-search-results-button,
+.searcher input::-webkit-search-results-decoration {
   -webkit-appearance: none;
   display: none;
 }
 
-.btn-clear {
-  border: 0;
-  background: transparent;
-  color: var(--cream, #e7dbbf);
-  cursor: pointer;
+.btn-clear-search {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  background: transparent;
+  border: 0;
+  color: var(--cream);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-.btn-clear svg {
-  width: 18px;
-  height: 18px;
+.btn-clear-search:hover {
+  transform: scale(1.12);
+  background-color: rgba(231, 219, 191, 0.15);
 }
 
+.clear-icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.readers-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Scrollable employee cards matching user-list.css */
 .modal-body {
   overflow-y: auto;
   padding-right: 4px;
   max-height: 52vh;
 }
 
-.employee-directory-list {
+.employee-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-.directory-row {
+.employee-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px 18px;
-  border-radius: 18px;
-  background-color: rgba(255, 255, 255, 0.45);
-  border: 2px solid var(--dark-green, #205a40);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  gap: 20px;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  border: 2px solid var(--dark-green);
+  border-radius: 20px;
+  padding: 18px 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.directory-row.current-branch {
-  background-color: rgba(56, 154, 110, 0.14);
+.employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(32, 90, 64, 0.12);
 }
 
 .employee-avatar {
-  flex: 0 0 46px;
-  height: 46px;
+  flex: 0 0 54px;
+  height: 54px;
   border-radius: 50%;
-  background-color: var(--dark-green, #205a40);
-  color: var(--cream, #e7dbbf);
+  background-color: var(--dark-green);
+  color: var(--cream);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.employee-main {
+.employee-info {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -176,73 +213,59 @@
 }
 
 .employee-name {
-  font-size: 18px;
+  margin: 0 0 4px 0;
+  font-size: 24px;
   font-weight: 700;
-  color: var(--dark-green, #205a40);
+  color: var(--dark-green);
 }
 
-.employee-role {
-  font-size: 14px;
-  color: var(--light-green, #389a6e);
+.employee-detail {
+  margin: 0;
+  font-size: 15px;
+  color: var(--light-green);
+}
+
+.employee-detail span {
   font-weight: 600;
+  color: var(--dark-green);
 }
 
-.branch-assignment {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-
-.branch-label {
-  font-size: 11px;
-  font-weight: 700;
+.employee-badge {
+  padding: 6px 16px;
+  border-radius: 12px;
+  background-color: var(--dark-green);
+  color: var(--cream);
+  font-size: 14px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--light-green, #389a6e);
-}
-
-.branch-badge {
-  padding: 6px 14px;
-  border-radius: 12px;
-  background-color: var(--dark-green, #205a40);
-  color: var(--cream, #e7dbbf);
-  font-size: 13px;
-  font-weight: 600;
   white-space: nowrap;
 }
 
-.branch-badge.unassigned {
-  background-color: rgba(32, 90, 64, 0.2);
-  color: var(--dark-green, #205a40);
-}
-
-.state-message {
+.state-message,
+.error-message {
   text-align: center;
+  font-size: 22px;
+  color: var(--dark-green);
   padding: 32px 0;
-  font-size: 18px;
   font-weight: 600;
-  color: var(--dark-green, #205a40);
-}
-
-.state-message.error {
-  color: #900c3f;
 }
 
 .btn-retry {
-  margin-left: 10px;
+  margin-left: 12px;
   padding: 6px 14px;
   border-radius: 10px;
-  border: 0;
-  background-color: #900c3f;
+  border: 1px solid #900c3f;
+  background: #900c3f;
   color: #fff;
+  font-size: 14px;
   cursor: pointer;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
@@ -250,18 +273,29 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 700px) {
   .modal-card {
     padding: 20px;
   }
 
-  .directory-row {
+  .searcher {
+    height: 56px;
+    padding: 0 18px;
+    border-radius: 16px;
+  }
+
+  .searcher input {
+    font-size: 18px;
+  }
+
+  .employee-card {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
   }
 
-  .branch-assignment {
-    align-items: flex-start;
+  .employee-badge {
+    align-self: flex-end;
   }
 }
-

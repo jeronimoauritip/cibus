@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {User, UserRequest, UserUpdate, ChangeRoleRequest, ChangePasswordRequest, ResetPinRequest, Page, UserFilterParams} from './user.model';
+import { User, UserRequest, UserUpdate, ChangeRoleRequest, ChangePasswordRequest, ResetPinRequest, Page, UserFilterParams } from './user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = "/api/users";
+  private readonly apiUrl = '/api/users';
 
 
   getAll(filters?: UserFilterParams): Observable<Page<User>> {

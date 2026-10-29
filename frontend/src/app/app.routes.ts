@@ -34,7 +34,11 @@ export const routes: Routes = [
             { path: '', component: AdminPanelComponent },
             { path: 'branches', component: BranchListComponent },
             { path: 'branches/new', component: BranchComponent },
+            { path: 'branches/employees', component: BranchEmployeesComponent },
+            { path: 'branches/:branchId/employees', component: BranchEmployeesComponent },
             { path: 'employees', component: UserList },
+            { path: 'employees/new', component: UserCreate },
+            { path: 'employees/:id', component: UserDetail },
             { path: 'menu', component: ProductListComponent },
             { path: 'menu/:id', component: ProductDetailComponent }
         ]

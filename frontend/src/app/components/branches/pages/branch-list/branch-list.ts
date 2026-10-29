@@ -107,7 +107,7 @@ export class BranchListComponent implements OnInit {
     event.stopPropagation();
     if (!branch.id) return;
 
-    const confirmed = window.confirm(`¿Estás seguro de eliminar la sucursal "${branch.name}"?`);
+    const confirmed = window.confirm(`Are you sure you want to delete branch "${branch.name}"?`);
     if (!confirmed) return;
 
     this.deletingId.set(branch.id);
@@ -117,13 +117,13 @@ export class BranchListComponent implements OnInit {
     this.branchService.delete(branch.id).subscribe({
       next: () => {
         this.branches.update((list) => list.filter((b) => b.id !== branch.id));
-        this.successMessage.set(`Sucursal "${branch.name}" eliminada exitosamente.`);
+        this.successMessage.set(`Branch "${branch.name}" deleted successfully.`);
         this.deletingId.set(null);
       },
       error: (err) => {
         console.error('Error deleting branch:', err);
         this.errorMessage.set(
-          err.error?.message || err.error?.error || err.message || 'No se pudo eliminar la sucursal.'
+          err.error?.message || err.error?.error || err.message || 'Could not delete the branch.'
         );
         this.deletingId.set(null);
       },

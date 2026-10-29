@@ -6,7 +6,7 @@ import { Branch } from '../models/branch.model';
 @Injectable({ providedIn: 'root' })
 export class BranchService {
     private readonly http = inject(HttpClient)
-    private readonly url = 'http://localhost:8080/api/branches'
+    private readonly url = '/api/branches'
 
 
     public findAll(): Observable<Branch[]> {
