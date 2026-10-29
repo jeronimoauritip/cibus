@@ -1,0 +1,175 @@
+<app-header-component> Employee Detail </app-header-component>
+
+<div class="container">
+  <main class="content">
+    @if (user()) {
+      <form (ngSubmit)="onSubmit()">
+        @if (errorMessage()) {
+          <div class="errors">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <!-- First Name -->
+        <div class="form-field">
+          <label for="firstName">First Name</label>
+          @if (!isEditing()) {
+            <input type="text" id="firstName" [value]="user()?.firstName" disabled />
+          } @else {
+            <input type="text" id="firstName" [formField]="form.firstName" />
+            @if (form.firstName().invalid() && form.firstName().touched()) {
+              <div class="errors">
+                @for (error of form.firstName().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-field">
+          <label for="lastName">Last Name</label>
+          @if (!isEditing()) {
+            <input type="text" id="lastName" [value]="user()?.lastName" disabled />
+          } @else {
+            <input type="text" id="lastName" [formField]="form.lastName" />
+            @if (form.lastName().invalid() && form.lastName().touched()) {
+              <div class="errors">
+                @for (error of form.lastName().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- DNI -->
+        <div class="form-field">
+          <label for="dni">DNI</label>
+          @if (!isEditing()) {
+            <input type="number" id="dni" [value]="user()?.dni" disabled />
+          } @else {
+            <input type="number" id="dni" [formField]="form.dni" />
+            @if (form.dni().invalid() && form.dni().touched()) {
+              <div class="errors">
+                @for (error of form.dni().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-field">
+          <label for="phoneNumber">Phone Number</label>
+          @if (!isEditing()) {
+            <input type="text" id="phoneNumber" [value]="user()?.phoneNumber" disabled />
+          } @else {
+            <input type="text" id="phoneNumber" [formField]="form.phoneNumber" />
+            @if (form.phoneNumber().invalid() && form.phoneNumber().touched()) {
+              <div class="errors">
+                @for (error of form.phoneNumber().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Email -->
+        <div class="form-field">
+          <label for="email">Email</label>
+          @if (!isEditing()) {
+            <input type="email" id="email" [value]="user()?.email" disabled />
+          } @else {
+            <input type="email" id="email" [formField]="form.email" />
+            @if (form.email().invalid() && form.email().touched()) {
+              <div class="errors">
+                @for (error of form.email().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Branch (Muestra el nombre en lectura, pide el ID en edición) -->
+        <div class="form-field">
+          <label for="branchId">Branch</label>
+          @if (!isEditing()) {
+            <input type="text" id="branchName" [value]="user()?.branchName" disabled />
+          } @else {
+            <input type="number" id="branchId" [formField]="form.branchId" />
+            @if (form.branchId().invalid() && form.branchId().touched()) {
+              <div class="errors">
+                @for (error of form.branchId().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Role -->
+        <div class="form-field">
+          <label for="role">Role</label>
+          @if (!isEditing()) {
+            <input type="text" id="role" [value]="user()?.role" disabled />
+          } @else {
+            <select id="role" [formField]="form.role">
+              <option value="" disabled>Select a role</option>
+              @for (role of roles(); track role) {
+                <option [value]="role">{{ role }}</option>
+              }
+            </select>
+            @if (form.role().invalid() && form.role().touched()) {
+              <div class="errors">
+                @for (error of form.role().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- PIN (Solo se pide en modo edición) -->
+        @if (isEditing()) {
+          <div class="form-field">
+            <label for="pin">New PIN</label>
+            <input type="password" id="pin" [formField]="form.pin" placeholder="Leave blank to keep current PIN" />
+            @if (form.pin().invalid() && form.pin().touched()) {
+              <div class="errors">
+                @for (error of form.pin().errors(); track $index) {
+                  <small class="error-text">{{ error.message }}</small>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Botonera -->
+        <div class="actions">
+          @if (!isEditing()) {
+            <button class="edit-btn" type="button" (click)="enableEdit()">
+              Edit Employee
+            </button>
+            <button class="delete-btn" type="button" (click)="onDelete()">
+              Delete Employee
+            </button>
+          } @else {
+            <button class="cancel-btn" type="button" (click)="cancelEdit()">
+              Cancel
+            </button>
+            <button class="save-btn" type="submit" [disabled]="!isFormValid() || isSubmitting()">
+              @if (isSubmitting()) { Saving changes... } @else { Save Changes }
+            </button>
+          }
+        </div>
+      </form>
+    } @else {
+      <div class="loading">Loading employee details...</div>
+    }
+  </main>
+</div>

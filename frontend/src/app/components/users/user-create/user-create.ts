@@ -16,14 +16,14 @@ export class UserCreate implements OnInit {
   private readonly userService = inject(UserService);
   private readonly router = inject(Router);
   readonly userModel = signal<UserRequest>({
-  dni: 0,
-  firstName: '',
-  lastName: '',
-  phoneNumber: '',
-  email: '',
-  branchId: 0,
-  role: '',
-  pin: ''
+    dni: 0,
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    email: '',
+    branchId: 0,
+    role: '',
+    pin: ''
   });
   readonly form = form(this.userModel, (path) => {
     required(path.dni, { message: 'DNI is required' });
