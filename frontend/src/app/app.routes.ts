@@ -7,13 +7,16 @@ import { UserCreate } from './components/users/user-create/user-create';
 import { BranchComponent } from './components/branches/pages/branch/branch';
 import { ProductsComponent } from './components/products/pages/products-component/products-component';
 import { ProductListComponent } from './components/products/pages/product-list-component/product-list-component';
+import { UserDetail } from './components/users/user-detail/user-detail';
 import { AdminPanelComponent } from './components/admin/pages/admin-panel-component/admin-panel-component';
+
 
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
     { path: 'login', component: Login },
     { path: 'users', component: UserList },
     { path: 'users/new', component: UserCreate },
+    { path: 'users/:id', component: UserDetail },
     { path: 'branches', component: BranchComponent },
     { path: 'products', component: ProductListComponent },
     { path: 'products/new', component: ProductsComponent },
