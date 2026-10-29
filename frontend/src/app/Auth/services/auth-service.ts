@@ -76,7 +76,8 @@ export class AuthService {
     private onAuthSuccess(response: AuthResponse): void {
         this._loading.set(false)
         if (this.setSession(response)) {
-            this.router.navigate(['/'])
+            this.router.navigate([this.isAdmin() ? '/admin' : '/'])
+
         } else {
             this._error.set('Invalid server response')
         }
