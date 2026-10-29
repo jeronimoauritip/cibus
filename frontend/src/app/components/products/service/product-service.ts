@@ -17,6 +17,9 @@ export class ProductService {
     create (product: ProductRequest): Observable<ProductRequest>{
         return this.http.post<ProductRequest>('/api/products',product);
     }
+    getById(id: number): Observable<Product> {
+        return this.http.get<Product>(`/api/products/${id}`);
+    }
 
     getCategories(): Observable<ProductCategory[]>{
         return this.http.get<ProductCategory[]>('/api/product-categories')

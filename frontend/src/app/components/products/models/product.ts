@@ -3,4 +3,6 @@ export interface Product {
     name:string;
     description?: string;
     categoryName: string;
+    price: number;
+    available?: boolean;
 }

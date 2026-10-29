@@ -10,6 +10,7 @@ import { BranchListComponent } from './components/branches/pages/branch-list/bra
 import { BranchEmployeesComponent } from './components/branches/pages/branch-employees/branch-employees';
 import { ProductsComponent } from './components/products/pages/products-component/products-component';
 import { ProductListComponent } from './components/products/pages/product-list-component/product-list-component';
+import { ProductDetailComponent } from './components/products/pages/product-detail-component/product-detail-component';
 import { AdminPanelComponent } from './components/admin/pages/admin-panel-component/admin-panel-component';
 
 export const routes: Routes = [
@@ -34,7 +35,8 @@ export const routes: Routes = [
             { path: 'branches', component: BranchListComponent },
             { path: 'branches/new', component: BranchComponent },
             { path: 'employees', component: UserList },
-            { path: 'menu', component: ProductListComponent }
+            { path: 'menu', component: ProductListComponent },
+            { path: 'menu/:id', component: ProductDetailComponent }
         ]
     },
     { path: '**', redirectTo: '' }

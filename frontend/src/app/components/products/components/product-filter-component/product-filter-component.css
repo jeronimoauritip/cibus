@@ -51,17 +51,25 @@
 }
 
 .search:focus-within {
-  outline: 2px solid var(--green);
+  outline: 2px solid var(--dark-green);
   outline-offset: 4px;
 }
 
 .controls {
   display: flex;
   align-items: center;
-  gap: 28px;
-  align-self: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
   margin-top: 14px;
   padding-left: 20px;
+}
+
+.controls__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .filters {
@@ -76,7 +84,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--green);
+  color: var(--dark-green);
   font: inherit;
   font-size: 24px;
   font-weight: 400;
@@ -89,7 +97,7 @@
   margin-top: 4px;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-top: 11px solid var(--green);
+  border-top: 11px solid var(--dark-green);
   pointer-events: none;
   transition: transform 0.2s ease;
 }
@@ -110,7 +118,7 @@
   margin-top: 8px;
   padding: 8px 0;
   overflow-y: auto;
-  border: 2px solid var(--green);
+  border: 2px solid var(--dark-green);
   border-radius: 14px;
   background-color: var(--cream);
   box-shadow: 0 8px 20px rgba(32, 90, 64, 0.25);
@@ -123,7 +131,7 @@
   padding: 10px 18px;
   border: 0;
   background: transparent;
-  color: var(--green);
+  color: var(--dark-green);
   cursor: pointer;
   font: inherit;
   font-size: 16px;
@@ -132,7 +140,7 @@
 }
 
 .option:hover {
-  background-color: var(--green);
+  background-color: var(--dark-green);
   color: var(--cream);
 }
 
@@ -143,7 +151,7 @@
 
 .option.active:hover,
 .option:has(input:checked):hover {
-  background-color: var(--green);
+  background-color: var(--dark-green);
 }
 
 .option input {
@@ -153,7 +161,7 @@
 }
 
 .option:has(input:focus-visible) {
-  outline: 2px solid var(--green);
+  outline: 2px solid var(--dark-green);
   outline-offset: -2px;
 }
 

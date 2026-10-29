@@ -1,0 +1,95 @@
+:host {
+  display: block;
+}
+
+.product-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 13px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--dark-green) 20%, transparent);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.product-row:hover {
+  background: var(--light-cream);
+  box-shadow: inset 4px 0 0 var(--light-green);
+}
+
+.product-row__info {
+  min-width: 0;
+}
+
+.product-row__name {
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark-green);
+  margin: 0;
+}
+
+.product-row__description {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--dark-green) 65%, transparent);
+  margin: 4px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-row__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.product-row__btn {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--background-green);
+  color: var(--cream);
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.product-row__btn:hover {
+  background: var(--dark-green);
+}
+
+.product-row__btn:focus-visible {
+  outline: 2px solid var(--dark-green);
+  outline-offset: 2px;
+}
+
+.product-row__btn--icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-row__btn--delete:hover,
+.product-row__btn--danger {
+  background: #a32d2d;
+}
+
+.product-row__btn--cancel {
+  background: var(--icon);
+}
+
+.product-row__confirm-text {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 13px;
+  color: var(--dark-green);
+}

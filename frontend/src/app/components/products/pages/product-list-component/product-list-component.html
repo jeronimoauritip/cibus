@@ -1,15 +1,33 @@
 <app-header-component> Products </app-header-component>
 <div class="page">
   <main class="content">
-    <app-product-filter-component [(filter)]="filter" />
+       <app-product-filter-component [(filter)]="filter">
+      <span class="toolbar__count">{{ filteredProducts().length }} products</span>
+      <button type="button" class="toolbar__new" (click)="onNewProduct()">
+        <span aria-hidden="true">+</span> New product
+      </button>
+    </app-product-filter-component>
+
+
     <div class="list">
       @if (loading()) {
         <p class="message">Loading...</p>
       } @else if (error()) {
         <p class="message error">Could not load products</p>
       } @else {
-        @for (product of filteredProducts(); track product.id) {
-          <app-product-card [product]="product" />
+        @for (group of groupedProducts(); track group.category) {
+          <section class="category">
+            <header class="category__header">
+              <h2 class="category__name">{{ group.category }}</h2>
+              <span class="category__count">{{ group.products.length }}</span>
+            </header>
+            @for (product of group.products; track product.id) {
+              <app-product-row
+                [product]="product"
+                (edit)="onEdit($event)"
+                (delete)="onDelete($event)" />
+            }
+          </section>
         } @empty {
           <p class="message">No products found</p>
         }
