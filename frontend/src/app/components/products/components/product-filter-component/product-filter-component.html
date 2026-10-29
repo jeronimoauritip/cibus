@@ -9,11 +9,6 @@
   </label>
 
   <div class="controls">
-    <button class="control" type="button">
-      Sort by
-      <span class="arrow" aria-hidden="true"></span>
-    </button>
-
     <div class="filters">
       <button class="control" type="button" (click)="isOpen.set(!isOpen())">
         Filters
@@ -50,6 +45,10 @@
           }
         </div>
       }
+    </div>
+
+    <div class="controls__right">
+      <ng-content />
     </div>
   </div>
 </form>
