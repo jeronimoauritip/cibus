@@ -7,6 +7,7 @@ import { Page, User } from '../user.model';
 import { HeaderComponent } from '../../header-component/header-component';
 import { Branch } from '../../branches/models/branch.model';
 import { BranchService } from '../../branches/service/branch-service';
+import { AuthService } from '../../../Auth/services/auth-service';
 
 @Component({
   imports: [FormsModule, HeaderComponent, RouterLink],
@@ -17,6 +18,7 @@ import { BranchService } from '../../branches/service/branch-service';
 export class UserList implements OnInit {
   private readonly userService = inject(UserService);
   private readonly branchService = inject(BranchService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   usersPage = signal<Page<User> | undefined>(undefined);
@@ -49,7 +51,7 @@ export class UserList implements OnInit {
   }
 
   isInactive(user: User): boolean {
-    return !user.branchId && !user.branchName;
+    return user.role?.toUpperCase() !== 'ADMIN' && !user.branchId && !user.branchName;
   }
 
   getNewEmployeeRoute(): string {
@@ -160,7 +162,18 @@ export class UserList implements OnInit {
       .subscribe({
         next: (page) => {
           if (page?.content) {
-            let filtered = page.content.filter((u) => u.role?.toUpperCase() !== 'ADMIN');
+            const currentUser = this.authService.user();
+            let filtered = page.content.filter((u) => {
+              if (!currentUser) return true;
+              if (currentUser.id && u.id === currentUser.id) return false;
+              if (
+                currentUser.email &&
+                u.email?.toLowerCase() === currentUser.email.toLowerCase()
+              ) {
+                return false;
+              }
+              return true;
+            });
             if (this.onlyInactive()) {
               filtered = filtered.filter((u) => this.isInactive(u));
             }

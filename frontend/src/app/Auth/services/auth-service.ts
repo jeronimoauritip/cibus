@@ -11,7 +11,7 @@ import { finalize, share, tap } from 'rxjs/operators';
 const REFRESH_KEY = 'refresh_token'
 const LEGACY_USER_KEY = 'auth_user'
 
-function decodeJwt(token: string): { authorities?: string[]; exp?: number } | null {
+function decodeJwt(token: string): { sub?: string; authorities?: string[]; exp?: number } | null {
     try {
         const part = token.split('.')[1]
         if (!part) return null
@@ -69,7 +69,7 @@ export class AuthService {
             localStorage.setItem(REFRESH_KEY, response.refreshToken)
         }
         const role = (roleName.charAt(0) + roleName.slice(1).toLowerCase()) as RoleModel['role']
-        this._user.set({ role: { role } } as AuthUser)
+        this._user.set({ email: payload.sub ?? '', role: { role } } as AuthUser)
         return true
     }
 

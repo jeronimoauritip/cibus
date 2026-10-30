@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
             branchId = user.getBranch().getId();
         }
         Specification<UserEntity> spec = Specification.allOf(
+                UserSpecification.idNotEquals(user.getId()),
                 UserSpecification.nameContains(name),
                 UserSpecification.dniEquals(dni),
                 UserSpecification.emailEquals(email),

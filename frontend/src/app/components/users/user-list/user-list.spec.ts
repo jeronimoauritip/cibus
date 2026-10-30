@@ -1,18 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter, Router } from '@angular/router';
+import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { UserList } from './user-list';
 import { UserService } from '../user.service';
 import { Page, User } from '../user.model';
 import { BranchService } from '../../branches/service/branch-service';
+import { AuthService } from '../../../Auth/services/auth-service';
 
 describe('UserList', () => {
   let component: UserList;
   let fixture: ComponentFixture<UserList>;
   let mockUserService: any;
   let mockBranchService: any;
+  let mockAuthService: any;
   let router: Router;
 
   const mockPage: Page<User> = {
@@ -50,8 +53,19 @@ describe('UserList', () => {
         branchName: '',
         role: 'MANAGER',
       },
+      {
+        id: 4,
+        dni: 999,
+        firstName: 'Second',
+        lastName: 'Admin',
+        phoneNumber: '999',
+        email: 'admin2@test.com',
+        branchId: 1,
+        branchName: 'Centro',
+        role: 'ADMIN',
+      },
     ],
-    totalElements: 3,
+    totalElements: 4,
     totalPages: 1,
     size: 10,
     number: 0,
@@ -81,6 +95,10 @@ describe('UserList', () => {
       ),
     };
 
+    mockAuthService = {
+      user: signal({ email: 'admin@test.com', role: { role: 'Admin' } }),
+    };
+
     await TestBed.configureTestingModule({
       imports: [UserList],
       providers: [
@@ -88,6 +106,7 @@ describe('UserList', () => {
         provideRouter([]),
         { provide: UserService, useValue: mockUserService },
         { provide: BranchService, useValue: mockBranchService },
+        { provide: AuthService, useValue: mockAuthService },
       ],
     }).compileComponents();
 
@@ -102,10 +121,11 @@ describe('UserList', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should filter out ADMIN users from the list', () => {
+  it('should show ADMIN users and exclude only the currently logged-in user', () => {
     const content = component.usersPage()?.content || [];
-    expect(content.length).toBe(2);
-    expect(content.some((u) => u.role === 'ADMIN')).toBe(false);
+    expect(content.length).toBe(3);
+    expect(content.some((u) => u.email === 'admin@test.com')).toBe(false);
+    expect(content.some((u) => u.email === 'admin2@test.com' && u.role === 'ADMIN')).toBe(true);
   });
 
   it('should filter only inactive employees when inactive filter is applied', () => {
