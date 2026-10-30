@@ -1,0 +1,31 @@
+<div class="order-item">
+  <div class="order-item__header">
+    <span class="order-item__name">{{ item().productName }}</span>
+    <button class="order-item__remove" type="button" (click)="onRemove()">
+      Remove
+    </button>
+  </div>
+
+  <div class="order-item__controls">
+    <div class="order-item__quantity">
+      <button type="button" (click)="onDecrement()">-</button>
+      <input
+        type="number"
+        class="order-item__qty-input"
+        [value]="item().quantity"
+        min="1"
+        (change)="onQuantityInput($event)"
+      />
+      <button type="button" (click)="onIncrement()">+</button>
+    </div>
+    <span class="order-item__subtotal">${{ item().subtotal }}</span>
+  </div>
+
+  <input
+    type="text"
+    class="order-item__observation"
+    placeholder="Notes (optional)"
+    [value]="item().observation ?? ''"
+    (change)="onObservationChange($event)"
+  />
+</div>

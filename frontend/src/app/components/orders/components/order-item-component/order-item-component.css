@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.order-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 0;
+}
+
+.order-item__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.order-item__name {
+  font-weight: 600;
+  color: var(--dark-green);
+}
+
+.order-item__remove {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+  color: var(--dark-green);
+  background: none;
+  border: none;
+  opacity: 0.6;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.order-item__remove:hover {
+  color: #991b1b;
+  opacity: 1;
+}
+
+.order-item__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.order-item__quantity {
+  display: inline-flex;
+  align-items: center;
+  background: white;
+  border-radius: 999px;
+}
+
+.order-item__quantity button {
+  width: 40px;
+  height: 40px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.order-item__quantity button:hover {
+  background: color-mix(in srgb, var(--dark-green) 12%, transparent);
+}
+
+.order-item__qty-input {
+  width: 2.75rem;
+  text-align: center;
+  font-weight: 700;
+  color: var(--dark-green);
+  background: none;
+  border: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.order-item__qty-input::-webkit-inner-spin-button,
+.order-item__qty-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.order-item__qty-input:focus {
+  outline: none;
+}
+
+.order-item__subtotal {
+  font-weight: 700;
+  color: var(--dark-green);
+}
+
+.order-item__observation {
+  height: 40px;
+  padding: 0 0.9rem;
+  font-size: 0.9rem;
+  color: var(--dark-green);
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 999px;
+}
+
+.order-item__observation::placeholder {
+  color: var(--dark-green);
+  opacity: 0.5;
+}
+
+.order-item__observation:focus {
+  outline: none;
+  border-color: var(--background-green);
+}
+
+.order-item__remove:focus-visible,
+.order-item__quantity button:focus-visible {
+  outline: 2px solid var(--dark-green);
+  outline-offset: 2px;
+}

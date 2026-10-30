@@ -1,0 +1,30 @@
+<div class="order-confirm">
+  <div class="order-confirm__total">
+    <span>Total</span>
+    <span class="order-confirm__dots"></span>
+    <span class="order-confirm__amount">${{ total() }}</span>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="order-confirm__error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  <div class="order-confirm__actions">
+    <button
+      type="button"
+      class="order-confirm__cancel"
+      [disabled]="confirming()"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="order-confirm__submit"
+      [disabled]="confirming() || items().length === 0"
+      (click)="onConfirm()"
+    >
+      {{ confirming() ? 'Confirming...' : 'Confirm order' }}
+    </button>
+  </div>
+</div>

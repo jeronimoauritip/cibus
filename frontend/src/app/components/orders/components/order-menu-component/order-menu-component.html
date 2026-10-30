@@ -1,0 +1,66 @@
+<div class="menu">
+  <input
+    type="search"
+    class="menu__search"
+    placeholder="Search product"
+    aria-label="Search product"
+    [value]="search()"
+    (input)="onSearch($event)"
+  />
+
+  <div class="menu__tabs" role="tablist">
+    <button
+      type="button"
+      class="menu__tab"
+      role="tab"
+      [attr.aria-selected]="selectedCategory() === null"
+      (click)="selectCategory(null)"
+    >
+      All
+    </button>
+    @for (category of categories(); track category) {
+      <button
+        type="button"
+        class="menu__tab"
+        role="tab"
+        [attr.aria-selected]="selectedCategory() === category"
+        (click)="selectCategory(category)"
+      >
+        {{ category }}
+      </button>
+    }
+  </div>
+
+  @for (group of groupedProducts(); track group.category) {
+    <section class="menu__category">
+      <h3 class="menu__category-name">{{ group.category }}</h3>
+      <ul class="menu__grid">
+        @for (product of group.items; track product.id) {
+          <li>
+            <button
+              type="button"
+              class="menu__tile"
+              [class.is-selected]="!!quantities()[product.id]"
+              [disabled]="product.available === false"
+              (click)="onAdd(product)"
+            >
+              @if (quantities()[product.id]; as quantity) {
+                <span class="menu__tile-count">{{ quantity }}</span>
+              }
+              @if (product.available === false) {
+                <span class="menu__tile-tag">Sold out</span>
+              }
+              <span class="menu__tile-name">{{ product.name }}</span>
+              @if (product.description) {
+                <span class="menu__tile-description">{{ product.description }}</span>
+              }
+              <span class="menu__tile-price">${{ product.price }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  } @empty {
+    <p class="menu__empty">No products found.</p>
+  }
+</div>
