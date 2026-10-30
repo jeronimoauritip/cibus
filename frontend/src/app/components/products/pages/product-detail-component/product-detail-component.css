@@ -208,6 +208,19 @@
   opacity: 1;
 }
 
+.pd-readonly-textarea {
+  height: auto;
+  min-height: 92px;
+  padding: 13px 16px;
+  align-items: flex-start;
+}
+
+/* Regla agregada para que el select muestre la flecha nativa */
+select.pd-input {
+  appearance: auto;
+  cursor: pointer;
+}
+
 @media (max-width: 520px) {
   .pd-card {
     padding: 20px 16px;

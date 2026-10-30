@@ -7,6 +7,15 @@ public class UserSpecification {
 
     private UserSpecification() {}  // para evitar que se instancie
 
+    public static Specification<UserEntity> idNotEquals(Long id) {
+        return (root, query, cb) -> {
+            if (id == null) {
+                return cb.conjunction();
+            }
+            return cb.notEqual(root.get("id"), id);
+        };
+    }
+
     public static Specification<UserEntity> nameContains(String name) {
         return (root, query, cb) -> {
             if (name == null || name.isBlank()) {
