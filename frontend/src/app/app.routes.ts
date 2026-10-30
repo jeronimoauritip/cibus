@@ -12,6 +12,7 @@ import { ProductsComponent } from './components/products/pages/products-componen
 import { ProductListComponent } from './components/products/pages/product-list-component/product-list-component';
 import { ProductDetailComponent } from './components/products/pages/product-detail-component/product-detail-component';
 import { AdminPanelComponent } from './components/admin/pages/admin-panel-component/admin-panel-component';
+import { OrderCreationComponent } from './components/orders/pages/order-creation-component/order-creation-component';
 
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
@@ -43,5 +44,14 @@ export const routes: Routes = [
             { path: 'menu/:id', component: ProductDetailComponent }
         ]
     },
+    // TEMPORARY: no guards so the order screen can be opened directly while adjusting its CSS.
+    // Final route (requires a logged in user with the Waiter role):
+    // {
+    //     path: 'tables/:tableNumber/order',
+    //     component: OrderCreationComponent,
+    //     canActivate: [authGuard, roleGuard],
+    //     data: { roles: ['Waiter'] }
+    // },
+    { path: 'tables/:tableNumber/order', component: OrderCreationComponent },
     { path: '**', redirectTo: '' }
 ];
