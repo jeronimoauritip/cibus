@@ -8,9 +8,8 @@ import { Product } from '../models/product';
 @Injectable({providedIn:'root'})
 export class ProductService {
     private readonly http= inject(HttpClient);
-    private readonly apiUrl = '/api/products';
     readonly products = httpResource<Product[]>(
-  () => this.apiUrl,
+  () => '/api/products',
   { parse: (res: any) => res.content });
     readonly categories = httpResource<ProductCategory[]>(() => '/api/product-categories');
 

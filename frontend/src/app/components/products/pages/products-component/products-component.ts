@@ -29,7 +29,7 @@ export class ProductsComponent {
     this.error.set(null);
     this.success.set(false);
 
-    this.service.create({ name, description: description || undefined, categoryId }).subscribe({
+    this.service.create({ name, description: description === '' ? null : description, categoryId }).subscribe({
       next: () => {
         this.loading.set(true);
         this.success.set(true);
