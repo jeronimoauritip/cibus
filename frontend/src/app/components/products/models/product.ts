@@ -3,6 +3,15 @@ export interface Product {
     name:string;
     description?: string;
     categoryName: string;
-    price: number;
-    available?: boolean;
+}
+
+export interface ProductRequest {
+    name:string;
+    description?:string;
+    categoryId:number;
+}
+
+export interface ProductCategory {
+    id:number;
+    name:string;
 }

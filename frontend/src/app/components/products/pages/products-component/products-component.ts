@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ProductService } from '../../service/product-service';
-import { ProductCategory } from '../../models/product-category';
+import { ProductCategory } from '../../models/product';
 import { HeaderComponent } from '../../../header-component/header-component';
 
 @Component({
