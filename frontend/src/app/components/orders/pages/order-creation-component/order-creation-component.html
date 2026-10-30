@@ -1,0 +1,47 @@
+<app-header-component>Table {{ tableNumber() }}</app-header-component>
+
+<div class="page">
+  <section class="menu-panel">
+    @if (loading()) {
+      <p class="message">Loading menu...</p>
+    } @else {
+      <app-order-menu
+        [products]="products.value() ?? []"
+        [quantities]="quantities()"
+        (add)="addItem($event)"
+      />
+    }
+  </section>
+
+  <aside class="order-panel">
+    <h2 class="order-panel__title">Order</h2>
+    <p class="order-panel__count">
+      {{ unitCount() }} {{ unitCount() === 1 ? 'item' : 'items' }}
+    </p>
+
+    @if (draftItems().length === 0) {
+      <p class="message">No items added yet.</p>
+    } @else {
+      <ul class="order-list">
+        @for (item of draftItems(); track item.lineId) {
+          <li>
+            <app-order-item
+              [item]="item"
+              (quantityChange)="updateQuantity(item.lineId, $event)"
+              (observationChange)="updateObservation(item.lineId, $event)"
+              (remove)="removeItem(item.lineId)"
+            />
+          </li>
+        }
+      </ul>
+    }
+
+    <app-order-confirm
+      [items]="draftItems()"
+      [confirming]="confirming()"
+      [errorMessage]="errorMessage()"
+      (confirm)="onConfirm()"
+      (cancel)="onCancel()"
+    />
+  </aside>
+</div>
