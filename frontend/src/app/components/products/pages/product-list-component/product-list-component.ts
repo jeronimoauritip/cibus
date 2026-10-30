@@ -41,13 +41,23 @@ export class ProductListComponent {
 
   onEdit(product: Product): void {
   this.router.navigate(['/admin/menu', product.id]);
-}
+  }
 
 
   onDelete(product: Product): void {
-    
+    this.service.delete(product.id).subscribe({
+      next: () => {
+        this.service.products.update(currentList => 
+          (currentList ?? []).filter(p => p.id !== product.id)
+        );
+      },
+      error: () => {
+        alert('Hubo un error al intentar eliminar el producto.');
+      }
+    });
   }
-    onNewProduct(): void {
+
+  onNewProduct(): void {
     this.router.navigate(['/products/new']);
   }
 

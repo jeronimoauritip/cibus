@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ProductService } from '../../service/product-service';
 import { ProductCategory } from '../../models/product';
 import { HeaderComponent } from '../../../header-component/header-component';
+import { Router } from '@angular/router';
 
 @Component({
   imports: [HeaderComponent],
@@ -11,6 +12,7 @@ import { HeaderComponent } from '../../../header-component/header-component';
 })
 export class ProductsComponent {
   private readonly service= inject (ProductService);
+  private readonly router = inject(Router);
 
   readonly categories = signal<ProductCategory[]>([]);
   readonly loading= signal (false);
@@ -34,6 +36,8 @@ export class ProductsComponent {
         this.loading.set(true);
         this.success.set(true);
         this.loading.set(false);
+        this.service.products.reload();
+        this.router.navigate(['/admin/menu']);
       },
       error: () => {
         this.error.set('Error creating the product');

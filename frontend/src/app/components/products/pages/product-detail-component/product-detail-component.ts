@@ -73,6 +73,7 @@ export class ProductDetailComponent implements OnInit {
     this.service.update(currentProduct.id, updatedProduct).subscribe({
       next: () => {
         this.saving.set(false);
+        this.service.products.reload();
         this.router.navigate(['/admin/menu']);
       },
       error: () => {
