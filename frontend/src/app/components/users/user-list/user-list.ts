@@ -51,6 +51,12 @@ export class UserList implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (page) => {
+          if (page?.content) {
+            page = {
+              ...page,
+              content: page.content.filter(u => u.role?.toUpperCase() !== 'ADMIN')
+            };
+          }
           this.usersPage.set(page);
         },
         error: (err) => {
