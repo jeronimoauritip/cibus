@@ -184,6 +184,7 @@ public class UserServiceImpl implements UserService {
         if (updateDTO.getBranchId() != null) {
             BranchEntity branch = getBranch(updateDTO.getBranchId());
             user.setBranch(branch);
+            credentials.enable();
         }
         UserEntity updated = userRepository.save(user);
         credentials.setUser(updated);

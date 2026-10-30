@@ -10,12 +10,10 @@
   min-height: 100vh;
   overflow-x: hidden;
   isolation: isolate;
-  min-height: 100vh;
-  isolation: isolate;
   padding: 0.5rem;
 }
 
-/* Contenido principal */
+/* Main content */
 
 .content {
   position: relative;
@@ -24,7 +22,7 @@
   margin: 0px auto 0;
 }
 
-/*Form*/
+/* Form */
 
 form {
   width: 100%;
@@ -42,13 +40,13 @@ form {
   padding: 0 38px;
   gap: 1.5rem;
   border-radius: 29px;
-  background: var(--dark-green, #205a40);
+  background: var(--dark-green);
   box-shadow: 0 4px 18px rgba(32, 90, 64, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-field:focus-within {
-  outline: 3px solid var(--verde-oscuro, #205a40);
+  outline: 3px solid var(--dark-green);
   outline-offset: 4px;
   transform: translateY(-1px);
 }
@@ -61,14 +59,13 @@ form {
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--cream, #e7dbbf);
-  font-family: "Instrument Sans", sans-serif;
+  color: var(--cream);
   font-size: 32px;
   line-height: 42px;
 }
 
 .form-field input::placeholder {
-  color: var(--cream, #e7dbbf);
+  color: var(--cream);
   opacity: 0.85;
 }
 
@@ -81,13 +78,14 @@ form {
 }
 
 .form-field select option {
-  background-color: var(--light-green, #389a6e);
-  color: var(--cream, #e7dbbf);
+  background-color: var(--light-green);
+  color: var(--cream);
 }
 
 label {
-  color: var(--cream, #e7dbbf);
+  color: var(--cream);
   opacity: 0.85;
+  white-space: nowrap;
 }
 
 /* Action controls */
@@ -107,7 +105,6 @@ label {
   border-radius: 29px;
   background: var(--dark-green);
   color: var(--cream);
-  font-family: "Instrument Sans", sans-serif;
   font-size: 26px;
   font-weight: 700;
   cursor: pointer;
@@ -146,28 +143,35 @@ label {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* =========================================
-   Responsive Design (Media Queries)
-   ========================================= */
+/* Responsive Design */
 @media (max-width: 768px) {
   .content {
     margin-top: 24px;
   }
+
   .form-field {
     height: 75px;
     padding: 0 24px;
     gap: 1rem;
     border-radius: 22px;
   }
+
   .form-field input,
   .form-field select {
     font-size: 24px;
     line-height: 32px;
   }
+
   .save-btn {
     height: 65px;
     font-size: 22px;
@@ -179,6 +183,7 @@ label {
   form {
     gap: 16px;
   }
+
   .form-field {
     flex-direction: column;
     align-items: flex-start;
@@ -188,18 +193,22 @@ label {
     gap: 4px;
     border-radius: 20px;
   }
+
   label {
     font-size: 14px;
   }
+
   .form-field input,
   .form-field select {
     font-size: 20px;
   }
+
   .save-btn {
     height: 55px;
     font-size: 18px;
     border-radius: 20px;
   }
+
   .errors {
     padding: 12px 16px;
     font-size: 14px;

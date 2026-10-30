@@ -214,7 +214,7 @@ public class DataLoader {
                                 System.out.println("Roles y permisos cargados correctamente.");
                         }
 
-                        if (!credentialsRepository.existsByUsername("admin") && !userRepository.existsByDni(0L)) {
+                        if (!credentialsRepository.existsByUsername("admin@gmail.com") && !userRepository.existsByDni(0L) && !userRepository.existsByEmail("admin@gmail.com")) {
 
                                 RoleEntity adminRole = roleRepository.findByRole(Roles.ADMIN)
 
@@ -242,7 +242,7 @@ public class DataLoader {
                                 System.out.println("Admin cargado correctamente");
                         }
 
-                        if (!credentialsRepository.existsByUsername("manager") && !userRepository.existsByDni(1L)) {
+                        if (!credentialsRepository.existsByUsername("manager@gmail.com") && !userRepository.existsByDni(1L) && !userRepository.existsByEmail("manager@gmail.com")) {
 
                                 BranchEntity branch = branchRepository.findById(1L)
                                                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -275,7 +275,7 @@ public class DataLoader {
                                 System.out.println("Manager cargado correctamente");
                         }
 
-                        if (!credentialsRepository.existsByUsername("waiter") && !userRepository.existsByDni(2L)) {
+                        if (!credentialsRepository.existsByUsername("1111") && !userRepository.existsByDni(2L) && !userRepository.existsByEmail("waiter@gmail.com")) {
 
                                 BranchEntity branch = branchRepository.findById(1L)
                                                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -308,7 +308,7 @@ public class DataLoader {
                                 System.out.println("Waiter cargado correctamente");
                         }
 
-                        if (!credentialsRepository.existsByUsername("host") && !userRepository.existsByDni(3L)) {
+                        if (!credentialsRepository.existsByUsername("2222") && !userRepository.existsByDni(3L) && !userRepository.existsByEmail("host@gmail.com")) {
 
                                 BranchEntity branch = branchRepository.findById(1L)
                                                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -341,7 +341,7 @@ public class DataLoader {
                                 System.out.println("Host cargado correctamente");
                         }
 
-                        if (!credentialsRepository.existsByUsername("kitchen") && !userRepository.existsByDni(4L)) {
+                        if (!credentialsRepository.existsByUsername("3333") && !userRepository.existsByDni(4L) && !userRepository.existsByEmail("kitchen@gmail.com")) {
 
                                 BranchEntity branch = branchRepository.findById(1L)
                                                 .orElseThrow(() -> new ResourceNotFoundException(

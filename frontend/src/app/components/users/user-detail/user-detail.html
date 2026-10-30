@@ -1,175 +1,290 @@
-<app-header-component> Employee Detail </app-header-component>
+<app-header-component>
+  <a class="btn-back" [routerLink]="[getBackRoute()]" aria-label="Back to employee list" title="Back">
+    <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+  </a>
+  Employee Detail
+</app-header-component>
 
 <div class="container">
   <main class="content">
-    @if (user()) {
-      <form (ngSubmit)="onSubmit()">
-        @if (errorMessage()) {
-          <div class="errors">
-            {{ errorMessage() }}
-          </div>
-        }
+    @if (user(); as currentUser) {
+    @if (successMessage()) {
+    <div class="feedback-success" role="status">
+      {{ successMessage() }}
+    </div>
+    }
 
-        <!-- First Name -->
-        <div class="form-field">
-          <label for="firstName">First Name</label>
-          @if (!isEditing()) {
-            <input type="text" id="firstName" [value]="user()?.firstName" disabled />
-          } @else {
-            <input type="text" id="firstName" [formField]="form.firstName" />
-            @if (form.firstName().invalid() && form.firstName().touched()) {
-              <div class="errors">
-                @for (error of form.firstName().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          }
-        </div>
+    <div class="detail-list">
+      <div class="form-field">
+        <label for="detailFirstName">First Name</label>
+        <input type="text" id="detailFirstName" [value]="currentUser.firstName" disabled />
+      </div>
 
-        <!-- Last Name -->
-        <div class="form-field">
-          <label for="lastName">Last Name</label>
-          @if (!isEditing()) {
-            <input type="text" id="lastName" [value]="user()?.lastName" disabled />
-          } @else {
-            <input type="text" id="lastName" [formField]="form.lastName" />
-            @if (form.lastName().invalid() && form.lastName().touched()) {
-              <div class="errors">
-                @for (error of form.lastName().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          }
-        </div>
+      <div class="form-field">
+        <label for="detailLastName">Last Name</label>
+        <input type="text" id="detailLastName" [value]="currentUser.lastName" disabled />
+      </div>
 
-        <!-- DNI -->
-        <div class="form-field">
-          <label for="dni">DNI</label>
-          @if (!isEditing()) {
-            <input type="number" id="dni" [value]="user()?.dni" disabled />
-          } @else {
-            <input type="number" id="dni" [formField]="form.dni" />
-            @if (form.dni().invalid() && form.dni().touched()) {
-              <div class="errors">
-                @for (error of form.dni().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          }
-        </div>
+      <div class="form-field">
+        <label for="detailDni">DNI</label>
+        <input type="number" id="detailDni" [value]="currentUser.dni" disabled />
+      </div>
 
-        <!-- Phone Number -->
-        <div class="form-field">
-          <label for="phoneNumber">Phone Number</label>
-          @if (!isEditing()) {
-            <input type="text" id="phoneNumber" [value]="user()?.phoneNumber" disabled />
-          } @else {
-            <input type="text" id="phoneNumber" [formField]="form.phoneNumber" />
-            @if (form.phoneNumber().invalid() && form.phoneNumber().touched()) {
-              <div class="errors">
-                @for (error of form.phoneNumber().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          }
-        </div>
+      <div class="form-field">
+        <label for="detailPhoneNumber">Phone Number</label>
+        <input type="text" id="detailPhoneNumber" [value]="currentUser.phoneNumber" disabled />
+      </div>
 
-        <!-- Email -->
-        <div class="form-field">
-          <label for="email">Email</label>
-          @if (!isEditing()) {
-            <input type="email" id="email" [value]="user()?.email" disabled />
-          } @else {
-            <input type="email" id="email" [formField]="form.email" />
-            @if (form.email().invalid() && form.email().touched()) {
-              <div class="errors">
-                @for (error of form.email().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          }
-        </div>
+      <div class="form-field">
+        <label for="detailEmail">Email</label>
+        <input type="email" id="detailEmail" [value]="currentUser.email" disabled />
+      </div>
 
-        <!-- Branch (Muestra el nombre en lectura, pide el ID en edición) -->
-        <div class="form-field">
-          <label for="branchId">Branch</label>
-          @if (!isEditing()) {
-            <input type="text" id="branchName" [value]="user()?.branchName" disabled />
-          } @else {
-            <input type="number" id="branchId" [formField]="form.branchId" />
-            @if (form.branchId().invalid() && form.branchId().touched()) {
-              <div class="errors">
-                @for (error of form.branchId().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          }
-        </div>
+      <div class="form-field">
+        <label for="detailBranch">Branch</label>
+        <input type="text" id="detailBranch" [value]="currentUser.branchName || currentUser.branchId" disabled />
+      </div>
 
-        <!-- Role -->
-        <div class="form-field">
-          <label for="role">Role</label>
-          @if (!isEditing()) {
-            <input type="text" id="role" [value]="user()?.role" disabled />
-          } @else {
-            <select id="role" [formField]="form.role">
-              <option value="" disabled>Select a role</option>
-              @for (role of roles(); track role) {
-                <option [value]="role">{{ role }}</option>
-              }
-            </select>
-            @if (form.role().invalid() && form.role().touched()) {
-              <div class="errors">
-                @for (error of form.role().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          }
-        </div>
+      <div class="form-field">
+        <label for="detailRole">Role</label>
+        <input type="text" id="detailRole" [value]="currentUser.role" disabled />
+      </div>
 
-        <!-- PIN (Solo se pide en modo edición) -->
-        @if (isEditing()) {
-          <div class="form-field">
-            <label for="pin">New PIN</label>
-            <input type="password" id="pin" [formField]="form.pin" placeholder="Leave blank to keep current PIN" />
-            @if (form.pin().invalid() && form.pin().touched()) {
-              <div class="errors">
-                @for (error of form.pin().errors(); track $index) {
-                  <small class="error-text">{{ error.message }}</small>
-                }
-              </div>
-            }
-          </div>
-        }
-
-        <!-- Botonera -->
-        <div class="actions">
-          @if (!isEditing()) {
-            <button class="edit-btn" type="button" (click)="enableEdit()">
-              Edit Employee
-            </button>
-            <button class="delete-btn" type="button" (click)="onDelete()">
-              Delete Employee
-            </button>
-          } @else {
-            <button class="cancel-btn" type="button" (click)="cancelEdit()">
-              Cancel
-            </button>
-            <button class="save-btn" type="submit" [disabled]="!isFormValid() || isSubmitting()">
-              @if (isSubmitting()) { Saving changes... } @else { Save Changes }
-            </button>
-          }
-        </div>
-      </form>
+      <div class="actions">
+        <button class="edit-btn" type="button" (click)="openEditModal()">
+          Edit Employee
+        </button>
+        <button class="delete-btn" type="button" (click)="openDeleteModal()">
+          Delete Employee
+        </button>
+      </div>
+    </div>
+    } @else if (errorMessage()) {
+    <div class="errors" role="alert">
+      {{ errorMessage() }}
+    </div>
     } @else {
-      <div class="loading">Loading employee details...</div>
+    <div class="loading">Loading employee details...</div>
     }
   </main>
 </div>
+
+<!-- Edit Employee Modal -->
+@if (isEditModalOpen() && user(); as currentUser) {
+<div class="modal-backdrop" (click)="onBackdropClick($event, 'edit')" role="dialog" aria-modal="true"
+  aria-labelledby="edit-employee-title">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="employee-summary">
+        <div class="employee-avatar">
+          {{ currentUser.firstName.charAt(0) }}{{ currentUser.lastName.charAt(0) }}
+        </div>
+        <div class="employee-info">
+          <h2 id="edit-employee-title" class="modal-title">Edit Employee</h2>
+          <p class="modal-subtitle">{{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+        </div>
+      </div>
+
+      <button type="button" class="btn-close" (click)="closeEditModal()" aria-label="Close modal" title="Close">
+        <svg class="close-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    @if (errorMessage()) {
+    <div class="errors" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
+
+    <form [formRoot]="form" (submit)="onSubmit()" novalidate>
+      <div class="field-group">
+        <div class="form-field">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" [formField]="form.firstName" />
+        </div>
+        @if (form.firstName().invalid() && form.firstName().touched()) {
+        <div class="field-errors">
+          @for (error of form.firstName().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="form-field">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" [formField]="form.lastName" />
+        </div>
+        @if (form.lastName().invalid() && form.lastName().touched()) {
+        <div class="field-errors">
+          @for (error of form.lastName().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="form-field">
+          <label for="dni">DNI</label>
+          <input type="number" id="dni" [formField]="form.dni" />
+        </div>
+        @if (form.dni().invalid() && form.dni().touched()) {
+        <div class="field-errors">
+          @for (error of form.dni().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="form-field">
+          <label for="phoneNumber">Phone</label>
+          <input type="text" id="phoneNumber" [formField]="form.phoneNumber" />
+        </div>
+        @if (form.phoneNumber().invalid() && form.phoneNumber().touched()) {
+        <div class="field-errors">
+          @for (error of form.phoneNumber().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" [formField]="form.email" />
+        </div>
+        @if (form.email().invalid() && form.email().touched()) {
+        <div class="field-errors">
+          @for (error of form.email().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="form-field">
+          <label for="branchId">Branch ID</label>
+          <input type="number" id="branchId" [formField]="form.branchId" />
+        </div>
+        @if (form.branchId().invalid() && form.branchId().touched()) {
+        <div class="field-errors">
+          @for (error of form.branchId().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="form-field">
+          <label for="role">Role</label>
+          <select id="role" [formField]="form.role">
+            <option value="" disabled>Select a role</option>
+            @for (role of roles(); track role) {
+            <option [value]="role">{{ role }}</option>
+            }
+          </select>
+        </div>
+        @if (form.role().invalid() && form.role().touched()) {
+        <div class="field-errors">
+          @for (error of form.role().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="form-field">
+          <label for="pin">New PIN</label>
+          <input type="password" id="pin" [formField]="form.pin" placeholder="Optional (4 digits)" />
+        </div>
+        @if (form.pin().invalid() && form.pin().touched()) {
+        <div class="field-errors">
+          @for (error of form.pin().errors(); track $index) {
+          <small class="error-text">{{ error.message }}</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="actions">
+        <button class="cancel-btn" type="button" [disabled]="isSubmitting()" (click)="closeEditModal()">
+          Cancel
+        </button>
+        <button class="save-btn" type="submit" [disabled]="!isFormValid() || isSubmitting()">
+          @if (isSubmitting()) {
+          Saving changes...
+          } @else {
+          Save Changes
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (isDeleteModalOpen() && user(); as currentUser) {
+<div class="modal-backdrop" (click)="onBackdropClick($event, 'delete')" role="dialog" aria-modal="true"
+  aria-labelledby="delete-employee-title">
+  <div class="modal-card modal-card--confirm">
+    <div class="modal-header">
+      <div class="employee-summary">
+        <div class="employee-avatar">
+          {{ currentUser.firstName.charAt(0) }}{{ currentUser.lastName.charAt(0) }}
+        </div>
+        <div class="employee-info">
+          <h2 id="delete-employee-title" class="modal-title">Delete Employee</h2>
+          <p class="modal-subtitle">{{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+        </div>
+      </div>
+
+      <button type="button" class="btn-close" (click)="closeDeleteModal()" aria-label="Close modal" title="Close">
+        <svg class="close-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <p class="confirm-text">
+      Are you sure you want to delete
+      <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>? This action will
+      deactivate the employee account.
+    </p>
+
+    @if (errorMessage()) {
+    <div class="errors" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
+
+    <div class="actions">
+      <button class="cancel-btn" type="button" [disabled]="isDeleting()" (click)="closeDeleteModal()">
+        Cancel
+      </button>
+      <button class="delete-btn" type="button" [disabled]="isDeleting()" (click)="confirmDelete()">
+        @if (isDeleting()) {
+        Deleting...
+        } @else {
+        Confirm Delete
+        }
+      </button>
+    </div>
+  </div>
+</div>
+}
