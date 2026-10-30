@@ -25,7 +25,7 @@ public class ProductEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private ProductCategoryEntity category;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
 }
