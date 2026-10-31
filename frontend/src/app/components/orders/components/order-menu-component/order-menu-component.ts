@@ -1,5 +1,5 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { Product } from '../../../products/models/product';
+import { MenuProduct } from '../../models/menu-product';
 
 @Component({
   selector: 'app-order-menu',
@@ -8,9 +8,9 @@ import { Product } from '../../../products/models/product';
   styleUrl: './order-menu-component.css'
 })
 export class OrderMenuComponent {
-  readonly products = input.required<Product[]>();
+  readonly products = input.required<MenuProduct[]>();
   readonly quantities = input<Record<number, number>>({});
-  readonly add = output<Product>();
+  readonly add = output<MenuProduct>();
 
   readonly search = signal('');
   readonly selectedCategory = signal<string | null>(null);
@@ -20,7 +20,7 @@ export class OrderMenuComponent {
   readonly groupedProducts = computed(() => {
     const term = this.search().trim().toLowerCase();
     const category = this.selectedCategory();
-    const map = new Map<string, Product[]>();
+    const map = new Map<string, MenuProduct[]>();
     for (const p of this.products()) {
       if (category && p.categoryName !== category) continue;
       if (term && !p.name.toLowerCase().includes(term)) continue;
@@ -39,7 +39,7 @@ export class OrderMenuComponent {
     this.selectedCategory.set(category);
   }
 
-  onAdd(product: Product): void {
+  onAdd(product: MenuProduct): void {
     this.add.emit(product);
   }
 }

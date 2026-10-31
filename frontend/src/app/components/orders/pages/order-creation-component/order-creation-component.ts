@@ -3,14 +3,15 @@ import { HeaderComponent } from "../../../header-component/header-component";
 import { OrderConfirmComponent } from "../../components/order-confirm-component/order-confirm-component";
 import { OrderItemComponent } from "../../components/order-item-component/order-item-component";
 import { OrderMenuComponent } from "../../components/order-menu-component/order-menu-component";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, httpResource } from "@angular/common/http";
 import { ActivatedRoute, Router } from "@angular/router";
 import { OrderService } from "../../service/order-service";
 import { ProductService } from "../../../products/service/product-service";
 import { AuthService } from "../../../../Auth/services/auth-service";
 import { OrderDetail } from "../../models/order-detail";
 import { DraftItem } from "../../models/draft-item";
-import { Product } from "../../../products/models/product";
+import { BranchProduct } from "../../models/branch-product";
+import { MenuProduct } from "../../models/menu-product";
 
 @Component({
   selector: 'app-order-creation',
@@ -47,7 +48,27 @@ export class OrderCreationComponent implements OnInit {
   );
 
   readonly products = this.productService.products;
-  readonly loading = computed(() => this.products.isLoading());
+
+  // Prices and availability are per branch, so the menu joins the catalog with the user's branch products.
+  readonly branchProducts = httpResource<BranchProduct[]>(
+    () => {
+      const branchId = this.authService.user()?.branchId;
+      return branchId ? `/api/branches/${branchId}/products?size=200` : undefined;
+    },
+    { parse: (res: any) => res.content }
+  );
+
+  readonly menuProducts = computed<MenuProduct[]>(() => {
+    const byProduct = new Map((this.branchProducts.value() ?? []).map(bp => [bp.productId, bp]));
+    return (this.products.value() ?? []).flatMap(product => {
+      const branchProduct = byProduct.get(product.id);
+      return branchProduct
+        ? [{ ...product, price: branchProduct.price, available: branchProduct.available }]
+        : [];
+    });
+  });
+
+  readonly loading = computed(() => this.products.isLoading() || this.branchProducts.isLoading());
 
   ngOnInit(): void {
     this.tableNumber.set(Number(this.route.snapshot.paramMap.get('tableNumber')));
@@ -55,7 +76,7 @@ export class OrderCreationComponent implements OnInit {
 
   // Tapping a product adds to its line without a note; lines with a note stay untouched,
   // so the same product can have several lines with different observations.
-  addItem(product: Product, quantity = 1): void {
+  addItem(product: MenuProduct, quantity = 1): void {
     const plain = this.draftItems().find(i => i.productId === product.id && !i.observation?.trim());
     if (plain) {
       this.updateQuantity(plain.lineId, plain.quantity + quantity);

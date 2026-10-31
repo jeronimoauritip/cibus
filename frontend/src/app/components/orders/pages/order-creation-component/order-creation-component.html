@@ -6,7 +6,7 @@
       <p class="message">Loading menu...</p>
     } @else {
       <app-order-menu
-        [products]="products.value() ?? []"
+        [products]="menuProducts()"
         [quantities]="quantities()"
         (add)="addItem($event)"
       />
