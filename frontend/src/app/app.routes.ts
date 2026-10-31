@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './Auth/guards/auth-guard';
 import { roleGuard } from './Auth/guards/role-guard';
 import { Local } from './Auth/pages/local/local';
 import { Login } from './Auth/pages/login/login';
@@ -44,14 +45,11 @@ export const routes: Routes = [
             { path: 'menu/:id', component: ProductDetailComponent }
         ]
     },
-    // TEMPORARY: no guards so the order screen can be opened directly while adjusting its CSS.
-    // Final route (requires a logged in user with the Waiter role):
-    // {
-    //     path: 'tables/:tableNumber/order',
-    //     component: OrderCreationComponent,
-    //     canActivate: [authGuard, roleGuard],
-    //     data: { roles: ['Waiter'] }
-    // },
-    { path: 'tables/:tableNumber/order', component: OrderCreationComponent },
+    {
+        path: 'tables/:tableNumber/order',
+        component: OrderCreationComponent,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Waiter'] }
+    },
     { path: '**', redirectTo: '' }
 ];
