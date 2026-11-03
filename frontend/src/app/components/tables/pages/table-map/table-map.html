@@ -1,0 +1,741 @@
+<div class="viewport-shell" (click)="onStageBackgroundClick()">
+  <div class="map-body">
+    <!-- FLOATING TOP HUD -->
+    <div class="floating-hud">
+      <!-- Top-Left: Return Button + Branch Pill / Selector -->
+      <div class="hud-left">
+        @if (isAdmin()) {
+          <button type="button" class="btn-back" (click)="goBack()">
+            <span class="arrow-left" aria-hidden="true"></span>
+            <span>Return</span>
+          </button>
+        } @else {
+          <button type="button" class="btn-back" (click)="logout()">
+            <span class="arrow-left" aria-hidden="true"></span>
+            <span>Return</span>
+          </button>
+        }
+
+        <div class="branch-selector-wrapper">
+          <button
+            type="button"
+            class="hud-branch-pill"
+            [class.hud-branch-pill--interactive]="isAdmin()"
+            (click)="toggleBranchMenu($event)"
+            [attr.aria-expanded]="isBranchMenuOpen()"
+          >
+            <span class="hud-branch-dot" aria-hidden="true"></span>
+            <span class="hud-branch-name">{{ activeBranchName() }}</span>
+            @if (role()) {
+              <span class="hud-role-tag">{{ role() }}</span>
+            }
+            @if (isAdmin()) {
+              <span class="hud-branch-chevron" [class.open]="isBranchMenuOpen()" aria-hidden="true">▾</span>
+            }
+          </button>
+
+          @if (isAdmin() && isBranchMenuOpen()) {
+            <div class="branch-dropdown" (click)="$event.stopPropagation()">
+              <div class="dropdown-section-label">Switch Branch</div>
+              @for (branch of branches(); track branch.id) {
+                <button
+                  type="button"
+                  class="branch-dropdown-item"
+                  [class.active]="branch.id === activeBranchId()"
+                  (click)="switchBranch(branch.id!, $event)"
+                >
+                  <span>{{ branch.name }}</span>
+                  <span class="branch-dropdown-id">#{{ branch.id }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Top-Center: Status Spotlight Filter Pills -->
+      <div class="hud-center" role="group" aria-label="Filter tables by status">
+        <button
+          type="button"
+          class="filter-chip"
+          [class.active]="activeFilter() === 'all'"
+          (click)="setFilter('all')"
+        >
+          <span>All</span>
+          <span class="chip-count">{{ countAll() }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="filter-chip"
+          [class.active]="activeFilter() === 'available'"
+          (click)="setFilter('available')"
+        >
+          <span class="chip-dot dot-free" aria-hidden="true"></span>
+          <span>Free</span>
+          <span class="chip-count">{{ countFree() }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="filter-chip"
+          [class.active]="activeFilter() === 'occupied'"
+          (click)="setFilter('occupied')"
+        >
+          <span class="chip-dot dot-occupied" aria-hidden="true"></span>
+          <span>Occupied</span>
+          <span class="chip-count">{{ countOccupied() }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="filter-chip"
+          [class.active]="activeFilter() === 'ready'"
+          (click)="setFilter('ready')"
+        >
+          <span class="chip-dot dot-ready" aria-hidden="true"></span>
+          <span>Ready</span>
+          <span class="chip-count">{{ countReady() }}</span>
+        </button>
+      </div>
+
+      <!-- Top-Right: Floating Circular Menu (Edit Layout + Zoom) -->
+      <div class="hud-right">
+        <div class="circle-menu-wrapper">
+          <button
+            type="button"
+            class="btn-circle-menu"
+            [class.menu-open]="isCircleMenuOpen()"
+            [class.edit-mode-ring]="isEditMode()"
+            (click)="toggleCircleMenu($event)"
+            aria-label="Map options and zoom"
+            title="Map options & zoom"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="4" y1="7" x2="20" y2="7"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <line x1="4" y1="17" x2="20" y2="17"></line>
+              <circle cx="8" cy="7" r="2"></circle>
+              <circle cx="15" cy="12" r="2"></circle>
+              <circle cx="10" cy="17" r="2"></circle>
+            </svg>
+          </button>
+
+          <div
+            class="circle-dropdown"
+            [class.open]="isCircleMenuOpen()"
+            (click)="$event.stopPropagation()"
+          >
+            @if (canEditLayout()) {
+              <div class="dropdown-section-label">Floor Layout</div>
+              <button
+                type="button"
+                class="dropdown-action-btn"
+                [class.active]="isEditMode()"
+                (click)="toggleEditMode($event)"
+              >
+                <span class="dropdown-action-left">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                  <span>{{ isEditMode() ? 'Done Editing' : 'Edit Map Layout' }}</span>
+                </span>
+                <span class="dropdown-badge">{{ isEditMode() ? 'ON' : 'OFF' }}</span>
+              </button>
+
+              @if (isEditMode()) {
+                <button
+                  type="button"
+                  class="dropdown-action-btn dropdown-add-table-btn"
+                  [disabled]="isSaving()"
+                  (click)="addNewTable($event)"
+                >
+                  <span class="dropdown-action-left">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>+ New Table</span>
+                  </span>
+                </button>
+              }
+
+              <div class="dropdown-divider"></div>
+            }
+
+            <div class="dropdown-zoom-header">
+              <span class="dropdown-section-label">Map Zoom</span>
+              <span class="zoom-readout">{{ zoomPercent() }}%</span>
+            </div>
+
+            <div class="zoom-stepper-row">
+              <button
+                type="button"
+                class="zoom-step-btn"
+                (click)="adjustZoom(-0.1, $event)"
+                aria-label="Zoom out"
+              >
+                −
+              </button>
+              <button
+                type="button"
+                class="zoom-step-btn zoom-reset-btn"
+                (click)="setZoomPreset(1, $event)"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                class="zoom-step-btn"
+                (click)="adjustZoom(0.1, $event)"
+                aria-label="Zoom in"
+              >
+                +
+              </button>
+            </div>
+
+            <div class="zoom-presets-row">
+              <button
+                type="button"
+                class="zoom-preset-chip"
+                (click)="setZoomPreset(0.75, $event)"
+              >
+                75%
+              </button>
+              <button
+                type="button"
+                class="zoom-preset-chip"
+                (click)="setZoomPreset(1, $event)"
+              >
+                100%
+              </button>
+              <button
+                type="button"
+                class="zoom-preset-chip"
+                (click)="fitZoomToViewport($event)"
+              >
+                Fit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOOR MAP STAGE -->
+    <div class="floor-stage" #floorStage>
+      @if (isLoading()) {
+        <div class="floor-status-card">
+          <span>Loading branch floor plan...</span>
+        </div>
+      } @else if (errorMessage()) {
+        <div class="floor-status-card floor-status-card--error">
+          <span>{{ errorMessage() }}</span>
+          @if (activeBranchId()) {
+            <button
+              type="button"
+              class="btn-retry-floor"
+              (click)="loadBranchFloorData(activeBranchId()!)"
+            >
+              Retry
+            </button>
+          }
+        </div>
+      } @else {
+        <div
+          class="floor-canvas"
+          #floorCanvas
+          [class.edit-grid]="isEditMode()"
+          [class.has-filter]="activeFilter() !== 'all'"
+          [style.transform]="'scale(' + zoomLevel() + ')'"
+        >
+          <!-- Spotlight Shadow Overlay -->
+          <div class="map-filter-shade" aria-hidden="true"></div>
+
+          <!-- Edit Mode Banner -->
+          <div class="edit-banner" [class.visible]="isEditMode()">
+            EDIT MODE — Drag tables to reposition (20px grid)
+          </div>
+
+          <!-- Architectural Landmarks -->
+          <div class="arch-zone zone-entrance" aria-hidden="true">MAIN ENTRANCE</div>
+          <div class="arch-zone zone-bar" aria-hidden="true">BAR &amp; SOMMELIER</div>
+          <div class="arch-zone zone-kitchen" aria-hidden="true">KITCHEN PASS</div>
+          <div class="arch-plant arch-plant--top-left" aria-hidden="true">🌿</div>
+          <div class="arch-plant arch-plant--bottom-left" aria-hidden="true">🌿</div>
+          <div class="arch-plant arch-plant--bottom-right" aria-hidden="true">🌿</div>
+
+          <!-- Dynamic Table Nodes -->
+          @for (table of tables(); track table.id || table.number) {
+            @let state = getTableVisualState(table);
+            @let chairs = getChairDistribution(table.capacity);
+            @let matches = matchesActiveFilter(table);
+
+            <div
+              class="table-node"
+              [ngClass]="[
+                getTableSizeClass(table.capacity),
+                'state-' + state
+              ]"
+              [class.selected]="selectedTableNumber() === table.number"
+              [class.edit-draggable]="isEditMode() && canEditLayout()"
+              [class.dragging]="draggingTableNumber() === table.number"
+              [class.filter-highlighted]="activeFilter() !== 'all' && matches"
+              [class.filter-dimmed]="activeFilter() !== 'all' && !matches"
+              [class.my-assigned-table]="isAssignedToCurrentUser(table)"
+              [style.left.px]="table.posX"
+              [style.top.px]="table.posY"
+              (pointerdown)="onTablePointerDown(table, $event)"
+              (click)="onTableClick(table, $event)"
+            >
+              @if (chairs.top.length) {
+                <div class="chairs-top" aria-hidden="true">
+                  @for (c of chairs.top; track c) {
+                    <span class="chair-h"></span>
+                  }
+                </div>
+              }
+              @if (chairs.bottom.length) {
+                <div class="chairs-bottom" aria-hidden="true">
+                  @for (c of chairs.bottom; track c) {
+                    <span class="chair-h"></span>
+                  }
+                </div>
+              }
+              @if (chairs.left.length) {
+                <div class="chairs-left" aria-hidden="true">
+                  @for (c of chairs.left; track c) {
+                    <span class="chair-v"></span>
+                  }
+                </div>
+              }
+              @if (chairs.right.length) {
+                <div class="chairs-right" aria-hidden="true">
+                  @for (c of chairs.right; track c) {
+                    <span class="chair-v"></span>
+                  }
+                </div>
+              }
+
+              <div class="t-top">
+                <span class="t-num">T-{{ table.number }}</span>
+                <span class="t-cap">{{ table.capacity }}p</span>
+              </div>
+
+              <span class="t-badge">{{ getStateBadgeText(state) }}</span>
+
+              <div class="t-sub">{{ getTableSubtext(table) }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- RIGHT SLIDE-OVER DRAWER -->
+    <div
+      class="drawer-backdrop"
+      [class.open]="selectedTable() !== null && !isEditMode()"
+      (click)="closeDrawer()"
+    ></div>
+
+    <aside
+      class="right-drawer"
+      [class.open]="selectedTable() !== null"
+      aria-label="Table Inspector"
+      (click)="$event.stopPropagation()"
+    >
+      @if (selectedTable(); as table) {
+        @let tableState = getTableVisualState(table);
+
+        <div class="drawer-header">
+          <div class="drawer-title-group">
+            <h2>
+              <span>Table #{{ table.number }}</span>
+              <span class="cap-badge">{{ table.capacity }} Guests</span>
+            </h2>
+            <p class="drawer-subtitle">{{ getStateReadableLabel(tableState) }}</p>
+          </div>
+          <button
+            type="button"
+            class="btn-close-drawer"
+            (click)="closeDrawer()"
+            aria-label="Close panel"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="drawer-body">
+          <!-- EDIT LAYOUT FORM (Only for Admin & Manager when Edit Mode is active) -->
+          @if (isEditMode() && canEditLayout()) {
+            <div class="info-card">
+              <p class="section-label">Edit Table Geometry</p>
+              <div class="edit-grid-fields">
+                <div class="field-box">
+                  <label for="edit-table-num">Table Number</label>
+                  <input
+                    id="edit-table-num"
+                    type="number"
+                    min="1"
+                    max="99"
+                    [ngModel]="editNumber()"
+                    (ngModelChange)="editNumber.set($event)"
+                  />
+                </div>
+                <div class="field-box">
+                  <label for="edit-table-cap">Capacity (Seats)</label>
+                  <select
+                    id="edit-table-cap"
+                    [ngModel]="editCapacity()"
+                    (ngModelChange)="editCapacity.set($event)"
+                  >
+                    <option [ngValue]="2">2 Guests</option>
+                    <option [ngValue]="4">4 Guests</option>
+                    <option [ngValue]="6">6 Guests</option>
+                    <option [ngValue]="8">8 Guests</option>
+                    <option [ngValue]="10">10 Guests</option>
+                  </select>
+                </div>
+                <div class="field-box">
+                  <label for="edit-table-x">Pos X (px)</label>
+                  <input
+                    id="edit-table-x"
+                    type="number"
+                    step="20"
+                    min="0"
+                    [ngModel]="editPosX()"
+                    (ngModelChange)="editPosX.set($event)"
+                  />
+                </div>
+                <div class="field-box">
+                  <label for="edit-table-y">Pos Y (px)</label>
+                  <input
+                    id="edit-table-y"
+                    type="number"
+                    step="20"
+                    min="0"
+                    [ngModel]="editPosY()"
+                    (ngModelChange)="editPosY.set($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="edit-actions-stack">
+                <button
+                  type="button"
+                  class="btn-action btn-primary-green"
+                  [disabled]="isSaving()"
+                  (click)="saveTableEdits()"
+                >
+                  Save Table Layout
+                </button>
+                <button
+                  type="button"
+                  class="btn-action btn-danger-outline"
+                  [disabled]="isSaving() || !table.available"
+                  (click)="deleteSelectedTable()"
+                >
+                  {{ table.available ? 'Delete Table' : 'Cannot Delete Occupied Table' }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            <!-- OPERATIONAL TABLE SESSION CARD -->
+            @if (table.available) {
+              <div class="info-card">
+                <p class="section-label">Current Status</p>
+                <div class="info-row">
+                  <span class="lbl">Availability</span>
+                  <span class="val val-free">Ready to Seat Guests</span>
+                </div>
+                <div class="info-row">
+                  <span class="lbl">Assigned Waiter</span>
+                  <span class="val">— Unassigned —</span>
+                </div>
+                @if (isWaiter()) {
+                  <div class="role-readonly-banner">
+                    Read-only view — Only Host, Manager, or Admin can open unassigned tables.
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="info-card">
+                <p class="section-label">Active Table Session</p>
+                <div class="info-row">
+                  <span class="lbl">Assigned Waiter</span>
+                  <span class="val">{{ getWaiterDisplayName(table) }}</span>
+                </div>
+                @if (selectedTableActiveOrder(); as activeOrd) {
+                  <div class="info-row">
+                    <span class="lbl">Active Ticket</span>
+                    <span class="val">#{{ activeOrd.id }} ({{ activeOrd.status }})</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="lbl">Current Balance</span>
+                    <span class="val">${{ activeOrd.finalTotal | number:'1.2-2' }}</span>
+                  </div>
+                }
+
+                @if (canActOnSelectedTable()) {
+                  @if (isWaiter() || isHost() || isManager() || isAdmin()) {
+                    <button
+                      type="button"
+                      class="btn-action btn-primary-green btn-take-order"
+                      (click)="navigateToCreateOrder(table.number)"
+                    >
+                      + New Order for Table #{{ table.number }}
+                    </button>
+                  }
+
+                  <p class="section-label section-label--spaced">Floor &amp; Kitchen State</p>
+                  <div class="state-grid">
+                    <button
+                      type="button"
+                      class="state-pill-btn"
+                      [class.active]="tableState === 'occupied'"
+                      (click)="setTableFloorState('occupied')"
+                    >
+                      Seated
+                    </button>
+                    <button
+                      type="button"
+                      class="state-pill-btn"
+                      [class.active]="tableState === 'preparing'"
+                      (click)="setTableFloorState('preparing')"
+                    >
+                      In Kitchen
+                    </button>
+                    <button
+                      type="button"
+                      class="state-pill-btn"
+                      [class.active]="tableState === 'ready'"
+                      (click)="setTableFloorState('ready')"
+                    >
+                      Order Ready
+                    </button>
+                    <button
+                      type="button"
+                      class="state-pill-btn"
+                      [class.active]="tableState === 'served'"
+                      (click)="setTableFloorState('served')"
+                    >
+                      Served
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="btn-action btn-danger-outline btn-free-table"
+                    [disabled]="isSaving()"
+                    (click)="freeSelectedTable()"
+                  >
+                    Free &amp; Close Table
+                  </button>
+                } @else {
+                  <div class="role-readonly-banner">
+                    Read-only view — You can only perform actions on tables assigned to your name.
+                  </div>
+                }
+              </div>
+            }
+          }
+
+          <!-- SUMMARIZED ORDER HISTORY SECTION -->
+          <div>
+            <p class="section-label">Recent Order History (Click to view ticket)</p>
+            @if (selectedTableOrders().length === 0) {
+              <div class="empty-orders-card">
+                No orders recorded for Table #{{ table.number }} yet.
+              </div>
+            } @else {
+              <div class="order-history-list">
+                @for (ord of selectedTableOrders(); track ord.id) {
+                  <div
+                    class="order-card"
+                    (click)="openTicketModal(ord, $event)"
+                    role="button"
+                    tabindex="0"
+                  >
+                    <div class="order-card-top">
+                      <span class="order-id">#{{ ord.id }}</span>
+                      <span
+                        class="order-status-pill"
+                        [ngClass]="'pill-' + (ord.status || '').toLowerCase()"
+                      >
+                        {{ ord.status }}
+                      </span>
+                    </div>
+                    <div class="order-card-meta">
+                      <span>{{ formatOrderTimestamp(ord.createdAt) }}</span>
+                      <span>•</span>
+                      <span>Waiter: {{ ord.waiterFirstName }} {{ ord.waiterLastName }}</span>
+                    </div>
+                    <div class="order-card-items-preview">
+                      {{ getOrderItemsPreview(ord) }}
+                    </div>
+                    <div class="order-card-bottom">
+                      <span class="view-ticket-hint">View full ticket →</span>
+                      <span class="order-total">${{ ord.finalTotal | number:'1.2-2' }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- STICKY BOTTOM FOOTER: iOS 26 Morphing "Open Table" Button -->
+        @if (table.available && !isEditMode() && canOpenTables()) {
+          <div class="drawer-footer">
+            <div
+              class="open-table-morph-shell"
+              [class.open]="isWaiterSelectOpen()"
+              (click)="$event.stopPropagation()"
+            >
+              <div class="morph-select-body">
+                <div class="upward-select-header">
+                  <span>Assign Waiter to Open Table</span>
+                  <span>Active Load</span>
+                </div>
+                <div class="waiter-list">
+                  @for (opt of assignableWaiterOptions(); track opt.id + '-' + opt.isSelf) {
+                    <button
+                      type="button"
+                      class="waiter-option"
+                      [class.waiter-option--self]="opt.isSelf"
+                      [disabled]="isSaving()"
+                      (click)="openTableWithWaiter(opt, $event)"
+                    >
+                      <div class="waiter-option-left">
+                        <span class="waiter-name">
+                          {{ opt.fullName }}{{ opt.isSelf ? ' (Self-assign)' : '' }}
+                        </span>
+                        <span class="waiter-role">{{ opt.roleLabel }}</span>
+                      </div>
+                      <span class="serving-pill">serving {{ opt.servingCount }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="btn-open-table-trigger"
+                (click)="toggleWaiterSelect($event)"
+              >
+                <span>Open Table #{{ table.number }}</span>
+                <span class="chevron-up" aria-hidden="true">▲</span>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </aside>
+  </div>
+
+  <!-- FULL TICKET DETAIL MODAL -->
+  <div
+    class="ticket-backdrop"
+    [class.open]="selectedTicketOrder() !== null"
+    (click)="closeTicketModal()"
+  >
+    @if (selectedTicketOrder(); as ticket) {
+      <div class="ticket-paper" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          class="btn-close-ticket"
+          (click)="closeTicketModal()"
+          aria-label="Close ticket"
+        >
+          ✕
+        </button>
+
+        <div class="ticket-header">
+          <div class="ticket-brand">CIBUS</div>
+          <div class="ticket-branch">
+            {{ ticket.branchName || activeBranchName() }} • Table #{{ ticket.tableNumber }}
+          </div>
+        </div>
+
+        <div class="ticket-meta-grid">
+          <div>
+            <span class="lbl">Ticket ID</span>
+            <span class="val">#{{ ticket.id }}</span>
+          </div>
+          <div>
+            <span class="lbl">Status</span>
+            <span class="val">{{ ticket.status }}</span>
+          </div>
+          <div>
+            <span class="lbl">Opened At</span>
+            <span class="val">{{ formatOrderTimestamp(ticket.createdAt) }}</span>
+          </div>
+          <div>
+            <span class="lbl">Closed At</span>
+            <span class="val">{{ formatOrderTimestamp(ticket.closedAt) }}</span>
+          </div>
+          <div>
+            <span class="lbl">Served By</span>
+            <span class="val">{{ ticket.waiterFirstName }} {{ ticket.waiterLastName }}</span>
+          </div>
+          <div>
+            <span class="lbl">Remaining</span>
+            <span class="val">${{ (ticket.remainingAmount ?? 0) | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <hr class="ticket-divider" />
+
+        <div class="ticket-items">
+          @if (!ticket.items || ticket.items.length === 0) {
+            <div class="ticket-empty-items">No line items in this ticket.</div>
+          } @else {
+            @for (item of ticket.items; track item.productId + '-' + item.productName) {
+              <div class="ticket-item">
+                <div class="ticket-item-left">
+                  <div class="ticket-item-name">
+                    {{ item.quantity }}x {{ item.productName }}
+                  </div>
+                  @if (item.observation) {
+                    <div class="ticket-item-obs">"{{ item.observation }}"</div>
+                  }
+                  <div class="ticket-item-unit">
+                    ${{ item.unitPrice | number:'1.2-2' }} each
+                  </div>
+                </div>
+                <div class="ticket-item-subtotal">
+                  ${{ item.subtotal | number:'1.2-2' }}
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        <div class="ticket-totals">
+          <div class="ticket-total-row">
+            <span>Subtotal</span>
+            <span>${{ ticket.subtotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="ticket-total-row">
+            <span>Discount</span>
+            <span>
+              {{ ticket.discount > 0 ? '-$' + (ticket.discount | number:'1.2-2') : '$0.00' }}
+            </span>
+          </div>
+          <div class="ticket-total-row final">
+            <span>TOTAL</span>
+            <span>${{ ticket.finalTotal | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="ticket-footer-msg">THANK YOU FOR DINING WITH CIBUS</div>
+      </div>
+    }
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" [class.show]="toastMessage() !== null" role="status" aria-live="polite">
+    {{ toastMessage() }}
+  </div>
+</div>
