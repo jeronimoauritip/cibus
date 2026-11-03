@@ -5,6 +5,7 @@ import com.jll.cibus.branchproduct.dto.BranchProductResponseDTO;
 import com.jll.cibus.branchproduct.dto.BranchProductUpdateDTO;
 import com.jll.cibus.branchproduct.entity.BranchProductEntity;
 import com.jll.cibus.common.model.IMapper;
+import com.jll.cibus.product.mapper.ProductMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -12,17 +13,18 @@ import org.springframework.stereotype.Component;
 public class BranchProductMapper implements IMapper<BranchProductEntity, BranchProductRequestDTO, BranchProductResponseDTO> {
 
     private final ModelMapper modelMapper;
+    private final ProductMapper productMapper;
 
-    public BranchProductMapper(ModelMapper modelMapper) {
+    public BranchProductMapper(ModelMapper modelMapper, ProductMapper productMapper) {
         this.modelMapper = modelMapper;
+        this.productMapper = productMapper;
     }
 
     public BranchProductResponseDTO toDTO (BranchProductEntity entity){
         BranchProductResponseDTO dto = modelMapper.map(entity, BranchProductResponseDTO.class);
         dto.setBranchId(entity.getBranch().getId());
         dto.setBranchName(entity.getBranch().getName());
-        dto.setProductId(entity.getProduct().getId());
-        dto.setProductName(entity.getProduct().getName());
+        dto.setProduct(productMapper.toDTO(entity.getProduct()));
         return dto;
     }
 
