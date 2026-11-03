@@ -14,6 +14,7 @@ import { ProductListComponent } from './components/products/pages/product-list-c
 import { ProductDetailComponent } from './components/products/pages/product-detail-component/product-detail-component';
 import { AdminPanelComponent } from './components/admin/pages/admin-panel-component/admin-panel-component';
 import { OrderCreationComponent } from './components/orders/pages/order-creation-component/order-creation-component';
+import { MenuComponent } from './components/menu/pages/menu-component/menu-component';
 
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
@@ -42,7 +43,8 @@ export const routes: Routes = [
             { path: 'employees/new', component: UserCreate },
             { path: 'employees/:id', component: UserDetail },
             { path: 'menu', component: ProductListComponent },
-            { path: 'menu/:id', component: ProductDetailComponent }
+            { path: 'menu/:id', component: ProductDetailComponent },
+            { path: 'menu/branch/:branchId', component:  MenuComponent}
         ]
     },
     {
