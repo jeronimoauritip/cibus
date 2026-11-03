@@ -2,155 +2,202 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { RoleModel } from '../../Roles/role-model';
+import { User } from '../../components/users/user.model';
 import { AuthUser } from '../models/auth-user';
 import { LoginCredentials } from '../models/login-credentials';
 import { AuthResponse } from '../models/auth-response';
-import { Observable, firstValueFrom, throwError } from 'rxjs';
-import { finalize, share, tap } from 'rxjs/operators';
+import { EMPTY, Observable, firstValueFrom, of, throwError } from 'rxjs';
+import { catchError, finalize, map, share, tap } from 'rxjs/operators';
 
-const REFRESH_KEY = 'refresh_token'
-const LEGACY_USER_KEY = 'auth_user'
+const REFRESH_KEY = 'refresh_token';
+const LEGACY_USER_KEY = 'auth_user';
 
 function decodeJwt(token: string): { sub?: string; authorities?: string[]; exp?: number } | null {
     try {
-        const part = token.split('.')[1]
-        if (!part) return null
-        const b64 = part.replace(/-/g, '+').replace(/_/g, '/')
-        return JSON.parse(atob(b64.padEnd(Math.ceil(b64.length / 4) * 4, '=')))
+        const part = token.split('.')[1];
+        if (!part) return null;
+        const b64 = part.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(atob(b64.padEnd(Math.ceil(b64.length / 4) * 4, '=')));
     } catch {
-        return null
+        return null;
     }
 }
 
-@Injectable({providedIn:'root'})
-export class AuthService {
-    private readonly http= inject(HttpClient)
-    private readonly router= inject(Router)
+function normalizeRoleName(raw: string): RoleModel['role'] {
+    const clean = raw.replace(/^ROLE_/i, '');
+    return (clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase()) as RoleModel['role'];
+}
 
-    private readonly _user= signal<AuthUser | null>(null)
-    private readonly _loading= signal (false)
-    private readonly _error= signal<string | null>(null)
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+    private readonly http = inject(HttpClient);
+    private readonly router = inject(Router);
+
+    private readonly _user = signal<AuthUser | null>(null);
+    private readonly _loading = signal(false);
+    private readonly _error = signal<string | null>(null);
     private readonly _accessToken = signal<string | null>(null);
     readonly accessToken = this._accessToken.asReadonly();
     private readonly _refreshToken = signal<string | null>(null);
-    private refreshInFlight$: Observable<AuthResponse> | null = null
+    private refreshInFlight$: Observable<AuthResponse> | null = null;
 
+    readonly user = this._user.asReadonly();
+    readonly loading = this._loading.asReadonly();
+    readonly error = this._error.asReadonly();
 
-    readonly user = this._user.asReadonly()
-    readonly loading = this._loading.asReadonly()
-    readonly error= this._error.asReadonly()
-    
-    readonly isLogged = computed(()=> this._user()!==null)
-    readonly role= computed(() => this._user()?.role.role ?? null)
-    readonly isAdmin = computed(()=>this.role()==='Admin')
-   readonly isManager = computed(()=>this.role()==='Manager'|| this.role()==='Admin')
-    
+    readonly isLogged = computed(() => this._user() !== null);
+    readonly role = computed(() => this._user()?.role.role ?? null);
+    readonly isAdmin = computed(() => this.role() === 'Admin');
+    readonly isManager = computed(() => this.role() === 'Manager' || this.role() === 'Admin');
+    readonly isHost = computed(() => this.role() === 'Host');
+    readonly isWaiter = computed(() => this.role() === 'Waiter');
+
     static requiredCredentials(role: RoleModel): boolean {
-     return role.role === 'Manager' || role.role === 'Admin'
+        return role.role === 'Manager' || role.role === 'Admin';
     }
-    constructor()
-    {
-        localStorage.removeItem(LEGACY_USER_KEY)
-        this._refreshToken.set(localStorage.getItem(REFRESH_KEY))
+
+    constructor() {
+        localStorage.removeItem(LEGACY_USER_KEY);
+        this._refreshToken.set(localStorage.getItem(REFRESH_KEY));
     }
 
     private setSession(response: AuthResponse): boolean {
-        const token = response.AccessToken ?? response.accessToken ?? ''
-        const payload = token ? decodeJwt(token) : null
-        const roleName = (payload?.authorities ?? []).find(a => a.startsWith('ROLE_'))?.replace('ROLE_', '')
-        if (!payload || !roleName) {
-            this.clearSession()
-            return false
+        const token = response.AccessToken ?? response.accessToken ?? '';
+        const payload = token ? decodeJwt(token) : null;
+        const roleAuthority = (payload?.authorities ?? []).find(a => a.startsWith('ROLE_'));
+        if (!payload || !roleAuthority) {
+            this.clearSession();
+            return false;
         }
 
-        this._accessToken.set(token)
+        this._accessToken.set(token);
         if (response.refreshToken) {
-            this._refreshToken.set(response.refreshToken)
-            localStorage.setItem(REFRESH_KEY, response.refreshToken)
+            this._refreshToken.set(response.refreshToken);
+            localStorage.setItem(REFRESH_KEY, response.refreshToken);
         }
-        const role = (roleName.charAt(0) + roleName.slice(1).toLowerCase()) as RoleModel['role']
-        this._user.set({ email: payload.sub ?? '', role: { role } } as AuthUser)
-        return true
+        const role = normalizeRoleName(roleAuthority);
+        const current = this._user();
+        this._user.set({
+            ...(current ?? {}),
+            email: payload.sub ?? current?.email ?? '',
+            role: { role }
+        } as AuthUser);
+        return true;
+    }
+
+    ensureProfileLoaded(): Observable<AuthUser | null> {
+        const current = this._user();
+        if (!this._accessToken()) {
+            return of(current);
+        }
+        if (current && typeof current.id === 'number' && current.id > 0) {
+            return of(current);
+        }
+        return this.http.get<User>('/api/auth').pipe(
+            map(profile => {
+                const role = profile.role ? normalizeRoleName(profile.role) : (current?.role.role ?? 'Waiter');
+                const hydrated: AuthUser = {
+                    ...profile,
+                    role: { role }
+                };
+                this._user.set(hydrated);
+                return hydrated;
+            }),
+            catchError(() => of(this._user()))
+        );
+    }
+
+    private hydrateProfileInBackground(): void {
+        this.http.get<User>('/api/auth').pipe(
+            catchError(() => EMPTY)
+        ).subscribe(profile => {
+            const current = this._user();
+            if (!current) return;
+            const role = profile.role ? normalizeRoleName(profile.role) : current.role.role;
+            this._user.set({
+                ...profile,
+                role: { role }
+            });
+        });
     }
 
     private onAuthSuccess(response: AuthResponse): void {
-        this._loading.set(false)
+        this._loading.set(false);
         if (this.setSession(response)) {
-            this.router.navigate([this.isAdmin() ? '/admin' : '/'])
-
+            this.hydrateProfileInBackground();
+            this.router.navigate([this.isAdmin() ? '/admin' : '/tables']);
         } else {
-            this._error.set('Invalid server response')
+            this._error.set('Invalid server response');
         }
     }
 
-    loginWithPin( pin:string):void{
+    loginWithPin(pin: string): void {
+        this._loading.set(true);
+        this._error.set(null);
 
-         this._loading.set(true) 
-        this._error.set(null) 
-
-          this.http.post<AuthResponse>('/api/auth',{ username: pin, password: pin }).subscribe({
-            next:response=> this.onAuthSuccess(response),
-            error:()=>{
-                this._error.set('WRONG PIN')
-                this._loading.set(false)
+        this.http.post<AuthResponse>('/api/auth', { username: pin, password: pin }).subscribe({
+            next: response => this.onAuthSuccess(response),
+            error: () => {
+                this._error.set('WRONG PIN');
+                this._loading.set(false);
             }
-        })
-
-        
+        });
     }
+
     loginWithCredentials(credentials: LoginCredentials): void {
-    this._loading.set(true)
-    this._error.set(null)
-    this.http.post<AuthResponse>('/api/auth', {
-        username: credentials.email,
-        email: credentials.email,
-        password: credentials.password
-    }).subscribe({
-        next: response => this.onAuthSuccess(response),
-
-        error: () => {
-            this._error.set('Wrong email or password');
-            this._loading.set(false);
-        }
-    })
+        this._loading.set(true);
+        this._error.set(null);
+        this.http.post<AuthResponse>('/api/auth', {
+            username: credentials.email,
+            email: credentials.email,
+            password: credentials.password
+        }).subscribe({
+            next: response => this.onAuthSuccess(response),
+            error: () => {
+                this._error.set('Wrong email or password');
+                this._loading.set(false);
+            }
+        });
     }
-        refresh(): Observable<AuthResponse> {
-        if (this.refreshInFlight$) return this.refreshInFlight$
-        const refreshToken = this._refreshToken()
-        if (!refreshToken) return throwError(() => new Error('No refresh token'))
+
+    refresh(): Observable<AuthResponse> {
+        if (this.refreshInFlight$) return this.refreshInFlight$;
+        const refreshToken = this._refreshToken();
+        if (!refreshToken) return throwError(() => new Error('No refresh token'));
         this.refreshInFlight$ = this.http.post<AuthResponse>('/api/auth/refresh', { refreshToken }).pipe(
             tap(response => {
-                if (!this.setSession(response)) throw new Error('Invalid refresh response')
+                if (!this.setSession(response)) throw new Error('Invalid refresh response');
+                this.hydrateProfileInBackground();
             }),
-            finalize(() => { this.refreshInFlight$ = null }),
+            finalize(() => { this.refreshInFlight$ = null; }),
             share()
-        )
-        return this.refreshInFlight$
+        );
+        return this.refreshInFlight$;
     }
 
     restoreSession(): Promise<void> {
-        if (!this._refreshToken()) return Promise.resolve()
+        if (!this._refreshToken()) return Promise.resolve();
         return firstValueFrom(this.refresh()).then(
             () => undefined,
             () => this.clearSession()
-        )
+        );
     }
-        clearError(): void {
-        this._error.set(null)
+
+    clearError(): void {
+        this._error.set(null);
     }
 
     private clearSession(): void {
-        this._user.set(null)
-        this._accessToken.set(null)
-        this._refreshToken.set(null)
-        localStorage.removeItem(REFRESH_KEY)
-        localStorage.removeItem(LEGACY_USER_KEY)
+        this._user.set(null);
+        this._accessToken.set(null);
+        this._refreshToken.set(null);
+        localStorage.removeItem(REFRESH_KEY);
+        localStorage.removeItem(LEGACY_USER_KEY);
     }
 
     logout(): void {
-        if (!this._accessToken() && !this._refreshToken()) return
-        this.clearSession()
-        this.router.navigate(['/login'])
+        if (!this._accessToken() && !this._refreshToken()) return;
+        this.clearSession();
+        this.router.navigate(['/login']);
     }
-
 }
