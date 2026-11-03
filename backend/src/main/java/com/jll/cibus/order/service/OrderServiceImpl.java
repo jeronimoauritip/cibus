@@ -4,6 +4,7 @@ import com.jll.cibus.auth.AuthService;
 import com.jll.cibus.branch.entity.BranchEntity;
 import com.jll.cibus.branch.repository.BranchRepository;
 import com.jll.cibus.common.exception.BusinessException;
+import com.jll.cibus.common.exception.ForbiddenOperationException;
 import com.jll.cibus.common.exception.ResourceNotFoundException;
 import com.jll.cibus.order.dto.OrderStatusDTO;
 import com.jll.cibus.order.dto.OrderUpdateDTO;
@@ -142,11 +143,16 @@ public class OrderServiceImpl implements OrderService {
                 .findByUser_Id(dto.getWaiterId())
                 .orElseThrow(() -> new BusinessException("The user with id " + dto.getWaiterId() + " has no credentials"));
 
-        boolean isWaiter = waiterCredentials.getUser() != null
-                && waiterCredentials.getUser().getRole().getRole() == Roles.WAITER;
+        Roles role = waiterCredentials.getUser() != null && waiterCredentials.getUser().getRole() != null
+                ? waiterCredentials.getUser().getRole().getRole()
+                : null;
+        boolean canServeTable = role == Roles.WAITER
+                || role == Roles.HOST
+                || role == Roles.MANAGER
+                || role == Roles.ADMIN;
 
-        if (!isWaiter)
-            throw new BusinessException("The user with id " + dto.getWaiterId() + " is not a waiter");
+        if (!canServeTable)
+            throw new BusinessException("The user with id " + dto.getWaiterId() + " cannot serve tables");
 
         if (!tableRepository.existsByBranchIdAndNumber(branchId, dto.getTableNumber()))
             throw new ResourceNotFoundException("Table number ", dto.getTableNumber());
@@ -288,6 +294,16 @@ public class OrderServiceImpl implements OrderService {
     }
     public OrderResponseDTO changeStatusInBranch(Long branchId, Long orderId, String newStatus) {
         assertOrderInBranch(branchId, orderId);
+        OrderEntity order = getEntity(orderId);
+        UserEntity authenticatedUser = authService.getAuthenticatedUser();
+        if (authenticatedUser.getRole().getRole() == Roles.WAITER) {
+            Long assignedWaiterId = order.getTable() != null && order.getTable().getWaiter() != null
+                    ? order.getTable().getWaiter().getId()
+                    : (order.getWaiter() != null ? order.getWaiter().getId() : null);
+            if (assignedWaiterId == null || !assignedWaiterId.equals(authenticatedUser.getId())) {
+                throw new ForbiddenOperationException("Waiters can only perform actions on tables assigned to themselves");
+            }
+        }
         return changeStatus(orderId, newStatus);
     }
 

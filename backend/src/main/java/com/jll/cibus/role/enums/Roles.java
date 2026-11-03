@@ -36,8 +36,8 @@ public enum Roles {
             Permits.PAYMENT_READ
     ),
     HOST(
+            Permits.USER_READ,
             Permits.TABLE_READ,
-            Permits.TABLE_UPDATE,
             Permits.TABLE_OPEN,
             Permits.TABLE_CLOSE,
             Permits.BRANCH_PRODUCT_READ,
@@ -47,10 +47,14 @@ public enum Roles {
             Permits.ORDER_CANCEL,
             Permits.ORDER_CLOSE,
             Permits.ORDER_STATUS_READ,
+            Permits.ORDER_CHANGE_STATUS,
+            Permits.ORDER_STATUS_UPDATE,
             Permits.PAYMENT_READ
     ),
     WAITER(
+            Permits.USER_READ,
             Permits.TABLE_READ,
+            Permits.TABLE_CLOSE,
             Permits.BRANCH_PRODUCT_READ,
             Permits.ORDER_READ,
             Permits.ORDER_CREATE,

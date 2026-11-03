@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserResponseDTO> findAll(Pageable pageable, Long dni, String name, String email, String phoneNumber, Long branchId, Long userRoleId) {
         UserEntity user = authService.getAuthenticatedUser();
-        if (user.getRole().getRole() == Roles.MANAGER) {
+        if (user.getRole().getRole() != Roles.ADMIN && user.getBranch() != null) {
             branchId = user.getBranch().getId();
         }
         Specification<UserEntity> spec = Specification.allOf(

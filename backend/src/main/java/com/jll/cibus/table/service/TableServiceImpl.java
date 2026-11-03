@@ -4,6 +4,7 @@ package com.jll.cibus.table.service;
 import com.jll.cibus.auth.AuthService;
 import com.jll.cibus.branch.repository.BranchRepository;
 import com.jll.cibus.common.exception.BusinessException;
+import com.jll.cibus.common.exception.ForbiddenOperationException;
 import com.jll.cibus.common.exception.ResourceNotFoundException;
 import com.jll.cibus.credential.entity.CredentialsEntity;
 import com.jll.cibus.credential.repository.CredentialsRepository;
@@ -98,9 +99,10 @@ public class TableServiceImpl implements TableService {
 
         if (role != Roles.WAITER
                 && role != Roles.HOST
-                && role != Roles.MANAGER) {
+                && role != Roles.MANAGER
+                && role != Roles.ADMIN) {
             throw new BusinessException(
-                    "The user must have role WAITER, HOST or MANAGER");
+                    "The user must have role WAITER, HOST, MANAGER or ADMIN");
         }
     }
 
@@ -137,6 +139,13 @@ public class TableServiceImpl implements TableService {
         TableEntity table = getTableByBranchIdAndNumber(branchId, tableNumber);
         if (table.getAvailable()) {
             throw new BusinessException("The table is already free");
+        }
+
+        UserEntity authenticatedUser = authService.getAuthenticatedUser();
+        if (authenticatedUser.getRole().getRole() == Roles.WAITER) {
+            if (table.getWaiter() == null || !table.getWaiter().getId().equals(authenticatedUser.getId())) {
+                throw new ForbiddenOperationException("Waiters can only perform actions on tables assigned to themselves");
+            }
         }
 
         table.setAvailable(true);
@@ -194,4 +203,3 @@ public class TableServiceImpl implements TableService {
         tableRepository.delete(table);
     }
 }
-
