@@ -13,24 +13,25 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { AuthService } from '../../../Auth/services/auth-service';
-import { Branch } from '../../branches/models/branch.model';
-import { BranchService } from '../../branches/service/branch-service';
-import { User } from '../../users/user.model';
-import { UserService } from '../../users/user.service';
+import { AuthService } from '../../../../Auth/services/auth-service';
+import { Branch } from '../../../branches/models/branch.model';
+import { BranchService } from '../../../branches/service/branch-service';
+import { User } from '../../../users/user.model';
+import { UserService } from '../../../users/user.service';
+import { TicketModalComponent } from '../../components/ticket-modal/ticket-modal';
 import {
   AssignableWaiterOption,
   BranchTable,
   TableFilterMode,
   TableOrder,
   TableVisualState,
-} from '../models/table.model';
-import { TableService } from '../service/table.service';
+} from '../../models/table.model';
+import { TableService } from '../../service/table.service';
 
 @Component({
   selector: 'app-table-map',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TicketModalComponent],
   templateUrl: './table-map.html',
   styleUrl: './table-map.css',
 })

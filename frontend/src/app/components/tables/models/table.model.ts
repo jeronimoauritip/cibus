@@ -54,3 +54,4 @@ export interface AssignableWaiterOption {
   servingCount: number;
   isSelf: boolean;
 }
+

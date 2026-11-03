@@ -1,0 +1,99 @@
+<div
+  class="ticket-backdrop"
+  [class.open]="ticket() !== null"
+  (click)="closeModal()"
+>
+  @if (ticket(); as t) {
+    <div class="ticket-paper" (click)="$event.stopPropagation()">
+      <button
+        type="button"
+        class="btn-close-ticket"
+        (click)="closeModal()"
+        aria-label="Close ticket"
+      >
+        ✕
+      </button>
+
+      <div class="ticket-header">
+        <div class="ticket-brand">CIBUS</div>
+        <div class="ticket-branch">
+          {{ t.branchName || branchName() }} • Table #{{ t.tableNumber }}
+        </div>
+      </div>
+
+      <div class="ticket-meta-grid">
+        <div>
+          <span class="lbl">Ticket ID</span>
+          <span class="val">#{{ t.id }}</span>
+        </div>
+        <div>
+          <span class="lbl">Status</span>
+          <span class="val">{{ t.status }}</span>
+        </div>
+        <div>
+          <span class="lbl">Opened At</span>
+          <span class="val">{{ formatTimestamp(t.createdAt) }}</span>
+        </div>
+        <div>
+          <span class="lbl">Closed At</span>
+          <span class="val">{{ formatTimestamp(t.closedAt) }}</span>
+        </div>
+        <div>
+          <span class="lbl">Served By</span>
+          <span class="val">{{ t.waiterFirstName }} {{ t.waiterLastName }}</span>
+        </div>
+        <div>
+          <span class="lbl">Remaining</span>
+          <span class="val">${{ (t.remainingAmount ?? 0) | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <hr class="ticket-divider" />
+
+      <div class="ticket-items">
+        @if (!t.items || t.items.length === 0) {
+          <div class="ticket-empty-items">No line items in this ticket.</div>
+        } @else {
+          @for (item of t.items; track item.productId + '-' + item.productName) {
+            <div class="ticket-item">
+              <div class="ticket-item-left">
+                <div class="ticket-item-name">
+                  {{ item.quantity }}x {{ item.productName }}
+                </div>
+                @if (item.observation) {
+                  <div class="ticket-item-obs">"{{ item.observation }}"</div>
+                }
+                <div class="ticket-item-unit">
+                  ${{ item.unitPrice | number:'1.2-2' }} each
+                </div>
+              </div>
+              <div class="ticket-item-subtotal">
+                ${{ item.subtotal | number:'1.2-2' }}
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <div class="ticket-totals">
+        <div class="ticket-total-row">
+          <span>Subtotal</span>
+          <span>${{ t.subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="ticket-total-row">
+          <span>Discount</span>
+          <span>
+            {{ t.discount > 0 ? '-$' + (t.discount | number:'1.2-2') : '$0.00' }}
+          </span>
+        </div>
+        <div class="ticket-total-row final">
+          <span>TOTAL</span>
+          <span>${{ t.finalTotal | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="ticket-footer-msg">THANK YOU FOR DINING WITH CIBUS</div>
+    </div>
+  }
+</div>
+

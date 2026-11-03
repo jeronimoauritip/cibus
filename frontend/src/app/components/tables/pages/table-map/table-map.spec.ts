@@ -27,3 +27,4 @@ describe('TableMapComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
