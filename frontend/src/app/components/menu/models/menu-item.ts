@@ -27,3 +27,8 @@ export interface Page<T> {
   last: boolean;
   empty: boolean;
 }
+
+export interface ProductFilter {
+    name: string;
+    category:string;
+}

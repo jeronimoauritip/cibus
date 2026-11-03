@@ -1,0 +1,7 @@
+<article class="card">
+  <div class="card__category">{{ menuItem().product.categoryName }}</div>
+  <h2 class="card__name">{{ menuItem().product.name }}</h2>
+  @if (menuItem().product.description) {
+    <p class="card__description">{{ menuItem().product.description }}</p>
+  }
+</article>

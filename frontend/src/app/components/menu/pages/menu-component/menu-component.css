@@ -1,0 +1,118 @@
+:host {
+  --header-gradient: linear-gradient(90deg, #205a40, #2d805d);
+  --field-gradient: linear-gradient(100deg, #205a40, #2d805d);
+  position: fixed;
+  inset: 0;
+  display: block;
+  font-family: "Instrument Sans", sans-serif;
+}
+
+.page {
+  position: relative;
+  isolation: isolate;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--cream);
+}
+
+.content {
+  grid-row: 2;
+  align-self: start;
+  width: min(60rem, calc(100% - 2.5rem));
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+.list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar__count {
+  font-size: 0.95rem;
+  color: var(--dark-green);
+  opacity: 0.7;
+}
+
+.toolbar__new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: var(--background-green);
+  color: var(--cream);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.toolbar__new:hover {
+  background: var(--dark-green);
+}
+
+.toolbar__new:focus-visible {
+  outline: 2px solid var(--dark-green);
+  outline-offset: 2px;
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+
+.category__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--dark-green);
+}
+
+.category__name {
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 24px;
+  color: var(--dark-green);
+  margin: 0;
+}
+
+.category__count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cream);
+  background: var(--background-green);
+  border-radius: 999px;
+  padding: 1px 10px;
+}
+
+.category app-menu-item-row-component:nth-of-type(even) {
+  background: color-mix(in srgb, var(--light-cream) 55%, transparent);
+}
+
+.message {
+  font-size: 1.2rem;
+  color: var(--dark-green);
+  opacity: 0.6;
+}
+
+.message.error {
+  color: #991b1b;
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .toolbar__count {
+    display: none;
+  }
+}

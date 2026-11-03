@@ -7,22 +7,22 @@ import { MenuItem, MenuItemRequest, MenuItemUpdate, Page } from '../models/menu-
 export class MenuService {
 
     private readonly http = inject(HttpClient);
-    private readonly apiUrl = '/api/branches/{branchId}/products';
+    
 
-    getAll(): Observable<Page<MenuItem>> {
-        return this.http.get<Page<MenuItem>>(this.apiUrl);
+    getAll(branchId: number): Observable<Page<MenuItem>> {
+        return this.http.get<Page<MenuItem>>(`/api/branches/${branchId}/products`);
     }
 
-    create(request: MenuItemRequest): Observable<MenuItem> {
-        return this.http.post<MenuItem>(this.apiUrl, request);
+    create(branchId: number, request: MenuItemRequest): Observable<MenuItem> {
+        return this.http.post<MenuItem>(`/api/branches/${branchId}/products`, request);
     }
 
-    update(productId: number, dto: MenuItemUpdate): Observable<MenuItem> {
-        return this.http.put<MenuItem>(`${this.apiUrl}/${productId}`, dto);
+    update(branchId: number, productId: number, dto: MenuItemUpdate): Observable<MenuItem> {
+        return this.http.put<MenuItem>(`/api/branches/${branchId}/products/${productId}`, dto);
     }
 
-    delete(productId: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${productId}`);
+    delete(branchId: number, productId: number): Observable<void> {
+        return this.http.delete<void>(`/api/branches/${branchId}/products/${productId}`);
     }
 
 }

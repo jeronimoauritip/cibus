@@ -1,1 +1,36 @@
-<p>menu-component works!</p>
+<app-header-component> Branch Menu </app-header-component>
+<div class="page">
+  <main class="content">
+    <app-menu-item-filter-component [(filter)]="filter">
+      <span class="toolbar__count">{{ filteredMenuItems().length }} items</span>
+      <button type="button" class="toolbar__new" (click)="onAddMenuItem()">
+        <span aria-hidden="true">+</span> Add to menu
+      </button>
+    </app-menu-item-filter-component>
+
+    <div class="list">
+      @if (loading()) {
+        <p class="message">Loading...</p>
+      } @else if (error()) {
+        <p class="message error">Could not load menu items</p>
+      } @else {
+        @for (group of groupedMenuItems(); track group.category) {
+          <section class="category">
+            <header class="category__header">
+              <h2 class="category__name">{{ group.category }}</h2>
+              <span class="category__count">{{ group.items.length }}</span>
+            </header>
+            @for (item of group.items; track item.id) {
+              <app-menu-item-row-component
+                [menuItem]="item"
+                (saveEdit)="onSaveEdit($event)"
+                (delete)="onDelete($event)" />
+            }
+          </section>
+        } @empty {
+          <p class="message">No items found in this branch</p>
+        }
+      }
+    </div>
+  </main>
+</div>
