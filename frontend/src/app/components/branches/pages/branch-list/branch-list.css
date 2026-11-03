@@ -348,6 +348,7 @@
   color: var(--dark-green);
 }
 
+.btn-tables,
 .btn-employees {
   padding: 6px 16px;
   border-radius: 12px;
@@ -356,11 +357,17 @@
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
+  white-space: nowrap;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.btn-employees:hover {
+.btn-tables {
   background-color: var(--dark-green);
+}
+
+.btn-tables:hover,
+.btn-employees:hover {
+  background-color: #17422f;
   transform: translateY(-1px);
 }
 

@@ -14,6 +14,7 @@ import { ProductListComponent } from './components/products/pages/product-list-c
 import { ProductDetailComponent } from './components/products/pages/product-detail-component/product-detail-component';
 import { AdminPanelComponent } from './components/admin/pages/admin-panel-component/admin-panel-component';
 import { OrderCreationComponent } from './components/orders/pages/order-creation-component/order-creation-component';
+import { TableMapComponent } from './components/tables/pages/table-map/table-map';
 
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
@@ -25,6 +26,16 @@ export const routes: Routes = [
     { path: 'branches/new', component: BranchComponent },
     { path: 'branches/employees', component: BranchEmployeesComponent },
     { path: 'branches/:branchId/employees', component: BranchEmployeesComponent },
+    {
+        path: 'branches/:branchId/tables',
+        component: TableMapComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'tables',
+        component: TableMapComponent,
+        canActivate: [authGuard]
+    },
     { path: 'products', component: ProductListComponent },
     { path: 'products/new', component: ProductsComponent },
     { path: 'list-of-products', component: ProductListComponent },
@@ -38,6 +49,8 @@ export const routes: Routes = [
             { path: 'branches/new', component: BranchComponent },
             { path: 'branches/employees', component: BranchEmployeesComponent },
             { path: 'branches/:branchId/employees', component: BranchEmployeesComponent },
+            { path: 'branches/:branchId/tables', component: TableMapComponent },
+            { path: 'tables', component: TableMapComponent },
             { path: 'employees', component: UserList },
             { path: 'employees/new', component: UserCreate },
             { path: 'employees/:id', component: UserDetail },
@@ -49,7 +62,7 @@ export const routes: Routes = [
         path: 'tables/:tableNumber/order',
         component: OrderCreationComponent,
         canActivate: [authGuard, roleGuard],
-        data: { roles: ['Waiter'] }
+        data: { roles: ['Waiter', 'Host', 'Manager', 'Admin'] }
     },
     { path: '**', redirectTo: '' }
 ];

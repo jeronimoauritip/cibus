@@ -110,8 +110,16 @@
                 <p class="branch-detail"><span>Number:</span> {{ branch.number }}</p>
               </div>
 
-              <!-- Badge ID & Employees link -->
+              <!-- Badge ID, Table map & Employees links -->
               @if (branch.id) {
+                <a
+                  class="btn-tables"
+                  [routerLink]="['/branches', branch.id, 'tables']"
+                  title="Open branch table map"
+                  aria-label="Open branch table map"
+                >
+                  Table map
+                </a>
                 <a
                   class="btn-employees"
                   [routerLink]="['/branches', branch.id, 'employees']"
