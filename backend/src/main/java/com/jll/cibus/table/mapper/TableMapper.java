@@ -16,16 +16,27 @@ public class TableMapper implements IMapper<TableEntity,TableCreateDTO,TableResp
     private final ModelMapper modelMapper;
 
     public TableEntity toEntity(TableUpdateDTO dto) {
-        return modelMapper.map(dto, TableEntity.class);
+        TableEntity entity = modelMapper.map(dto, TableEntity.class);
+        if (dto.getShape() != null && !dto.getShape().isBlank()) {
+            entity.setShape(dto.getShape().toUpperCase());
+        }
+        return entity;
     }
 
     public TableEntity toEntity(TableCreateDTO dto) {
-        return modelMapper.map(dto, TableEntity.class);
+        TableEntity entity = modelMapper.map(dto, TableEntity.class);
+        if (dto.getShape() != null && !dto.getShape().isBlank()) {
+            entity.setShape(dto.getShape().toUpperCase());
+        } else {
+            entity.setShape("ROUND");
+        }
+        return entity;
     }
 
     public TableResponseDTO toDTO(TableEntity entity) {
         TableResponseDTO dto = modelMapper.map(entity, TableResponseDTO.class);
         dto.setBranchId(entity.getBranch().getId());
+        dto.setShape(entity.getShape() != null ? entity.getShape() : "ROUND");
         if(entity.getWaiter()!= null){
             dto.setWaiterId(entity.getWaiter().getId());
         }
