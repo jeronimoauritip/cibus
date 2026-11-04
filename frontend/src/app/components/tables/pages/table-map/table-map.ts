@@ -1040,10 +1040,6 @@ export class TableMapComponent implements OnInit {
       });
   }
 
-  navigateToCreateOrder(tableNumber: number): void {
-    this.router.navigate(['/tables', tableNumber, 'order']);
-  }
-
   // ── Ticket Modal & Helpers ───────────────────────────────
 
   openTicketModal(order: TableOrder, event?: MouseEvent): void {

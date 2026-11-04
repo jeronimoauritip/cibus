@@ -345,10 +345,10 @@
 }
 
 .btn-hud-delete.btn-hud-delete--active {
-  background: #dc2626 !important;
+  background: #900c3f !important;
   color: #fff !important;
-  border-color: #dc2626 !important;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.35) !important;
+  border-color: #900c3f !important;
+  box-shadow: 0 0 0 3px rgba(144, 12, 63, 0.35) !important;
 }
 
 .btn-hud-delete.btn-hud-disabled {
@@ -1083,10 +1083,12 @@
   border: 2px solid var(--dark-green);
   background: var(--dark-green);
   color: var(--cream);
-  font: 800 16px inherit;
+  font: 900 18px inherit;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 22px;
   cursor: pointer;
   box-shadow: 0 10px 26px rgba(23, 66, 47, 0.26);
@@ -1099,73 +1101,60 @@
   box-shadow: 0 12px 30px rgba(23, 66, 47, 0.35);
 }
 
-.pill-arrow-right {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(231, 219, 191, 0.18);
-  font-size: 14px;
-  transition: transform 0.2s ease;
+.btn-order-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
-.btn-order-pill-trigger:hover .pill-arrow-right {
-  transform: translateX(3px);
-}
-
-/* DELETE MODE CANVAS & TABLE NODES */
+/* DELETE MODE CANVAS & TABLE NODES (BORGOÑA / BORRAVINO THEME) */
 .floor-canvas.delete-mode .table-node {
-  background-color: rgba(254, 242, 242, 0.96) !important;
-  color: #991b1b !important;
-  border-color: #ef4444 !important;
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.24) !important;
+  background-color: rgba(254, 245, 247, 0.96) !important;
+  color: #900c3f !important;
+  border-color: #900c3f !important;
+  box-shadow: 0 4px 16px rgba(144, 12, 63, 0.22) !important;
   cursor: pointer !important;
   animation: none !important;
 }
 
 .floor-canvas.delete-mode .table-node:hover {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.38) !important;
-  border-color: #dc2626 !important;
+  box-shadow: 0 8px 24px rgba(144, 12, 63, 0.35) !important;
+  border-color: #900c3f !important;
 }
 
 .floor-canvas.delete-mode .table-node .chair-h,
 .floor-canvas.delete-mode .table-node .chair-v {
-  background: #f87171 !important;
-  opacity: 0.8 !important;
+  background: #900c3f !important;
+  opacity: 0.75 !important;
 }
 
 .floor-canvas.delete-mode .table-node .t-top {
-  color: #991b1b !important;
+  color: #900c3f !important;
 }
 
 .floor-canvas.delete-mode .table-node .t-num {
-  color: #991b1b !important;
+  color: #900c3f !important;
 }
 
 .floor-canvas.delete-mode .table-node .t-cap {
-  color: #b91c1c !important;
+  color: #900c3f !important;
+  opacity: 0.85;
 }
 
 .tap-to-delete-tag {
-  margin-top: 4px;
-  padding: 3px 8px;
-  border-radius: 999px;
+  margin-top: 5px;
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
-  animation: pulse-delete-tag 1.6s ease-in-out infinite;
-}
-
-@keyframes pulse-delete-tag {
-  0%, 100% { opacity: 0.9; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.04); }
+  color: #900c3f;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  text-align: center;
+  pointer-events: none;
 }
 
 /* DELETE CONFIRMATION MODAL */
@@ -1186,14 +1175,14 @@
   width: 100%;
   max-width: 440px;
   background: var(--cream);
-  border: 2px solid #ef4444;
+  border: 2px solid #900c3f;
   border-radius: 28px;
   padding: 30px 26px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 24px 50px rgba(18, 52, 37, 0.35), 0 10px 20px rgba(220, 38, 38, 0.15);
+  box-shadow: 0 24px 50px rgba(18, 52, 37, 0.35), 0 10px 20px rgba(144, 12, 63, 0.15);
   animation: scaleInCard 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1201,8 +1190,8 @@
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(144, 12, 63, 0.1);
+  color: #900c3f;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1226,7 +1215,7 @@
   margin: 0 0 24px;
   font-size: 14px;
   font-weight: 600;
-  color: #dc2626;
+  color: #900c3f;
   opacity: 0.9;
 }
 
@@ -1259,15 +1248,15 @@
 
 .btn-delete-confirm {
   border: 0;
-  background: #dc2626;
+  background: #900c3f;
   color: #ffffff;
-  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 8px 18px rgba(144, 12, 63, 0.3);
 }
 
 .btn-delete-confirm:hover:not(:disabled) {
-  background: #b91c1c;
+  background: #730932;
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(220, 38, 38, 0.4);
+  box-shadow: 0 10px 22px rgba(144, 12, 63, 0.4);
 }
 
 .btn-delete-cancel:disabled,

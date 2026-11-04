@@ -64,7 +64,7 @@ export const routes: Routes = [
         path: 'tables/:tableNumber/order',
         component: OrderCreationComponent,
         canActivate: [authGuard, roleGuard],
-        data: { roles: ['Waiter', 'Host', 'Manager', 'Admin'] }
+        data: { roles: ['Waiter'] }
     },
     { path: '**', redirectTo: '' }
 ];
