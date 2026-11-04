@@ -26,40 +26,53 @@
               'shape-' + selectedShape(),
               capacity() > 6 ? 'cap-large' : 'cap-standard'
             ]">
-          <!-- Chairs top -->
-          @if (chairs().top.length) {
-          <div class="preview-chairs-top" aria-hidden="true">
-            @for (c of chairs().top; track c) {
-            <span class="preview-chair-h"></span>
+          @if (chairs().isRadial) {
+            <div class="preview-chairs-radial" aria-hidden="true">
+              @for (angle of chairs().radialAngles; track angle) {
+                <div
+                  class="preview-chair-spoke"
+                  [style.transform]="'rotate(' + angle + 'deg)'"
+                >
+                  <span class="preview-chair-h"></span>
+                </div>
+              }
+            </div>
+          } @else {
+            <!-- Chairs top -->
+            @if (chairs().top.length) {
+              <div class="preview-chairs-top" aria-hidden="true">
+                @for (c of chairs().top; track c) {
+                  <span class="preview-chair-h"></span>
+                }
+              </div>
             }
-          </div>
-          }
 
-          <!-- Chairs bottom -->
-          @if (chairs().bottom.length) {
-          <div class="preview-chairs-bottom" aria-hidden="true">
-            @for (c of chairs().bottom; track c) {
-            <span class="preview-chair-h"></span>
+            <!-- Chairs bottom -->
+            @if (chairs().bottom.length) {
+              <div class="preview-chairs-bottom" aria-hidden="true">
+                @for (c of chairs().bottom; track c) {
+                  <span class="preview-chair-h"></span>
+                }
+              </div>
             }
-          </div>
-          }
 
-          <!-- Chairs left -->
-          @if (chairs().left.length) {
-          <div class="preview-chairs-left" aria-hidden="true">
-            @for (c of chairs().left; track c) {
-            <span class="preview-chair-v"></span>
+            <!-- Chairs left -->
+            @if (chairs().left.length) {
+              <div class="preview-chairs-left" aria-hidden="true">
+                @for (c of chairs().left; track c) {
+                  <span class="preview-chair-v"></span>
+                }
+              </div>
             }
-          </div>
-          }
 
-          <!-- Chairs right -->
-          @if (chairs().right.length) {
-          <div class="preview-chairs-right" aria-hidden="true">
-            @for (c of chairs().right; track c) {
-            <span class="preview-chair-v"></span>
+            <!-- Chairs right -->
+            @if (chairs().right.length) {
+              <div class="preview-chairs-right" aria-hidden="true">
+                @for (c of chairs().right; track c) {
+                  <span class="preview-chair-v"></span>
+                }
+              </div>
             }
-          </div>
           }
 
           <div class="preview-t-top">

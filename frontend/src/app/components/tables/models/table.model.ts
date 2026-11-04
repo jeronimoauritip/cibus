@@ -60,6 +60,8 @@ export interface AssignableWaiterOption {
 }
 
 export interface ChairDistribution {
+  isRadial: boolean;
+  radialAngles: number[];
   top: number[];
   bottom: number[];
   left: number[];
@@ -74,43 +76,51 @@ export function calculateChairs(shape: TableShape = 'round', capacity: number = 
   const cap = Math.max(1, capacity);
 
   if (shape === 'round') {
-    if (cap === 1) return { top: [0], bottom: [], left: [], right: [] };
-    if (cap === 2) return { top: [0], bottom: [0], left: [], right: [] };
-    if (cap === 3) return { top: [0], bottom: [0], left: [0], right: [] };
-    if (cap === 4) return { top: [0], bottom: [0], left: [0], right: [0] };
-    if (cap === 5) return { top: [0, 1], bottom: [0, 1], left: [0], right: [] };
-    if (cap === 6) return { top: [0, 1], bottom: [0, 1], left: [0], right: [0] };
-    const longSide = Math.max(2, Math.floor((cap - 2) / 2));
+    const step = 360 / cap;
+    const angles = Array.from({ length: cap }, (_, i) => Math.round(i * step));
     return {
-      top: Array.from({ length: longSide }, (_, i) => i),
-      bottom: Array.from({ length: longSide }, (_, i) => i),
-      left: [0],
-      right: [0],
+      isRadial: true,
+      radialAngles: angles,
+      top: [],
+      bottom: [],
+      left: [],
+      right: [],
     };
   }
 
   if (shape === 'square') {
-    if (cap === 1) return { top: [0], bottom: [], left: [], right: [] };
-    if (cap <= 2) return { top: [0], bottom: [0], left: [], right: [] };
-    if (cap === 3) return { top: [0], bottom: [0], left: [0], right: [] };
-    if (cap === 4) return { top: [0], bottom: [0], left: [0], right: [0] };
-    if (cap <= 6) return { top: [0, 1], bottom: [0, 1], left: [0], right: [0] };
-    const pairs = Math.max(2, Math.floor(cap / 4));
+    let top = 0;
+    let bottom = 0;
+    let left = 0;
+    let right = 0;
+
+    for (let i = 0; i < cap; i++) {
+      const side = i % 4;
+      if (side === 0) top++;
+      else if (side === 1) bottom++;
+      else if (side === 2) left++;
+      else right++;
+    }
+
     return {
-      top: Array.from({ length: pairs }, (_, i) => i),
-      bottom: Array.from({ length: pairs }, (_, i) => i),
-      left: Array.from({ length: pairs }, (_, i) => i),
-      right: Array.from({ length: pairs }, (_, i) => i),
+      isRadial: false,
+      radialAngles: [],
+      top: Array.from({ length: top }, (_, i) => i),
+      bottom: Array.from({ length: bottom }, (_, i) => i),
+      left: Array.from({ length: left }, (_, i) => i),
+      right: Array.from({ length: right }, (_, i) => i),
     };
   }
 
   // Rectangular shape
-  if (cap === 1) return { top: [0], bottom: [], left: [], right: [] };
-  if (cap === 2) return { top: [0], bottom: [0], left: [], right: [] };
-  if (cap === 3) return { top: [0], bottom: [0], left: [0], right: [] };
-  if (cap === 4) return { top: [0], bottom: [0], left: [0], right: [0] };
+  if (cap === 1) return { isRadial: false, radialAngles: [], top: [0], bottom: [], left: [], right: [] };
+  if (cap === 2) return { isRadial: false, radialAngles: [], top: [0], bottom: [0], left: [], right: [] };
+  if (cap === 3) return { isRadial: false, radialAngles: [], top: [0], bottom: [0], left: [0], right: [] };
+  if (cap === 4) return { isRadial: false, radialAngles: [], top: [0], bottom: [0], left: [0], right: [0] };
   const alongSides = Math.max(2, Math.floor((cap - 2) / 2));
   return {
+    isRadial: false,
+    radialAngles: [],
     top: Array.from({ length: alongSides }, (_, i) => i),
     bottom: Array.from({ length: alongSides }, (_, i) => i),
     left: [0],
