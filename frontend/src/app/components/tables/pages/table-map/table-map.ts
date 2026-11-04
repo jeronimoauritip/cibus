@@ -111,6 +111,7 @@ export class TableMapComponent implements OnInit {
   readonly isManager = computed(() => this.role() === 'Manager');
   readonly isHost = computed(() => this.role() === 'Host');
   readonly isWaiter = computed(() => this.role() === 'Waiter');
+  readonly canSwitchBranch = computed(() => this.isAdmin() && this.branches().length > 1);
 
   /**
    * Only Admin (any branch) and Manager (within their assigned branch) can edit layout.
@@ -361,7 +362,7 @@ export class TableMapComponent implements OnInit {
 
   toggleBranchMenu(event: MouseEvent): void {
     event.stopPropagation();
-    if (!this.isAdmin()) return;
+    if (!this.canSwitchBranch()) return;
     this.isBranchMenuOpen.update((v) => !v);
     this.isCircleMenuOpen.set(false);
   }

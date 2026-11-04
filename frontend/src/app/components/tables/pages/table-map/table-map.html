@@ -17,36 +17,57 @@
         }
 
         <div class="branch-selector-wrapper">
-          <button
-            type="button"
-            class="hud-branch-pill"
-            [class.hud-branch-pill--interactive]="isAdmin()"
-            (click)="toggleBranchMenu($event)"
-            [attr.aria-expanded]="isBranchMenuOpen()"
-          >
-            <span class="hud-branch-dot" aria-hidden="true"></span>
-            <span class="hud-branch-name">{{ activeBranchName() }}</span>
-            @if (role()) {
-              <span class="hud-role-tag">{{ role() }}</span>
-            }
-            @if (isAdmin()) {
-              <span class="hud-branch-chevron" [class.open]="isBranchMenuOpen()" aria-hidden="true">▾</span>
-            }
-          </button>
+          @if (canSwitchBranch()) {
+            <div
+              class="branch-morph-shell"
+              [class.open]="isBranchMenuOpen()"
+              (click)="$event.stopPropagation()"
+            >
+              <button
+                type="button"
+                class="branch-morph-trigger"
+                (click)="toggleBranchMenu($event)"
+                [attr.aria-expanded]="isBranchMenuOpen()"
+              >
+                <span class="hud-branch-dot" aria-hidden="true"></span>
+                <span class="hud-branch-name">{{ activeBranchName() }}</span>
+                @if (role()) {
+                  <span class="hud-role-tag">{{ role() }}</span>
+                }
+                <span class="hud-branch-chevron" [class.open]="isBranchMenuOpen()" aria-hidden="true">▾</span>
+              </button>
 
-          @if (isAdmin() && isBranchMenuOpen()) {
-            <div class="branch-dropdown" (click)="$event.stopPropagation()">
-              <div class="dropdown-section-label">Switch Branch</div>
-              @for (branch of branches(); track branch.id) {
-                <button
-                  type="button"
-                  class="branch-dropdown-item"
-                  [class.active]="branch.id === activeBranchId()"
-                  (click)="switchBranch(branch.id!, $event)"
-                >
-                  <span>{{ branch.name }}</span>
-                  <span class="branch-dropdown-id">#{{ branch.id }}</span>
-                </button>
+              <div class="branch-morph-body">
+                <div class="branch-morph-header">
+                  <span>Switch Branch</span>
+                  <span class="branch-morph-count">{{ branches().length }} available</span>
+                </div>
+                <div class="branch-options-list">
+                  @for (branch of branches(); track branch.id) {
+                    <button
+                      type="button"
+                      class="branch-option-item"
+                      [class.active]="branch.id === activeBranchId()"
+                      (click)="switchBranch(branch.id!, $event)"
+                    >
+                      <div class="branch-option-info">
+                        <span class="branch-option-name">{{ branch.name }}</span>
+                        <span class="branch-option-id">ID #{{ branch.id }}</span>
+                      </div>
+                      @if (branch.id === activeBranchId()) {
+                        <span class="branch-active-pill">Active</span>
+                      }
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="branch-static-pill">
+              <span class="hud-branch-dot" aria-hidden="true"></span>
+              <span class="hud-branch-name">{{ activeBranchName() }}</span>
+              @if (role()) {
+                <span class="hud-role-tag">{{ role() }}</span>
               }
             </div>
           }
@@ -270,9 +291,32 @@
           <div class="arch-zone zone-entrance" aria-hidden="true">MAIN ENTRANCE</div>
           <div class="arch-zone zone-bar" aria-hidden="true">BAR &amp; SOMMELIER</div>
           <div class="arch-zone zone-kitchen" aria-hidden="true">KITCHEN PASS</div>
-          <div class="arch-plant arch-plant--top-left" aria-hidden="true">🌿</div>
-          <div class="arch-plant arch-plant--bottom-left" aria-hidden="true">🌿</div>
-          <div class="arch-plant arch-plant--bottom-right" aria-hidden="true">🌿</div>
+          <!-- Empty Floor State Message -->
+          @if (tables().length === 0) {
+            <div class="empty-canvas-message" role="status">
+              <div class="empty-canvas-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="6" width="16" height="12" rx="3"></rect>
+                  <line x1="8" y1="18" x2="8" y2="21"></line>
+                  <line x1="16" y1="18" x2="16" y2="21"></line>
+                  <line x1="2" y1="10" x2="4" y2="10"></line>
+                  <line x1="20" y1="10" x2="22" y2="10"></line>
+                </svg>
+              </div>
+              <h3 class="empty-canvas-title">There are no tables yet.</h3>
+              <p class="empty-canvas-subtitle">Try adding one.</p>
+              @if (canEditLayout()) {
+                <button
+                  type="button"
+                  class="btn-empty-add-table"
+                  (click)="openNewTableModal($event)"
+                >
+                  <span class="btn-hud-icon">+</span>
+                  <span>Add Table</span>
+                </button>
+              }
+            </div>
+          }
 
           <!-- Dynamic Table Nodes -->
           @for (table of tables(); track table.id || table.number) {

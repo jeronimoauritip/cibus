@@ -26,5 +26,17 @@ describe('TableMapComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should only allow switching branch when user is admin and multiple branches exist', () => {
+    // Default state: not admin or empty branches
+    expect(component.canSwitchBranch()).toBe(false);
+
+    // If branches are added but role is not admin
+    component.branches.set([
+      { id: 1, name: 'Palermo' } as any,
+      { id: 2, name: 'Recoleta' } as any,
+    ]);
+    expect(component.canSwitchBranch()).toBe(false);
+  });
 });
 

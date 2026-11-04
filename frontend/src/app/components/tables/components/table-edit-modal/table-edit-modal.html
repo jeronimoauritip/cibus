@@ -1,205 +1,155 @@
-<div
-  class="table-edit-backdrop"
-  [class.open]="isOpen()"
-  (click)="attemptClose()"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="modal-title"
->
+<div class="table-edit-backdrop" [class.open]="isOpen()" (click)="attemptClose()" role="dialog" aria-modal="true"
+  aria-labelledby="modal-title">
   @if (isOpen()) {
-    <div class="table-edit-dialog" (click)="$event.stopPropagation()">
-      <button
-        type="button"
-        class="btn-close-modal"
-        (click)="attemptClose()"
-        aria-label="Close"
-      >
-        ✕
-      </button>
+  <div class="table-edit-dialog" (click)="$event.stopPropagation()">
+    <button type="button" class="btn-close-modal" (click)="attemptClose()" aria-label="Close">
+      ✕
+    </button>
 
-      <div class="modal-header">
-        <h2 id="modal-title">
-          {{ mode() === 'edit' ? 'Edit Table #' + tableNumber() : 'New Table Setup' }}
-        </h2>
-        <p class="modal-subtitle">
-          {{ mode() === 'edit'
-               ? 'Configure table shape and seat capacity'
-               : 'Configure table shape and seat capacity before placing on the floor' }}
-        </p>
-      </div>
+    <div class="modal-header">
+      <h2 id="modal-title">
+        {{ mode() === 'edit' ? 'Edit Table #' + tableNumber() : 'New Table Setup' }}
+      </h2>
+      <p class="modal-subtitle">
+        {{ mode() === 'edit'
+        ? 'Configure table shape and seat capacity'
+        : 'Configure table shape and seat capacity before placing on the floor' }}
+      </p>
+    </div>
 
-      <!-- LIVE REACTIVE PREVIEW AREA -->
-      <div class="preview-card" aria-label="Live table preview">
-        <span class="preview-badge-label">LIVE PREVIEW</span>
+    <!-- LIVE REACTIVE PREVIEW AREA -->
+    <div class="preview-card" aria-label="Live table preview">
+      <span class="preview-badge-label">LIVE PREVIEW</span>
 
-        <div class="preview-canvas">
-          <div
-            class="preview-table-node"
-            [ngClass]="[
+      <div class="preview-canvas">
+        <div class="preview-table-node" [ngClass]="[
               'shape-' + selectedShape(),
               capacity() > 6 ? 'cap-large' : 'cap-standard'
-            ]"
-          >
-            <!-- Chairs top -->
-            @if (chairs().top.length) {
-              <div class="preview-chairs-top" aria-hidden="true">
-                @for (c of chairs().top; track c) {
-                  <span class="preview-chair-h"></span>
-                }
-              </div>
+            ]">
+          <!-- Chairs top -->
+          @if (chairs().top.length) {
+          <div class="preview-chairs-top" aria-hidden="true">
+            @for (c of chairs().top; track c) {
+            <span class="preview-chair-h"></span>
             }
-
-            <!-- Chairs bottom -->
-            @if (chairs().bottom.length) {
-              <div class="preview-chairs-bottom" aria-hidden="true">
-                @for (c of chairs().bottom; track c) {
-                  <span class="preview-chair-h"></span>
-                }
-              </div>
-            }
-
-            <!-- Chairs left -->
-            @if (chairs().left.length) {
-              <div class="preview-chairs-left" aria-hidden="true">
-                @for (c of chairs().left; track c) {
-                  <span class="preview-chair-v"></span>
-                }
-              </div>
-            }
-
-            <!-- Chairs right -->
-            @if (chairs().right.length) {
-              <div class="preview-chairs-right" aria-hidden="true">
-                @for (c of chairs().right; track c) {
-                  <span class="preview-chair-v"></span>
-                }
-              </div>
-            }
-
-            <div class="preview-t-top">
-              <span class="preview-t-num">T-{{ tableNumber() }}</span>
-              <span class="preview-t-cap">{{ capacity() }}p</span>
-            </div>
-            <span
-              class="preview-status-badge"
-              [class.preview-status-badge--edit]="mode() === 'edit'"
-            >
-              {{ mode() === 'edit' ? 'EDIT' : 'NEW' }}
-            </span>
           </div>
-        </div>
-      </div>
-
-      <!-- SHAPE SELECTION -->
-      <div class="config-section">
-        <label class="section-label">Choose Table Shape</label>
-        <div class="shape-options-grid" role="radiogroup" aria-label="Table shape">
-          <button
-            type="button"
-            class="shape-option-btn"
-            [class.active]="selectedShape() === 'square'"
-            (click)="setShape('square')"
-            role="radio"
-            [attr.aria-checked]="selectedShape() === 'square'"
-          >
-            <div class="shape-icon-box shape-icon-square" aria-hidden="true"></div>
-            <span class="shape-title">Square</span>
-          </button>
-
-          <button
-            type="button"
-            class="shape-option-btn"
-            [class.active]="selectedShape() === 'rectangular'"
-            (click)="setShape('rectangular')"
-            role="radio"
-            [attr.aria-checked]="selectedShape() === 'rectangular'"
-          >
-            <div class="shape-icon-box shape-icon-rect" aria-hidden="true"></div>
-            <span class="shape-title">Rectangular</span>
-          </button>
-
-          <button
-            type="button"
-            class="shape-option-btn"
-            [class.active]="selectedShape() === 'round'"
-            (click)="setShape('round')"
-            role="radio"
-            [attr.aria-checked]="selectedShape() === 'round'"
-          >
-            <div class="shape-icon-box shape-icon-round" aria-hidden="true"></div>
-            <span class="shape-title">Round</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- SEAT COUNTER (STEPPER) -->
-      <div class="config-section">
-        <label class="section-label">Seat Capacity</label>
-        <div class="stepper-box">
-          <button
-            type="button"
-            class="btn-stepper btn-stepper--minus"
-            [disabled]="capacity() <= 1"
-            (click)="decrementCapacity()"
-            aria-label="Decrease seat count"
-          >
-            −
-          </button>
-          <div class="stepper-value-readout">
-            <span class="stepper-number">{{ capacity() }}</span>
-            <span class="stepper-unit">{{ capacity() === 1 ? 'Guest' : 'Guests' }}</span>
-          </div>
-          <button
-            type="button"
-            class="btn-stepper btn-stepper--plus"
-            [disabled]="capacity() >= 16"
-            (click)="incrementCapacity()"
-            aria-label="Increase seat count"
-          >
-            +
-          </button>
-        </div>
-      </div>
-
-      <!-- CONFIRMATION OVERLAY IF DIRTY ON CANCEL -->
-      @if (showConfirmDiscard()) {
-        <div class="discard-alert-overlay" role="alertdialog" aria-modal="true">
-          <div class="discard-alert-card">
-            <h3>Discard Changes?</h3>
-            <p>
-              {{ mode() === 'edit'
-                   ? 'You have unsaved changes. If you exit now, your edits will not be saved.'
-                   : "You have unsaved changes. If you exit now, this table won't be added to the floor." }}
-            </p>
-            <div class="discard-actions">
-              <button type="button" class="btn-discard-secondary" (click)="cancelDiscard()">
-                Keep Editing
-              </button>
-              <button type="button" class="btn-discard-primary" (click)="confirmDiscard()">
-                Discard &amp; Exit
-              </button>
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- BOTTOM ACTION PILL BUTTON (iOS 26 Style) -->
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn-confirm-add-pill"
-          (click)="onSubmit()"
-        >
-          @if (mode() === 'edit') {
-            <span>Save Table #{{ tableNumber() }}</span>
-            <span class="btn-pill-icon" aria-hidden="true">✓</span>
-          } @else {
-            <span>Add Table #{{ tableNumber() }} to Floor</span>
-            <span class="btn-pill-icon" aria-hidden="true">+</span>
           }
+
+          <!-- Chairs bottom -->
+          @if (chairs().bottom.length) {
+          <div class="preview-chairs-bottom" aria-hidden="true">
+            @for (c of chairs().bottom; track c) {
+            <span class="preview-chair-h"></span>
+            }
+          </div>
+          }
+
+          <!-- Chairs left -->
+          @if (chairs().left.length) {
+          <div class="preview-chairs-left" aria-hidden="true">
+            @for (c of chairs().left; track c) {
+            <span class="preview-chair-v"></span>
+            }
+          </div>
+          }
+
+          <!-- Chairs right -->
+          @if (chairs().right.length) {
+          <div class="preview-chairs-right" aria-hidden="true">
+            @for (c of chairs().right; track c) {
+            <span class="preview-chair-v"></span>
+            }
+          </div>
+          }
+
+          <div class="preview-t-top">
+            <span class="preview-t-num">T-{{ tableNumber() }}</span>
+            <span class="preview-t-cap">{{ capacity() }}p</span>
+          </div>
+          <span class="preview-status-badge" [class.preview-status-badge--edit]="mode() === 'edit'">
+            {{ mode() === 'edit' ? 'EDIT' : 'NEW' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHAPE SELECTION -->
+    <div class="config-section">
+      <label class="section-label">Choose Table Shape</label>
+      <div class="shape-options-grid" role="radiogroup" aria-label="Table shape">
+        <button type="button" class="shape-option-btn" [class.active]="selectedShape() === 'square'"
+          (click)="setShape('square')" role="radio" [attr.aria-checked]="selectedShape() === 'square'">
+          <div class="shape-icon-box shape-icon-square" aria-hidden="true"></div>
+          <span class="shape-title">Square</span>
+        </button>
+
+        <button type="button" class="shape-option-btn" [class.active]="selectedShape() === 'rectangular'"
+          (click)="setShape('rectangular')" role="radio" [attr.aria-checked]="selectedShape() === 'rectangular'">
+          <div class="shape-icon-box shape-icon-rect" aria-hidden="true"></div>
+          <span class="shape-title">Rectangular</span>
+        </button>
+
+        <button type="button" class="shape-option-btn" [class.active]="selectedShape() === 'round'"
+          (click)="setShape('round')" role="radio" [attr.aria-checked]="selectedShape() === 'round'">
+          <div class="shape-icon-box shape-icon-round" aria-hidden="true"></div>
+          <span class="shape-title">Round</span>
         </button>
       </div>
     </div>
+
+    <!-- SEAT COUNTER (STEPPER) -->
+    <div class="config-section">
+      <label class="section-label">Seat Capacity</label>
+      <div class="stepper-box">
+        <button type="button" class="btn-stepper btn-stepper--minus" [disabled]="capacity() <= 1"
+          (click)="decrementCapacity()" aria-label="Decrease seat count">
+          −
+        </button>
+        <div class="stepper-value-readout">
+          <span class="stepper-number">{{ capacity() }}</span>
+          <span class="stepper-unit">{{ capacity() === 1 ? 'Guest' : 'Guests' }}</span>
+        </div>
+        <button type="button" class="btn-stepper btn-stepper--plus" [disabled]="capacity() >= 16"
+          (click)="incrementCapacity()" aria-label="Increase seat count">
+          +
+        </button>
+      </div>
+    </div>
+
+    <!-- CONFIRMATION OVERLAY IF DIRTY ON CANCEL -->
+    @if (showConfirmDiscard()) {
+    <div class="discard-alert-overlay" role="alertdialog" aria-modal="true">
+      <div class="discard-alert-card">
+        <h3>Discard Changes?</h3>
+        <p>
+          {{ mode() === 'edit'
+          ? 'You have unsaved changes. If you exit now, your edits will not be saved.'
+          : "You have unsaved changes. If you exit now, this table won't be added to the floor." }}
+        </p>
+        <div class="discard-actions">
+          <button type="button" class="btn-discard-secondary" (click)="cancelDiscard()">
+            Keep Editing
+          </button>
+          <button type="button" class="btn-discard-primary" (click)="confirmDiscard()">
+            Discard &amp; Exit
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- BOTTOM ACTION PILL BUTTON (iOS 26 Style) -->
+    <div class="modal-footer">
+      <button type="button" class="btn-confirm-add-pill" (click)="onSubmit()">
+        @if (mode() === 'edit') {
+        <span>Save Table #{{ tableNumber() }}</span>
+        <span class="btn-pill-icon" aria-hidden="true">✓</span>
+        } @else {
+        <span>Add Table #{{ tableNumber() }} to Floor</span>
+        <span class="btn-pill-icon" aria-hidden="true">+</span>
+        }
+      </button>
+    </div>
+  </div>
   }
 </div>
-
