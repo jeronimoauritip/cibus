@@ -35,9 +35,8 @@ export class MenuItemRowComponent {
   }
 
   onSave(): void {
-    // Emit the update payload to the parent component
     this.saveEdit.emit({
-      id: this.menuItem().id,
+      id: this.menuItem().product.id,
       data: {
         price: this.draftPrice,
         available: this.draftAvailable

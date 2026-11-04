@@ -34,3 +34,12 @@
   opacity: 0.7;
   margin: 0;
 }
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1rem;
+  }
+  .card__name {
+    font-size: 1.25rem;
+  }
+}

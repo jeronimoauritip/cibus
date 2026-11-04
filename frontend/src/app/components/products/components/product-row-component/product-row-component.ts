@@ -8,9 +8,24 @@ import { Product } from '../../models/product';
 })
 export class ProductRowComponent {
   readonly product = input.required<Product>();
+  
+  // Nuevo Input para saber si estamos en el modal
+  readonly isSelectionMode = input<boolean>(false); 
+
   readonly edit = output<Product>();
   readonly delete = output<Product>();
+  
+  // Nuevo Output para emitir la selección
+  readonly selected = output<Product>(); 
+
   readonly confirming = signal(false);
+
+  // Nueva función para cuando se hace clic (solo funciona en modo selección)
+  onSelect(): void {
+    if (this.isSelectionMode()) {
+      this.selected.emit(this.product());
+    }
+  }
 
   onEdit(): void { this.edit.emit(this.product()); }
   onDeleteRequest(): void { this.confirming.set(true); }

@@ -1,4 +1,5 @@
 <app-header-component> Branch Menu </app-header-component>
+
 <div class="page">
   <main class="content">
     <app-menu-item-filter-component [(filter)]="filter">
@@ -34,3 +35,87 @@
     </div>
   </main>
 </div>
+
+<!-- Add Product to Branch Menu Modal -->
+@if (isAddModalOpen()) {
+<div class="modal-backdrop" (click)="onBackdropClick($event)" role="dialog" aria-modal="true" aria-labelledby="add-menu-item-title">
+  <div class="modal-card modal-card--large">
+    <div class="modal-header">
+      <div class="employee-info">
+        <h2 id="add-menu-item-title" class="modal-title">
+          @if (selectedProductForAdd()) {
+            Set Item Price
+          } @else {
+            Select Product
+          }
+        </h2>
+      </div>
+
+      <button type="button" class="btn-close" (click)="closeAddModal()" aria-label="Close modal" title="Close">
+        <svg class="close-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      @if (addSuccessMessage()) {
+        <div class="feedback-success" role="status">
+          {{ addSuccessMessage() }}
+        </div>
+      }
+      @if (addErrorMessage()) {
+        <div class="errors" role="alert">
+          {{ addErrorMessage() }}
+        </div>
+      }
+
+      @if (!selectedProductForAdd()) {
+        <!-- Product Selection List View -->
+        <div class="product-selector-container">
+          <app-product-list-component
+            class="modal-mode" 
+            [isSelectionMode]="true" 
+            [excludedProductIds]="currentProductIds()"
+            (productSelected)="onProductSelectedFromList($event)" />
+        </div>
+      } @else {
+        <!-- Price Input View -->
+        <div class="price-input-section">
+          <p class="selected-product-info">
+            Selected Product: <strong>{{ selectedProductForAdd()?.name }}</strong>
+            <span class="category-tag">({{ selectedProductForAdd()?.categoryName }})</span>
+          </p>
+          
+          <div class="form-field">
+            <label for="newPrice">Branch Price ($)</label>
+            <input 
+              type="number" 
+              id="newPrice" 
+              [value]="newProductPrice()" 
+              (input)="updateNewPrice($event)"
+              placeholder="0.00"
+              min="0.01"
+              step="0.01"
+            />
+          </div>
+
+          <div class="actions">
+            <button class="cancel-btn" type="button" [disabled]="isAdding()" (click)="cancelProductSelection()">
+              Back to List
+            </button>
+            <button class="save-btn" type="button" [disabled]="isAdding() || newProductPrice() <= 0" (click)="confirmAddProduct()">
+              @if (isAdding()) {
+                Adding...
+              } @else {
+                Confirm & Add
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+}
