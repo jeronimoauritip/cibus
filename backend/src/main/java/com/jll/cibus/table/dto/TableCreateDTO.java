@@ -28,4 +28,5 @@ public class TableCreateDTO {
     @Min(value = 0, message = "Y coordinate cannot be negative")
     private Integer posY;
 
+    private String shape;
 }

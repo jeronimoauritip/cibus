@@ -7,7 +7,6 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class TableResponseDTO {
     private Long id;
     private Integer number;
@@ -15,7 +14,7 @@ public class TableResponseDTO {
     private Boolean available;
     private Integer posX;
     private Integer posY;
+    private String shape;
     private Long waiterId;
     private Long branchId;
-
 }

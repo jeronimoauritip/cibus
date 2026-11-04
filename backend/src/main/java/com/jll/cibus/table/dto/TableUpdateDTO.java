@@ -9,7 +9,6 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class TableUpdateDTO {
 
     @Positive
@@ -27,4 +26,5 @@ public class TableUpdateDTO {
     @Min(value = 0, message = "Y coordinate cannot be negative")
     private Integer posY;
 
+    private String shape;
 }

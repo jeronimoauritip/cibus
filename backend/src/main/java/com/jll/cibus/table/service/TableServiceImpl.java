@@ -86,6 +86,11 @@ public class TableServiceImpl implements TableService {
                 .orElseThrow(() -> new ResourceNotFoundException("branch", branchId)));
         table.setAvailable(Boolean.TRUE);
         table.setWaiter(null);
+        if (dto.getShape() != null && !dto.getShape().isBlank()) {
+            table.setShape(dto.getShape().toUpperCase());
+        } else {
+            table.setShape("ROUND");
+        }
         TableEntity saved = tableRepository.save(table);
         return tableMapper.toDTO(saved);
     }
@@ -191,6 +196,11 @@ public class TableServiceImpl implements TableService {
             }
             table.setPosY(newTable.getPosY());
         }
+
+        if (newTable.getShape() != null && !newTable.getShape().isBlank()) {
+            table.setShape(newTable.getShape().toUpperCase());
+        }
+
         TableEntity updatedTable = tableRepository.save(table);
         return tableMapper.toDTO(updatedTable);
     }
