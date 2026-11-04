@@ -84,6 +84,11 @@ export class TableMapComponent implements OnInit {
   readonly editingTableNumber = signal<number | null>(null);
   readonly zoomLevel = signal<number>(1);
 
+  // Delete mode & confirmation
+  readonly isDeleteMode = signal<boolean>(false);
+  readonly tableToDelete = signal<BranchTable | null>(null);
+  readonly isDeleteConfirmModalOpen = signal<boolean>(false);
+
   readonly nextNewTableNumber = computed(() => {
     const existing = this.tables().map((t) => t.number);
     return existing.length > 0 ? Math.max(...existing) + 1 : 1;
@@ -518,7 +523,20 @@ export class TableMapComponent implements OnInit {
     this.isEditMode.set(next);
     this.isWaiterSelectOpen.set(false);
     this.selectedTableNumber.set(null);
+    if (!next) {
+      this.isDeleteMode.set(false);
+      this.isDeleteConfirmModalOpen.set(false);
+    }
     this.showToast(next ? 'Floor layout edit mode enabled' : 'Floor layout saved');
+  }
+
+  toggleDeleteMode(event?: MouseEvent): void {
+    event?.stopPropagation();
+    if (!this.canEditLayout()) return;
+    const next = !this.isDeleteMode();
+    this.isDeleteMode.set(next);
+    this.selectedTableNumber.set(null);
+    this.showToast(next ? 'Tap any table to delete' : 'Delete mode disabled');
   }
 
   adjustZoom(delta: number, event?: MouseEvent): void {
@@ -640,6 +658,10 @@ export class TableMapComponent implements OnInit {
 
     if (this.isEditMode()) {
       if (!this.canEditLayout()) return;
+      if (this.isDeleteMode()) {
+        this.handleTableClickInDeleteMode(table);
+        return;
+      }
       this.selectedTableNumber.set(table.number);
       this.openEditTableModal(table);
       return;
@@ -650,6 +672,57 @@ export class TableMapComponent implements OnInit {
     this.isCircleMenuOpen.set(false);
     this.isBranchMenuOpen.set(false);
     this.syncEditForm(table);
+  }
+
+  handleTableClickInDeleteMode(table: BranchTable): void {
+    const hasActiveOrders = this.branchOrders().some(
+      (o) =>
+        o.tableNumber === table.number &&
+        o.status.toUpperCase() !== 'CLOSED' &&
+        o.status.toUpperCase() !== 'CANCELLED'
+    );
+    if (!table.available || hasActiveOrders) {
+      this.showToast(
+        `Cannot delete Table #${table.number} because it has active orders. Free or close the table first.`
+      );
+      return;
+    }
+
+    this.tableToDelete.set(table);
+    this.isDeleteConfirmModalOpen.set(true);
+  }
+
+  cancelDeleteTable(): void {
+    this.isDeleteConfirmModalOpen.set(false);
+    this.tableToDelete.set(null);
+  }
+
+  confirmDeleteTable(): void {
+    const table = this.tableToDelete();
+    const branchId = this.activeBranchId();
+    if (!table || !branchId) return;
+
+    this.isSaving.set(true);
+    this.tableService
+      .deleteTable(branchId, table.number)
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: () => {
+          this.tables.update((list) => list.filter((t) => t.number !== table.number));
+          this.isDeleteConfirmModalOpen.set(false);
+          this.tableToDelete.set(null);
+          this.selectedTableNumber.set(null);
+          this.showToast(`Table #${table.number} deleted`);
+          if (this.tables().length === 0) {
+            this.isDeleteMode.set(false);
+          }
+        },
+        error: (err) => {
+          this.showToast(
+            err?.error?.message || err?.error?.error || 'Could not delete table'
+          );
+        },
+      });
   }
 
   onStageBackgroundClick(): void {
@@ -719,16 +792,21 @@ export class TableMapComponent implements OnInit {
           capacity: config.capacity,
           posX: 400,
           posY: 240,
-          shape: config.shape,
+          shape: config.shape.toUpperCase() as TableShape,
         })
         .pipe(finalize(() => this.isSaving.set(false)))
         .subscribe({
           next: (created) => {
-            this.tables.update((list) => [...list, created]);
-            this.selectedTableNumber.set(created.number);
-            this.syncEditForm(created);
+            const normalizedShape = (created.shape ? created.shape.toLowerCase() : config.shape.toLowerCase()) as TableShape;
+            const createdTable: BranchTable = {
+              ...created,
+              shape: normalizedShape,
+            };
+            this.tables.update((list) => [...list, createdTable]);
+            this.selectedTableNumber.set(createdTable.number);
+            this.syncEditForm(createdTable);
             this.isTableModalOpen.set(false);
-            this.showToast(`Table #${created.number} added to the floor. Drag to place.`);
+            this.showToast(`Table #${createdTable.number} added to the floor. Drag to place.`);
           },
           error: (err) => {
             this.showToast(
@@ -746,7 +824,7 @@ export class TableMapComponent implements OnInit {
         .updateTable(branchId, existing.number, {
           number: existing.number,
           capacity: config.capacity,
-          shape: config.shape,
+          shape: config.shape.toUpperCase() as TableShape,
           posX: existing.posX,
           posY: existing.posY,
           waiterId: existing.waiterId ?? undefined,
@@ -754,13 +832,18 @@ export class TableMapComponent implements OnInit {
         .pipe(finalize(() => this.isSaving.set(false)))
         .subscribe({
           next: (updated) => {
+            const normalizedShape = (updated.shape ? updated.shape.toLowerCase() : config.shape.toLowerCase()) as TableShape;
+            const updatedTable: BranchTable = {
+              ...updated,
+              shape: normalizedShape,
+            };
             this.tables.update((list) =>
-              list.map((t) => (t.id === updated.id ? updated : t))
+              list.map((t) => (t.number === updatedTable.number ? updatedTable : t))
             );
-            this.selectedTableNumber.set(updated.number);
-            this.syncEditForm(updated);
+            this.selectedTableNumber.set(updatedTable.number);
+            this.syncEditForm(updatedTable);
             this.isTableModalOpen.set(false);
-            this.showToast(`Table #${updated.number} updated`);
+            this.showToast(`Table #${updatedTable.number} updated`);
           },
           error: (err) => {
             this.showToast(
@@ -772,26 +855,7 @@ export class TableMapComponent implements OnInit {
   }
 
   onDeleteTableFromHud(event?: MouseEvent): void {
-    event?.stopPropagation();
-    if (!this.canEditLayout()) return;
-
-    if (this.selectedTableNumber() === null) {
-      this.showToast('Please tap a table on the map to select it for deletion');
-      return;
-    }
-
-    const table = this.selectedTable();
-    if (!table) return;
-
-    if (!table.available) {
-      this.showToast('Cannot delete an occupied table. Free it first.');
-      return;
-    }
-
-    const confirmed = window.confirm(`Delete Table #${table.number}?`);
-    if (!confirmed) return;
-
-    this.deleteSelectedTable();
+    this.toggleDeleteMode(event);
   }
 
   saveTableEdits(): void {

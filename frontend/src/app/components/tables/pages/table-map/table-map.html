@@ -135,12 +135,12 @@
           <button
             type="button"
             class="btn-hud-edit btn-hud-delete"
-            [class.btn-hud-disabled]="selectedTableNumber() === null"
+            [class.btn-hud-delete--active]="isDeleteMode()"
             (click)="onDeleteTableFromHud($event)"
-            [title]="selectedTableNumber() === null ? 'Select a table on the map to delete' : 'Delete selected Table #' + selectedTableNumber()"
+            [title]="isDeleteMode() ? 'Cancel delete mode' : 'Delete a table'"
           >
-            <span class="btn-hud-icon">−</span>
-            <span>Delete table</span>
+            <span class="btn-hud-icon">{{ isDeleteMode() ? '✕' : '−' }}</span>
+            <span>{{ isDeleteMode() ? 'Cancel delete' : 'Delete table' }}</span>
           </button>
         </div>
       }
@@ -276,6 +276,7 @@
           class="floor-canvas"
           #floorCanvas
           [class.edit-grid]="isEditMode()"
+          [class.delete-mode]="isDeleteMode()"
           [class.has-filter]="activeFilter() !== 'all'"
           [style.transform]="'scale(' + zoomLevel() + ')'"
         >
@@ -342,33 +343,46 @@
               (pointerdown)="onTablePointerDown(table, $event)"
               (click)="onTableClick(table, $event)"
             >
-              @if (chairs.top.length) {
-                <div class="chairs-top" aria-hidden="true">
-                  @for (c of chairs.top; track c) {
-                    <span class="chair-h"></span>
+              @if (chairs.isRadial) {
+                <div class="chairs-radial" aria-hidden="true">
+                  @for (angle of chairs.radialAngles; track angle) {
+                    <div
+                      class="chair-spoke"
+                      [style.transform]="'rotate(' + angle + 'deg)'"
+                    >
+                      <span class="chair-h"></span>
+                    </div>
                   }
                 </div>
-              }
-              @if (chairs.bottom.length) {
-                <div class="chairs-bottom" aria-hidden="true">
-                  @for (c of chairs.bottom; track c) {
-                    <span class="chair-h"></span>
-                  }
-                </div>
-              }
-              @if (chairs.left.length) {
-                <div class="chairs-left" aria-hidden="true">
-                  @for (c of chairs.left; track c) {
-                    <span class="chair-v"></span>
-                  }
-                </div>
-              }
-              @if (chairs.right.length) {
-                <div class="chairs-right" aria-hidden="true">
-                  @for (c of chairs.right; track c) {
-                    <span class="chair-v"></span>
-                  }
-                </div>
+              } @else {
+                @if (chairs.top.length) {
+                  <div class="chairs-top" aria-hidden="true">
+                    @for (c of chairs.top; track c) {
+                      <span class="chair-h"></span>
+                    }
+                  </div>
+                }
+                @if (chairs.bottom.length) {
+                  <div class="chairs-bottom" aria-hidden="true">
+                    @for (c of chairs.bottom; track c) {
+                      <span class="chair-h"></span>
+                    }
+                  </div>
+                }
+                @if (chairs.left.length) {
+                  <div class="chairs-left" aria-hidden="true">
+                    @for (c of chairs.left; track c) {
+                      <span class="chair-v"></span>
+                    }
+                  </div>
+                }
+                @if (chairs.right.length) {
+                  <div class="chairs-right" aria-hidden="true">
+                    @for (c of chairs.right; track c) {
+                      <span class="chair-v"></span>
+                    }
+                  </div>
+                }
               }
 
               <div class="t-top">
@@ -376,9 +390,12 @@
                 <span class="t-cap">{{ table.capacity }}p</span>
               </div>
 
-              <span class="t-badge">{{ getStateBadgeText(state) }}</span>
-
-              <div class="t-sub">{{ getTableSubtext(table) }}</div>
+              @if (isDeleteMode()) {
+                <span class="tap-to-delete-tag">Tap to delete</span>
+              } @else {
+                <span class="t-badge">{{ getStateBadgeText(state) }}</span>
+                <div class="t-sub">{{ getTableSubtext(table) }}</div>
+              }
             </div>
           }
         </div>
@@ -633,6 +650,53 @@
     (confirmConfig)="onTableModalConfirm($event)"
     (dismissModal)="closeTableModal()"
   ></app-table-edit-modal>
+
+  <!-- DELETE TABLE CONFIRMATION MODAL -->
+  @if (isDeleteConfirmModalOpen() && tableToDelete()) {
+    <div
+      class="delete-confirm-backdrop"
+      (click)="cancelDeleteTable()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-confirm-title"
+    >
+      <div class="delete-confirm-card" (click)="$event.stopPropagation()">
+        <div class="delete-confirm-icon-box" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </div>
+        <h2 id="delete-confirm-title" class="delete-confirm-title">
+          Do you want to delete Table #{{ tableToDelete()!.number }}?
+        </h2>
+        <p class="delete-confirm-subtitle">
+          This option cannot be undone.
+        </p>
+
+        <div class="delete-confirm-actions">
+          <button
+            type="button"
+            class="btn-delete-cancel"
+            [disabled]="isSaving()"
+            (click)="cancelDeleteTable()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn-delete-confirm"
+            [disabled]="isSaving()"
+            (click)="confirmDeleteTable()"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- TOAST NOTIFICATION -->
   <div class="toast" [class.show]="toastMessage() !== null" role="status" aria-live="polite">
