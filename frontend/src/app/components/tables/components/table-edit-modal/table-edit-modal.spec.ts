@@ -34,4 +34,16 @@ describe('TableEditModalComponent', () => {
     component.setShape('rectangular');
     expect(component.selectedShape()).toBe('rectangular');
   });
+
+  it('should emit confirmConfig on submit', () => {
+    let emitted: { shape: string; capacity: number } | undefined;
+    component.confirmConfig.subscribe((val) => (emitted = val));
+
+    component.setShape('square');
+    component.incrementCapacity();
+    component.onSubmit();
+
+    expect(emitted).toEqual({ shape: 'square', capacity: 5 });
+  });
 });
+

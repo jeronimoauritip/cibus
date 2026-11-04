@@ -23,11 +23,13 @@ import {
 })
 export class TableEditModalComponent {
   readonly isOpen = input<boolean>(false);
+  readonly mode = input<'create' | 'edit'>('create');
   readonly tableNumber = input<number>(1);
   readonly initialShape = input<TableShape>('round');
   readonly initialCapacity = input<number>(4);
 
-  readonly confirmCreate = output<{ shape: TableShape; capacity: number }>();
+  readonly confirmConfig = output<{ shape: TableShape; capacity: number }>();
+  readonly confirmCreate = this.confirmConfig;
   readonly dismissModal = output<void>();
 
   readonly selectedShape = signal<TableShape>('round');
@@ -89,7 +91,7 @@ export class TableEditModalComponent {
   }
 
   onSubmit(): void {
-    this.confirmCreate.emit({
+    this.confirmConfig.emit({
       shape: this.selectedShape(),
       capacity: this.capacity(),
     });

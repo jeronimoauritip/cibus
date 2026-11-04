@@ -234,6 +234,11 @@
   color: var(--dark-green);
 }
 
+.preview-status-badge--edit {
+  background: var(--dark-green);
+  color: var(--cream);
+}
+
 /* CONFIG SECTIONS */
 .config-section {
   display: flex;
@@ -475,3 +480,4 @@
   font-size: 20px;
   font-weight: 800;
 }
+

@@ -297,7 +297,6 @@
 }
 .dropdown-action-btn:hover:not(:disabled) { background: rgba(32, 90, 64, 0.1); border-color: var(--dark-green); }
 .dropdown-action-btn.active { background: var(--dark-green); color: var(--cream); border-color: var(--dark-green); }
-.dropdown-add-table-btn { border-style: dashed; }
 .dropdown-action-left { display: inline-flex; align-items: center; gap: 8px; }
 .dropdown-action-left svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .dropdown-badge { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: rgba(32, 90, 64, 0.12); }
@@ -354,6 +353,10 @@
   padding: 80px 24px 32px;
   cursor: grab;
   background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.35), transparent 70%), var(--cream);
+  transition: background 0.45s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.floor-stage.edit-mode {
+  background: radial-gradient(circle at 50% 45%, rgba(24, 46, 35, 0.12), transparent 70%), #d1c7b5;
 }
 .floor-stage:active { cursor: grabbing; }
 .floor-status-card {
@@ -383,14 +386,17 @@
   background-image: radial-gradient(rgba(32, 90, 64, 0.16) 1.5px, transparent 1.5px);
   background-size: 20px 20px;
   transform-origin: center center;
-  transition: transform 0.2s ease, border-color 0.25s ease;
+  transition: transform 0.2s ease, border-color 0.35s ease, background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
 }
 .floor-canvas.edit-grid {
-  background-image: linear-gradient(to right, rgba(32, 90, 64, 0.09) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(32, 90, 64, 0.09) 1px, transparent 1px);
+  background-color: rgba(218, 208, 190, 0.88);
+  background-image: linear-gradient(to right, rgba(32, 90, 64, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(32, 90, 64, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
   border-style: dashed;
+  border-color: rgba(32, 90, 64, 0.7);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.09), 0 20px 42px rgba(23, 66, 47, 0.18);
 }
 
 /* SPOTLIGHT SHADOW FILTER */
@@ -539,11 +545,90 @@
   text-transform: uppercase;
   letter-spacing: 0.4px;
   background: rgba(114, 148, 114, 0.22);
-  transition: background-color 0.45s ease, color 0.45s ease;
+  transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    max-height 0.35s ease,
+    margin 0.35s ease,
+    padding 0.35s ease,
+    background-color 0.45s ease,
+    color 0.45s ease;
 }
 .state-occupied .t-badge, .state-served .t-badge { background: rgba(231, 219, 191, 0.2); color: var(--cream); }
 .state-preparing .t-badge, .state-ready .t-badge { background: var(--state-ready-bg); color: #fff; }
-.t-sub { margin-top: 3px; font-size: 10px; font-weight: 600; opacity: 0.85; max-width: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-sub {
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.85;
+  max-width: 92%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    max-height 0.35s ease,
+    margin 0.35s ease;
+}
+
+/* In Edit Mode: Tables adopt neutral layout blueprint appearance; operational states disappear */
+.floor-canvas.edit-grid .table-node {
+  background-color: rgba(255, 252, 245, 0.94) !important;
+  color: var(--dark-green) !important;
+  border-color: var(--dark-green) !important;
+  box-shadow: 0 4px 14px rgba(23, 66, 47, 0.12) !important;
+  animation: none !important;
+}
+
+.floor-canvas.edit-grid .table-node:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 22px rgba(23, 66, 47, 0.22) !important;
+}
+
+.floor-canvas.edit-grid .table-node.selected {
+  outline: 3.5px solid var(--state-ready-bg) !important;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.25), 0 10px 24px rgba(23, 66, 47, 0.2) !important;
+}
+
+.floor-canvas.edit-grid .table-node.my-assigned-table {
+  box-shadow: 0 4px 14px rgba(23, 66, 47, 0.12) !important;
+}
+
+.floor-canvas.edit-grid .table-node .chair-h,
+.floor-canvas.edit-grid .table-node .chair-v {
+  background: var(--background-green) !important;
+  opacity: 0.75 !important;
+}
+
+.floor-canvas.edit-grid .table-node .t-top {
+  color: var(--dark-green);
+}
+
+.floor-canvas.edit-grid .table-node .t-num {
+  color: var(--dark-green);
+}
+
+.floor-canvas.edit-grid .table-node .t-cap {
+  color: rgba(23, 66, 47, 0.72);
+}
+
+.floor-canvas.edit-grid .table-node .t-badge {
+  opacity: 0 !important;
+  transform: scale(0.65);
+  max-height: 0;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  pointer-events: none;
+}
+
+.floor-canvas.edit-grid .table-node .t-sub {
+  opacity: 0;
+  transform: translateY(-4px);
+  max-height: 0;
+  margin-top: 0;
+  pointer-events: none;
+}
 
 /* RIGHT SLIDE-OVER DRAWER */
 .drawer-backdrop {
@@ -645,21 +730,6 @@
 .btn-danger-outline { border: 1.5px solid var(--danger); background: transparent; color: var(--danger); }
 .btn-danger-outline:hover:not(:disabled) { background: var(--danger); color: #fff; }
 .btn-action:disabled { opacity: 0.45; cursor: not-allowed; }
-
-.edit-grid-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.field-box { display: flex; flex-direction: column; gap: 4px; }
-.field-box label { font-size: 11px; font-weight: 700; }
-.field-box input, .field-box select {
-  height: 38px;
-  padding: 0 10px;
-  border-radius: 10px;
-  border: 1.5px solid var(--dark-green);
-  background: rgba(255, 255, 255, 0.75);
-  color: var(--dark-green);
-  font: 700 14px inherit;
-  outline: none;
-}
-.edit-actions-stack { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
 
 /* ORDER HISTORY */
 .empty-orders-card { padding: 18px; border-radius: 16px; background: rgba(255, 255, 255, 0.38); border: 1.5px dashed rgba(32, 90, 64, 0.25); text-align: center; font-size: 13px; font-weight: 600; color: var(--background-green); }

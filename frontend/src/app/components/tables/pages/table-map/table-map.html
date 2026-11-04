@@ -108,7 +108,7 @@
             title="Create and configure a new table"
           >
             <span class="btn-hud-icon">+</span>
-            <span>New table +</span>
+            <span>New table</span>
           </button>
 
           <button
@@ -119,7 +119,7 @@
             [title]="selectedTableNumber() === null ? 'Select a table on the map to delete' : 'Delete selected Table #' + selectedTableNumber()"
           >
             <span class="btn-hud-icon">−</span>
-            <span>Delete table −</span>
+            <span>Delete table</span>
           </button>
         </div>
       }
@@ -168,23 +168,6 @@
                 </span>
                 <span class="dropdown-badge">{{ isEditMode() ? 'ON' : 'OFF' }}</span>
               </button>
-
-              @if (isEditMode()) {
-                <button
-                  type="button"
-                  class="dropdown-action-btn dropdown-add-table-btn"
-                  [disabled]="isSaving()"
-                  (click)="openNewTableModal($event)"
-                >
-                  <span class="dropdown-action-left">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    <span>+ New Table</span>
-                  </span>
-                </button>
-              }
 
               <div class="dropdown-divider"></div>
             }
@@ -249,7 +232,7 @@
     </div>
 
     <!-- FLOOR MAP STAGE -->
-    <div class="floor-stage" #floorStage>
+    <div class="floor-stage" [class.edit-mode]="isEditMode()" #floorStage>
       @if (isLoading()) {
         <div class="floor-status-card">
           <span>Loading branch floor plan...</span>
@@ -367,7 +350,7 @@
 
     <aside
       class="right-drawer"
-      [class.open]="selectedTable() !== null"
+      [class.open]="selectedTable() !== null && !isEditMode()"
       aria-label="Table Inspector"
       (click)="$event.stopPropagation()"
     >
@@ -393,82 +376,8 @@
         </div>
 
         <div class="drawer-body">
-          <!-- EDIT LAYOUT FORM (Only for Admin & Manager when Edit Mode is active) -->
-          @if (isEditMode() && canEditLayout()) {
-            <div class="info-card">
-              <p class="section-label">Edit Table Geometry</p>
-              <div class="edit-grid-fields">
-                <div class="field-box">
-                  <label for="edit-table-num">Table Number</label>
-                  <input
-                    id="edit-table-num"
-                    type="number"
-                    min="1"
-                    max="99"
-                    [ngModel]="editNumber()"
-                    (ngModelChange)="editNumber.set($event)"
-                  />
-                </div>
-                <div class="field-box">
-                  <label for="edit-table-cap">Capacity (Seats)</label>
-                  <select
-                    id="edit-table-cap"
-                    [ngModel]="editCapacity()"
-                    (ngModelChange)="editCapacity.set($event)"
-                  >
-                    <option [ngValue]="2">2 Guests</option>
-                    <option [ngValue]="4">4 Guests</option>
-                    <option [ngValue]="6">6 Guests</option>
-                    <option [ngValue]="8">8 Guests</option>
-                    <option [ngValue]="10">10 Guests</option>
-                  </select>
-                </div>
-                <div class="field-box">
-                  <label for="edit-table-x">Pos X (px)</label>
-                  <input
-                    id="edit-table-x"
-                    type="number"
-                    step="20"
-                    min="0"
-                    [ngModel]="editPosX()"
-                    (ngModelChange)="editPosX.set($event)"
-                  />
-                </div>
-                <div class="field-box">
-                  <label for="edit-table-y">Pos Y (px)</label>
-                  <input
-                    id="edit-table-y"
-                    type="number"
-                    step="20"
-                    min="0"
-                    [ngModel]="editPosY()"
-                    (ngModelChange)="editPosY.set($event)"
-                  />
-                </div>
-              </div>
-
-              <div class="edit-actions-stack">
-                <button
-                  type="button"
-                  class="btn-action btn-primary-green"
-                  [disabled]="isSaving()"
-                  (click)="saveTableEdits()"
-                >
-                  Save Table Layout
-                </button>
-                <button
-                  type="button"
-                  class="btn-action btn-danger-outline"
-                  [disabled]="isSaving() || !table.available"
-                  (click)="deleteSelectedTable()"
-                >
-                  {{ table.available ? 'Delete Table' : 'Cannot Delete Occupied Table' }}
-                </button>
-              </div>
-            </div>
-          } @else {
-            <!-- OPERATIONAL TABLE SESSION CARD -->
-            @if (table.available) {
+          <!-- OPERATIONAL TABLE SESSION CARD -->
+          @if (table.available) {
               <div class="info-card">
                 <p class="section-label">Current Status</p>
                 <div class="info-row">
@@ -555,7 +464,6 @@
                 }
               </div>
             }
-          }
 
           <!-- SUMMARIZED ORDER HISTORY SECTION -->
           <div class="orders-section-container">
@@ -673,10 +581,13 @@
 
   <!-- NEW TABLE SETUP & EDIT MODAL -->
   <app-table-edit-modal
-    [isOpen]="isNewTableModalOpen()"
-    [tableNumber]="nextNewTableNumber()"
-    (confirmCreate)="onCreateTableFromModal($event)"
-    (dismissModal)="closeNewTableModal()"
+    [isOpen]="isTableModalOpen()"
+    [mode]="tableModalMode()"
+    [tableNumber]="modalTableNumber()"
+    [initialShape]="modalInitialShape()"
+    [initialCapacity]="modalInitialCapacity()"
+    (confirmConfig)="onTableModalConfirm($event)"
+    (dismissModal)="closeTableModal()"
   ></app-table-edit-modal>
 
   <!-- TOAST NOTIFICATION -->

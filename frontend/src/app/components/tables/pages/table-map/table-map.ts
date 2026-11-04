@@ -75,7 +75,13 @@ export class TableMapComponent implements OnInit {
   readonly activeFilter = signal<TableFilterMode>('all');
   readonly isCircleMenuOpen = signal<boolean>(false);
   readonly isEditMode = signal<boolean>(false);
-  readonly isNewTableModalOpen = signal<boolean>(false);
+  readonly isTableModalOpen = signal<boolean>(false);
+  readonly isNewTableModalOpen = this.isTableModalOpen;
+  readonly tableModalMode = signal<'create' | 'edit'>('create');
+  readonly modalTableNumber = signal<number>(1);
+  readonly modalInitialShape = signal<TableShape>('round');
+  readonly modalInitialCapacity = signal<number>(4);
+  readonly editingTableNumber = signal<number | null>(null);
   readonly zoomLevel = signal<number>(1);
 
   readonly nextNewTableNumber = computed(() => {
@@ -510,6 +516,7 @@ export class TableMapComponent implements OnInit {
     const next = !this.isEditMode();
     this.isEditMode.set(next);
     this.isWaiterSelectOpen.set(false);
+    this.selectedTableNumber.set(null);
     this.showToast(next ? 'Floor layout edit mode enabled' : 'Floor layout saved');
   }
 
@@ -629,6 +636,14 @@ export class TableMapComponent implements OnInit {
       this.dragMoved = false;
       return;
     }
+
+    if (this.isEditMode()) {
+      if (!this.canEditLayout()) return;
+      this.selectedTableNumber.set(table.number);
+      this.openEditTableModal(table);
+      return;
+    }
+
     this.selectedTableNumber.set(table.number);
     this.isWaiterSelectOpen.set(false);
     this.isCircleMenuOpen.set(false);
@@ -657,44 +672,102 @@ export class TableMapComponent implements OnInit {
   openNewTableModal(event?: MouseEvent): void {
     event?.stopPropagation();
     if (!this.canEditLayout()) return;
-    this.isNewTableModalOpen.set(true);
+    this.tableModalMode.set('create');
+    this.editingTableNumber.set(null);
+    this.modalTableNumber.set(this.nextNewTableNumber());
+    this.modalInitialShape.set('round');
+    this.modalInitialCapacity.set(4);
+    this.isTableModalOpen.set(true);
     this.isCircleMenuOpen.set(false);
   }
 
+  openEditTableModal(table: BranchTable): void {
+    if (!this.canEditLayout()) return;
+    this.tableModalMode.set('edit');
+    this.editingTableNumber.set(table.number);
+    this.modalTableNumber.set(table.number);
+    this.modalInitialShape.set(this.inferShape(table));
+    this.modalInitialCapacity.set(table.capacity);
+    this.isTableModalOpen.set(true);
+    this.isCircleMenuOpen.set(false);
+  }
+
+  closeTableModal(): void {
+    this.isTableModalOpen.set(false);
+  }
+
   closeNewTableModal(): void {
-    this.isNewTableModalOpen.set(false);
+    this.closeTableModal();
   }
 
   onCreateTableFromModal(config: { shape: TableShape; capacity: number }): void {
+    this.onTableModalConfirm(config);
+  }
+
+  onTableModalConfirm(config: { shape: TableShape; capacity: number }): void {
     if (!this.canEditLayout()) return;
     const branchId = this.activeBranchId();
     if (!branchId) return;
 
-    const nextNumber = this.nextNewTableNumber();
-    this.isSaving.set(true);
-    this.tableService
-      .createTable(branchId, {
-        number: nextNumber,
-        capacity: config.capacity,
-        posX: 400,
-        posY: 240,
-        shape: config.shape,
-      })
-      .pipe(finalize(() => this.isSaving.set(false)))
-      .subscribe({
-        next: (created) => {
-          this.tables.update((list) => [...list, created]);
-          this.selectedTableNumber.set(created.number);
-          this.syncEditForm(created);
-          this.isNewTableModalOpen.set(false);
-          this.showToast(`Table #${created.number} added to the floor. Drag to place.`);
-        },
-        error: (err) => {
-          this.showToast(
-            err?.error?.message || err?.error?.error || 'Could not create table'
-          );
-        },
-      });
+    if (this.tableModalMode() === 'create') {
+      const nextNumber = this.modalTableNumber();
+      this.isSaving.set(true);
+      this.tableService
+        .createTable(branchId, {
+          number: nextNumber,
+          capacity: config.capacity,
+          posX: 400,
+          posY: 240,
+          shape: config.shape,
+        })
+        .pipe(finalize(() => this.isSaving.set(false)))
+        .subscribe({
+          next: (created) => {
+            this.tables.update((list) => [...list, created]);
+            this.selectedTableNumber.set(created.number);
+            this.syncEditForm(created);
+            this.isTableModalOpen.set(false);
+            this.showToast(`Table #${created.number} added to the floor. Drag to place.`);
+          },
+          error: (err) => {
+            this.showToast(
+              err?.error?.message || err?.error?.error || 'Could not create table'
+            );
+          },
+        });
+    } else {
+      const tableNumber = this.editingTableNumber();
+      const existing = this.tables().find((t) => t.number === tableNumber);
+      if (!existing) return;
+
+      this.isSaving.set(true);
+      this.tableService
+        .updateTable(branchId, existing.number, {
+          number: existing.number,
+          capacity: config.capacity,
+          shape: config.shape,
+          posX: existing.posX,
+          posY: existing.posY,
+          waiterId: existing.waiterId ?? undefined,
+        })
+        .pipe(finalize(() => this.isSaving.set(false)))
+        .subscribe({
+          next: (updated) => {
+            this.tables.update((list) =>
+              list.map((t) => (t.id === updated.id ? updated : t))
+            );
+            this.selectedTableNumber.set(updated.number);
+            this.syncEditForm(updated);
+            this.isTableModalOpen.set(false);
+            this.showToast(`Table #${updated.number} updated`);
+          },
+          error: (err) => {
+            this.showToast(
+              err?.error?.message || err?.error?.error || 'Could not update table'
+            );
+          },
+        });
+    }
   }
 
   onDeleteTableFromHud(event?: MouseEvent): void {

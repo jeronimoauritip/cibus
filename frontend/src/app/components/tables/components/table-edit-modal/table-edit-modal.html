@@ -18,9 +18,13 @@
       </button>
 
       <div class="modal-header">
-        <h2 id="modal-title">New Table Setup</h2>
+        <h2 id="modal-title">
+          {{ mode() === 'edit' ? 'Edit Table #' + tableNumber() : 'New Table Setup' }}
+        </h2>
         <p class="modal-subtitle">
-          Configure table shape and seat capacity before placing on the floor
+          {{ mode() === 'edit'
+               ? 'Configure table shape and seat capacity'
+               : 'Configure table shape and seat capacity before placing on the floor' }}
         </p>
       </div>
 
@@ -76,7 +80,12 @@
               <span class="preview-t-num">T-{{ tableNumber() }}</span>
               <span class="preview-t-cap">{{ capacity() }}p</span>
             </div>
-            <span class="preview-status-badge">NEW</span>
+            <span
+              class="preview-status-badge"
+              [class.preview-status-badge--edit]="mode() === 'edit'"
+            >
+              {{ mode() === 'edit' ? 'EDIT' : 'NEW' }}
+            </span>
           </div>
         </div>
       </div>
@@ -157,7 +166,11 @@
         <div class="discard-alert-overlay" role="alertdialog" aria-modal="true">
           <div class="discard-alert-card">
             <h3>Discard Changes?</h3>
-            <p>You have unsaved changes. If you exit now, this table won't be added to the floor.</p>
+            <p>
+              {{ mode() === 'edit'
+                   ? 'You have unsaved changes. If you exit now, your edits will not be saved.'
+                   : "You have unsaved changes. If you exit now, this table won't be added to the floor." }}
+            </p>
             <div class="discard-actions">
               <button type="button" class="btn-discard-secondary" (click)="cancelDiscard()">
                 Keep Editing
@@ -177,10 +190,16 @@
           class="btn-confirm-add-pill"
           (click)="onSubmit()"
         >
-          <span>Add Table #{{ tableNumber() }} to Floor</span>
-          <span class="btn-pill-icon" aria-hidden="true">+</span>
+          @if (mode() === 'edit') {
+            <span>Save Table #{{ tableNumber() }}</span>
+            <span class="btn-pill-icon" aria-hidden="true">✓</span>
+          } @else {
+            <span>Add Table #{{ tableNumber() }} to Floor</span>
+            <span class="btn-pill-icon" aria-hidden="true">+</span>
+          }
         </button>
       </div>
     </div>
   }
 </div>
+
