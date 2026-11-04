@@ -53,51 +53,76 @@
         </div>
       </div>
 
-      <!-- Top-Center: Status Spotlight Filter Pills -->
-      <div class="hud-center" role="group" aria-label="Filter tables by status">
-        <button
-          type="button"
-          class="filter-chip"
-          [class.active]="activeFilter() === 'all'"
-          (click)="setFilter('all')"
-        >
-          <span>All</span>
-          <span class="chip-count">{{ countAll() }}</span>
-        </button>
+      <!-- Top-Center: Status Spotlight Filter Pills (Normal) OR Edit Actions (Edit Mode) -->
+      @if (!isEditMode()) {
+        <div class="hud-center" role="group" aria-label="Filter tables by status">
+          <button
+            type="button"
+            class="filter-chip"
+            [class.active]="activeFilter() === 'all'"
+            (click)="setFilter('all')"
+          >
+            <span>All</span>
+            <span class="chip-count">{{ countAll() }}</span>
+          </button>
 
-        <button
-          type="button"
-          class="filter-chip"
-          [class.active]="activeFilter() === 'available'"
-          (click)="setFilter('available')"
-        >
-          <span class="chip-dot dot-free" aria-hidden="true"></span>
-          <span>Free</span>
-          <span class="chip-count">{{ countFree() }}</span>
-        </button>
+          <button
+            type="button"
+            class="filter-chip"
+            [class.active]="activeFilter() === 'available'"
+            (click)="setFilter('available')"
+          >
+            <span class="chip-dot dot-free" aria-hidden="true"></span>
+            <span>Free</span>
+            <span class="chip-count">{{ countFree() }}</span>
+          </button>
 
-        <button
-          type="button"
-          class="filter-chip"
-          [class.active]="activeFilter() === 'occupied'"
-          (click)="setFilter('occupied')"
-        >
-          <span class="chip-dot dot-occupied" aria-hidden="true"></span>
-          <span>Occupied</span>
-          <span class="chip-count">{{ countOccupied() }}</span>
-        </button>
+          <button
+            type="button"
+            class="filter-chip"
+            [class.active]="activeFilter() === 'occupied'"
+            (click)="setFilter('occupied')"
+          >
+            <span class="chip-dot dot-occupied" aria-hidden="true"></span>
+            <span>Occupied</span>
+            <span class="chip-count">{{ countOccupied() }}</span>
+          </button>
 
-        <button
-          type="button"
-          class="filter-chip"
-          [class.active]="activeFilter() === 'ready'"
-          (click)="setFilter('ready')"
-        >
-          <span class="chip-dot dot-ready" aria-hidden="true"></span>
-          <span>Ready</span>
-          <span class="chip-count">{{ countReady() }}</span>
-        </button>
-      </div>
+          <button
+            type="button"
+            class="filter-chip"
+            [class.active]="activeFilter() === 'ready'"
+            (click)="setFilter('ready')"
+          >
+            <span class="chip-dot dot-ready" aria-hidden="true"></span>
+            <span>Ready</span>
+            <span class="chip-count">{{ countReady() }}</span>
+          </button>
+        </div>
+      } @else {
+        <div class="hud-center hud-center--edit" role="group" aria-label="Edit floor layout actions">
+          <button
+            type="button"
+            class="btn-hud-edit btn-hud-add"
+            (click)="openNewTableModal($event)"
+            title="Create and configure a new table"
+          >
+            <span class="btn-hud-icon">+</span>
+            <span>New table +</span>
+          </button>
+
+          <button
+            type="button"
+            class="btn-hud-edit btn-hud-delete"
+            [class.btn-hud-disabled]="selectedTableNumber() === null"
+            (click)="onDeleteTableFromHud($event)"
+            [title]="selectedTableNumber() === null ? 'Select a table on the map to delete' : 'Delete selected Table #' + selectedTableNumber()"
+          >
+            <span class="btn-hud-icon">−</span>
+            <span>Delete table −</span>
+          </button>
+        </div>
+      }
 
       <!-- Top-Right: Floating Circular Menu (Edit Layout + Zoom) -->
       <div class="hud-right">
@@ -149,7 +174,7 @@
                   type="button"
                   class="dropdown-action-btn dropdown-add-table-btn"
                   [disabled]="isSaving()"
-                  (click)="addNewTable($event)"
+                  (click)="openNewTableModal($event)"
                 >
                   <span class="dropdown-action-left">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -269,12 +294,13 @@
           <!-- Dynamic Table Nodes -->
           @for (table of tables(); track table.id || table.number) {
             @let state = getTableVisualState(table);
-            @let chairs = getChairDistribution(table.capacity);
+            @let chairs = getChairDistribution(table);
             @let matches = matchesActiveFilter(table);
 
             <div
               class="table-node"
               [ngClass]="[
+                getTableShapeClass(table),
                 getTableSizeClass(table.capacity),
                 'state-' + state
               ]"
@@ -478,16 +504,6 @@
                 }
 
                 @if (canActOnSelectedTable()) {
-                  @if (isWaiter() || isHost() || isManager() || isAdmin()) {
-                    <button
-                      type="button"
-                      class="btn-action btn-primary-green btn-take-order"
-                      (click)="navigateToCreateOrder(table.number)"
-                    >
-                      + New Order for Table #{{ table.number }}
-                    </button>
-                  }
-
                   <p class="section-label section-label--spaced">Floor &amp; Kitchen State</p>
                   <div class="state-grid">
                     <button
@@ -542,7 +558,7 @@
           }
 
           <!-- SUMMARIZED ORDER HISTORY SECTION -->
-          <div>
+          <div class="orders-section-container">
             <p class="section-label">Recent Order History (Click to view ticket)</p>
             @if (selectedTableOrders().length === 0) {
               <div class="empty-orders-card">
@@ -585,7 +601,7 @@
           </div>
         </div>
 
-        <!-- STICKY BOTTOM FOOTER: iOS 26 Morphing "Open Table" Button -->
+        <!-- STICKY BOTTOM FOOTER: Free Table -> iOS 26 Morphing "Open Table" Button -->
         @if (table.available && !isEditMode() && canOpenTables()) {
           <div class="drawer-footer">
             <div
@@ -630,6 +646,20 @@
             </div>
           </div>
         }
+
+        <!-- STICKY BOTTOM FOOTER: Occupied Table -> iOS 26 Pill "New Order" Button (Same location and shape as Open Table) -->
+        @if (!table.available && !isEditMode() && canActOnSelectedTable()) {
+          <div class="drawer-footer">
+            <button
+              type="button"
+              class="btn-order-pill-trigger"
+              (click)="navigateToCreateOrder(table.number)"
+            >
+              <span>+ New Order for Table #{{ table.number }}</span>
+              <span class="pill-arrow-right" aria-hidden="true">→</span>
+            </button>
+          </div>
+        }
       }
     </aside>
   </div>
@@ -641,9 +671,16 @@
     (closed)="closeTicketModal()"
   ></app-ticket-modal>
 
+  <!-- NEW TABLE SETUP & EDIT MODAL -->
+  <app-table-edit-modal
+    [isOpen]="isNewTableModalOpen()"
+    [tableNumber]="nextNewTableNumber()"
+    (confirmCreate)="onCreateTableFromModal($event)"
+    (dismissModal)="closeNewTableModal()"
+  ></app-table-edit-modal>
+
   <!-- TOAST NOTIFICATION -->
   <div class="toast" [class.show]="toastMessage() !== null" role="status" aria-live="polite">
     {{ toastMessage() }}
   </div>
 </div>
-

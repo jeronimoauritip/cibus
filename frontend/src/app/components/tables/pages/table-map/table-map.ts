@@ -19,11 +19,15 @@ import { BranchService } from '../../../branches/service/branch-service';
 import { User } from '../../../users/user.model';
 import { UserService } from '../../../users/user.service';
 import { TicketModalComponent } from '../../components/ticket-modal/ticket-modal';
+import { TableEditModalComponent } from '../../components/table-edit-modal/table-edit-modal';
 import {
   AssignableWaiterOption,
   BranchTable,
+  calculateChairs,
+  ChairDistribution,
   TableFilterMode,
   TableOrder,
+  TableShape,
   TableVisualState,
 } from '../../models/table.model';
 import { TableService } from '../../service/table.service';
@@ -31,7 +35,7 @@ import { TableService } from '../../service/table.service';
 @Component({
   selector: 'app-table-map',
   standalone: true,
-  imports: [CommonModule, FormsModule, TicketModalComponent],
+  imports: [CommonModule, FormsModule, TicketModalComponent, TableEditModalComponent],
   templateUrl: './table-map.html',
   styleUrl: './table-map.css',
 })
@@ -71,7 +75,13 @@ export class TableMapComponent implements OnInit {
   readonly activeFilter = signal<TableFilterMode>('all');
   readonly isCircleMenuOpen = signal<boolean>(false);
   readonly isEditMode = signal<boolean>(false);
+  readonly isNewTableModalOpen = signal<boolean>(false);
   readonly zoomLevel = signal<number>(1);
+
+  readonly nextNewTableNumber = computed(() => {
+    const existing = this.tables().map((t) => t.number);
+    return existing.length > 0 ? Math.max(...existing) + 1 : 1;
+  });
 
   // Right Drawer & Ticket Modal state
   readonly selectedTableNumber = signal<number | null>(null);
@@ -420,6 +430,20 @@ export class TableMapComponent implements OnInit {
     return true;
   }
 
+  inferShape(table: BranchTable): TableShape {
+    if (table.shape) {
+      const s = table.shape.toLowerCase() as TableShape;
+      if (s === 'square' || s === 'rectangular' || s === 'round') return s;
+    }
+    if (table.capacity <= 2) return 'round';
+    if (table.capacity <= 4) return 'square';
+    return 'rectangular';
+  }
+
+  getTableShapeClass(table: BranchTable): string {
+    return 'shape-' + this.inferShape(table);
+  }
+
   getTableSizeClass(capacity: number): string {
     if (capacity <= 2) return 'size-2';
     if (capacity <= 4) return 'size-4';
@@ -427,24 +451,8 @@ export class TableMapComponent implements OnInit {
     return 'size-8';
   }
 
-  getChairDistribution(capacity: number): {
-    top: number[];
-    bottom: number[];
-    left: number[];
-    right: number[];
-  } {
-    if (capacity <= 2) {
-      return { top: [0], bottom: [0], left: [], right: [] };
-    }
-    if (capacity <= 4) {
-      return { top: [0], bottom: [0], left: [0], right: [0] };
-    }
-    if (capacity <= 6) {
-      return { top: [0, 1], bottom: [0, 1], left: [0], right: [0] };
-    }
-    const sidePairs = Math.max(2, Math.floor((capacity - 2) / 2));
-    const arr = Array.from({ length: sidePairs }, (_, idx) => idx);
-    return { top: arr, bottom: arr, left: [0], right: [0] };
+  getChairDistribution(table: BranchTable): ChairDistribution {
+    return calculateChairs(this.inferShape(table), table.capacity);
   }
 
   getWaiterDisplayName(table: BranchTable): string {
@@ -646,22 +654,31 @@ export class TableMapComponent implements OnInit {
     this.editPosY.set(table.posY);
   }
 
-  addNewTable(event?: MouseEvent): void {
+  openNewTableModal(event?: MouseEvent): void {
     event?.stopPropagation();
+    if (!this.canEditLayout()) return;
+    this.isNewTableModalOpen.set(true);
+    this.isCircleMenuOpen.set(false);
+  }
+
+  closeNewTableModal(): void {
+    this.isNewTableModalOpen.set(false);
+  }
+
+  onCreateTableFromModal(config: { shape: TableShape; capacity: number }): void {
     if (!this.canEditLayout()) return;
     const branchId = this.activeBranchId();
     if (!branchId) return;
 
-    const existingNums = this.tables().map((t) => t.number);
-    const nextNumber = existingNums.length > 0 ? Math.max(...existingNums) + 1 : 1;
-
+    const nextNumber = this.nextNewTableNumber();
     this.isSaving.set(true);
     this.tableService
       .createTable(branchId, {
         number: nextNumber,
-        capacity: 4,
-        posX: 420,
-        posY: 260,
+        capacity: config.capacity,
+        posX: 400,
+        posY: 240,
+        shape: config.shape,
       })
       .pipe(finalize(() => this.isSaving.set(false)))
       .subscribe({
@@ -669,8 +686,8 @@ export class TableMapComponent implements OnInit {
           this.tables.update((list) => [...list, created]);
           this.selectedTableNumber.set(created.number);
           this.syncEditForm(created);
-          this.isCircleMenuOpen.set(false);
-          this.showToast(`Table #${created.number} added to the floor`);
+          this.isNewTableModalOpen.set(false);
+          this.showToast(`Table #${created.number} added to the floor. Drag to place.`);
         },
         error: (err) => {
           this.showToast(
@@ -678,6 +695,29 @@ export class TableMapComponent implements OnInit {
           );
         },
       });
+  }
+
+  onDeleteTableFromHud(event?: MouseEvent): void {
+    event?.stopPropagation();
+    if (!this.canEditLayout()) return;
+
+    if (this.selectedTableNumber() === null) {
+      this.showToast('Please tap a table on the map to select it for deletion');
+      return;
+    }
+
+    const table = this.selectedTable();
+    if (!table) return;
+
+    if (!table.available) {
+      this.showToast('Cannot delete an occupied table. Free it first.');
+      return;
+    }
+
+    const confirmed = window.confirm(`Delete Table #${table.number}?`);
+    if (!confirmed) return;
+
+    this.deleteSelectedTable();
   }
 
   saveTableEdits(): void {

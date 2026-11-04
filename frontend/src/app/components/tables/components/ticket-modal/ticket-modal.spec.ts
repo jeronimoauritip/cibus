@@ -19,3 +19,4 @@ describe('TicketModalComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
