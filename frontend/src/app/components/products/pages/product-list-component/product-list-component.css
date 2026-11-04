@@ -1,10 +1,14 @@
 :host {
   --header-gradient: linear-gradient(90deg, #205a40, #2d805d);
   --field-gradient: linear-gradient(100deg, #205a40, #2d805d);
-  position: fixed;
-  inset: 0;
   display: block;
   font-family: "Instrument Sans", sans-serif;
+}
+
+/* Solo ocupa toda la pantalla si NO tiene la clase modal-mode */
+:host(:not(.modal-mode)) {
+  position: fixed;
+  inset: 0;
 }
 
 .page {
@@ -16,6 +20,11 @@
   background: var(--cream);
 }
 
+/* Quitamos el fondo cuando está adentro del modal para que se funda con la tarjeta */
+:host(.modal-mode) .page {
+  background: transparent;
+}
+
 .content {
   grid-row: 2;
   align-self: start;
@@ -25,6 +34,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+  padding-top: 1rem;
   padding-bottom: 2rem;
 }
 

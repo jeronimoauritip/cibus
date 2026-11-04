@@ -1,13 +1,20 @@
-<app-header-component> Products </app-header-component>
+<!-- Ocultamos el header global si estamos adentro del modal -->
+@if (!isSelectionMode()) {
+  <app-header-component> Products </app-header-component>
+}
+
 <div class="page">
   <main class="content">
-       <app-product-filter-component [(filter)]="filter">
+    <app-product-filter-component [(filter)]="filter">
       <span class="toolbar__count">{{ filteredProducts().length }} products</span>
-      <button type="button" class="toolbar__new" (click)="onNewProduct()">
-        <span aria-hidden="true">+</span> New product
-      </button>
+      
+      <!-- Ocultamos el botón de crear producto nuevo si estamos en el modal -->
+      @if (!isSelectionMode()) {
+        <button type="button" class="toolbar__new" (click)="onNewProduct()">
+          <span aria-hidden="true">+</span> New product
+        </button>
+      }
     </app-product-filter-component>
-
 
     <div class="list">
       @if (loading()) {
@@ -22,8 +29,11 @@
               <span class="category__count">{{ group.products.length }}</span>
             </header>
             @for (product of group.products; track product.id) {
+              <!-- Le pasamos el modo selección a la fila y escuchamos el nuevo evento (selected) -->
               <app-product-row
                 [product]="product"
+                [isSelectionMode]="isSelectionMode()"
+                (selected)="onSelectProduct($event)"
                 (edit)="onEdit($event)"
                 (delete)="onDelete($event)" />
             }
