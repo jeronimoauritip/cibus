@@ -1,5 +1,5 @@
 import { OrderDetail } from "./order-detail";
-
+import { OrderStatus } from "./order-status";
 export interface OrderResponse {
     id:number;
     branchId: number;
