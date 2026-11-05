@@ -16,7 +16,7 @@ import { AdminPanelComponent } from './components/admin/pages/admin-panel-compon
 import { OrderCreationComponent } from './components/orders/pages/order-creation-component/order-creation-component';
 import { TableMapComponent } from './components/tables/pages/table-map/table-map';
 import { MenuComponent } from './components/menu/pages/menu-component/menu-component';
-
+import { KitchenViewComponent } from './components/orders/pages/kitchen-view-component/kitchen-view-component';
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
     { path: 'login', component: Login },
@@ -66,5 +66,12 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard],
         data: { roles: ['Waiter'] }
     },
+    {
+    path: 'kitchen',
+    component: KitchenViewComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Kitchen'] }
+},
+
     { path: '**', redirectTo: '' }
 ];
