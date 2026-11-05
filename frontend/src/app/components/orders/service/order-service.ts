@@ -1,10 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { forkJoin, map, Observable, switchMap, throwError } from 'rxjs';
 import { OrderDetail } from '../models/order-detail';
 import { OrderDetailRequest } from '../models/order-detail-request';
 import { OrderRequest } from '../models/order-request';
 import { OrderResponse } from '../models/order-response';
+import { Page } from '../../users/user.model';
+import { OrderStatus } from '../models/order-status';
+
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -38,9 +41,44 @@ export class OrderService {
     )
   );
 }
+  getKitchenOrders(
+  branchId: () => number | undefined,
+  status: Extract<OrderStatus, 'PREPARING' | 'READY'>
+) {
+  return httpResource<Page<OrderResponse>>(() => {
+    const id = branchId();
+    return id
+      ? {
+          url: this.url(id),
+          params: { statusName: status, size: 50, sort: 'createdAt,asc' }
+        }
+      : undefined;
+  });
+}
+
+  private static readonly STATUS_ACTIONS: Record<
+  Extract<OrderStatus, 'READY' | 'SERVED' | 'CANCELLED'>,
+  string
+> = {
+  READY: 'ready',
+  SERVED: 'serve',
+  CANCELLED: 'cancel'
+};
+
+changeStatus(
+  branchId: number,
+  orderId: number,
+  status: keyof typeof OrderService.STATUS_ACTIONS
+): Observable<OrderResponse> {
+  const action = OrderService.STATUS_ACTIONS[status];
+  return this.http.post<OrderResponse>(`${this.url(branchId)}/${orderId}/${action}`, {});
+}
+
+
 
     private url(branchId: number): string {
         return `/api/branches/${branchId}/orders`;
     }
+
    
 }
