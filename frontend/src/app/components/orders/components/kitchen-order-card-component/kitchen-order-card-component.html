@@ -1,0 +1,24 @@
+<article class="kitchen-card">
+  <header class="kitchen-card__header">
+    <h2 class="kitchen-card__table">Mesa {{ order().tableNumber }}</h2>
+    <span class="kitchen-card__time">{{ order().createdAt | date: 'HH:mm' }}</span>
+  </header>
+
+  <ul class="kitchen-card__items">
+    @for (item of order().items; track item.productId) {
+      <li class="kitchen-card__item">
+        <span class="kitchen-card__quantity">{{ item.quantity }}×</span>
+        <span class="kitchen-card__name">{{ item.productName }}</span>
+        @if (item.observation) {
+          <p class="kitchen-card__observation">{{ item.observation }}</p>
+        }
+      </li>
+    }
+  </ul>
+
+  @if (showAction()) {
+    <button type="button" class="kitchen-card__ready" (click)="onReady()">
+      Listo
+    </button>
+  }
+</article>

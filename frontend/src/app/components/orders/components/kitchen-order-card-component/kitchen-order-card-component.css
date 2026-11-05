@@ -1,0 +1,129 @@
+:host {
+  display: block;
+}
+
+/* Kitchen ticket — uses the :root variables */
+.kitchen-card {
+  position: relative;
+  margin-bottom: 22px;
+  padding: 16px 14px 16px;
+  background: var(--light-cream);
+  color: var(--dark-green);
+}
+
+/* top strip */
+.kitchen-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: var(--background-green);
+}
+
+/* scalloped bottom edge */
+.kitchen-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 8px;
+  background: radial-gradient(circle at 7px 0, var(--light-cream) 6px, transparent 6.5px) 0 0 / 14px 8px repeat-x;
+}
+
+.kitchen-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed color-mix(in srgb, var(--dark-green) 30%, transparent);
+}
+
+.kitchen-card__table {
+  margin: 0;
+  font-family: "Croogla", "Instrument Sans", sans-serif;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--dark-green);
+}
+
+.kitchen-card__time {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--background-green);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Items: quantity + name on one row, observation below the name */
+.kitchen-card__items {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kitchen-card__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  align-items: baseline;
+}
+
+.kitchen-card__quantity {
+  min-width: 30px;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--background-green);
+}
+
+.kitchen-card__name {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Observation: margin note */
+.kitchen-card__observation {
+  grid-column: 2;
+  margin: 4px 0 0;
+  padding: 1px 0 1px 9px;
+  border-left: 3px solid var(--light-green);
+  font-size: 14.5px;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* Ready button */
+.kitchen-card__ready {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  margin-top: 16px;
+  background: var(--background-green);
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cream);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kitchen-card__ready:hover {
+  background: var(--light-green);
+}
+
+.kitchen-card__ready:active {
+  transform: scale(0.98);
+}
+
+.kitchen-card__ready:focus-visible {
+  outline: 2px solid var(--dark-green);
+  outline-offset: 2px;
+}
