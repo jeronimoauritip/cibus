@@ -1,9 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed,DestroyRef, inject, signal } from '@angular/core';
 import { AuthService } from '../../../../Auth/services/auth-service';
 import { HeaderComponent } from '../../../header-component/header-component';
 import { KitchenOrderCardComponent } from '../../components/kitchen-order-card-component/kitchen-order-card-component';
 import { OrderService } from '../../service/order-service';
+const REFRESH_INTERVAL_MS = 10_000;
 
 @Component({
   selector: 'app-kitchen-view',
@@ -14,6 +15,7 @@ import { OrderService } from '../../service/order-service';
 export class KitchenViewComponent {
   private readonly orderService = inject(OrderService);
   private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly branchId = computed(() => this.authService.user()?.branchId);
 
@@ -37,6 +39,17 @@ export class KitchenViewComponent {
 
   readonly showReady = signal(true);
   readonly errorMessage = signal<string | null>(null);
+   constructor() {
+    const timer = setInterval(() => this.refresh(), REFRESH_INTERVAL_MS);
+    this.destroyRef.onDestroy(() => clearInterval(timer));
+  }
+
+  private refresh(): void {
+    if (document.hidden) return;
+    this.preparingResource.reload();
+    this.readyResource.reload();
+  }
+
 
   toggleReady(): void {
     this.showReady.update(value => !value);
@@ -47,13 +60,11 @@ export class KitchenViewComponent {
     if (!branchId) return;
 
     this.errorMessage.set(null);
-    this.orderService.changeStatus(branchId, orderId, 'READY').subscribe({
-      next: () => {
-        this.preparingResource.reload();
-        this.readyResource.reload();
-      },
+        this.orderService.changeStatus(branchId, orderId, 'READY').subscribe({
+      next: () => this.refresh(),
       error: (err: HttpErrorResponse) =>
         this.errorMessage.set(err.error?.message ?? 'Could not mark the order as ready')
     });
+
   }
 }
