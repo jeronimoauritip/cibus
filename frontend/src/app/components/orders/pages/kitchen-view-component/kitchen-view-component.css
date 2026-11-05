@@ -1,0 +1,159 @@
+:host {
+  display: block;
+}
+
+.board {
+  position: relative;
+  isolation: isolate;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  color: var(--dark-green);
+}
+
+
+.board__summary {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.board__message {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid var(--light-green);
+  font-size: 0.95rem;
+}
+
+.board__message--error {
+  border-left-color: #991b1b;
+  color: #991b1b;
+}
+
+.board__message--warning {
+  border-left-color: #b45309;
+  color: #b45309;
+}
+
+
+.board__columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+}
+
+
+.column {
+  min-width: 0;
+  padding: 0 1.25rem;
+}
+
+.column + .column {
+  border-left: 2px solid color-mix(in srgb, var(--dark-green) 25%, transparent);
+}
+
+.column:first-child {
+  padding-left: 0;
+}
+
+.column:last-child {
+  padding-right: 0;
+}
+
+.column__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-sizing: content-box;
+  min-height: 2.5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--dark-green);
+}
+
+
+
+.column__title {
+  margin: 0;
+  font-family: "Croogla", "Instrument Sans", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.column__count {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--background-green);
+  font-variant-numeric: tabular-nums;
+}
+
+.column__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: auto;
+  color: var(--dark-green);
+  background: none;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.column__toggle:hover {
+  background: color-mix(in srgb, var(--dark-green) 10%, transparent);
+}
+
+.column__toggle:focus-visible {
+  outline: 2px solid var(--dark-green);
+  outline-offset: 2px;
+}
+
+.column__empty {
+  position: relative;
+  margin: 0 0 22px;
+  padding: 22px 14px 18px;
+  background: var(--light-cream);
+  font-size: 0.95rem;
+  text-align: center;
+  color: color-mix(in srgb, var(--dark-green) 70%, transparent);
+}
+
+.column__empty::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: var(--background-green);
+}
+
+.column__empty::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 8px;
+  background: radial-gradient(circle at 7px 0, var(--light-cream) 6px, transparent 6.5px) 0 0 / 14px 8px repeat-x;
+}
+
+
+
+@media (max-width: 700px) {
+  .board__columns {
+    grid-template-columns: 1fr;
+  }
+
+  .column {
+    padding: 0;
+  }
+
+  .column + .column {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-left: none;
+    border-top: 2px solid color-mix(in srgb, var(--dark-green) 25%, transparent);
+  }
+}

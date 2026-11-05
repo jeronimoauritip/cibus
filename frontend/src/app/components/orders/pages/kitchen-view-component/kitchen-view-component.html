@@ -1,0 +1,75 @@
+<app-header-component>Kitchen</app-header-component>
+
+<main class="board">
+  <p class="board__summary">
+    {{ preparingOrders().length + preparingOverflow() }}
+    {{ preparingOrders().length + preparingOverflow() === 1 ? 'pending order' : 'pending orders' }}
+  </p>
+
+  @if (errorMessage()) {
+    <p class="board__message board__message--error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loadFailed()) {
+    <p class="board__message board__message--error" role="alert">
+      Could not load the orders.
+    </p>
+  } @else if (loading() && preparingOrders().length === 0 && readyOrders().length === 0) {
+    <p class="board__message">Loading orders...</p>
+  } @else {
+    <div class="board__columns">
+      <section class="column" aria-label="Preparing">
+        <div class="column__head">
+          <h2 class="column__title">Preparing</h2>
+          <span class="column__count">{{ preparingOrders().length }}</span>
+        </div>
+
+        @if (preparingOverflow() > 0) {
+          <p class="board__message board__message--warning" role="status">
+            {{ preparingOverflow() }} more orders are not shown.
+          </p>
+        }
+
+        @for (order of preparingOrders(); track order.id) {
+          <app-kitchen-order-card [order]="order" (ready)="markAsReady($event)" />
+        } @empty {
+          <p class="column__empty">No orders.</p>
+        }
+      </section>
+
+      <section class="column" aria-label="Ready">
+        <div class="column__head">
+          <h2 class="column__title">Ready</h2>
+          <span class="column__count">{{ readyOrders().length }}</span>
+          <button
+            type="button"
+            class="column__toggle"
+            [attr.aria-pressed]="!showReady()"
+            [attr.aria-label]="showReady() ? 'Hide ready orders' : 'Show ready orders'"
+            (click)="toggleReady()"
+          >
+            @if (showReady()) {
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.94 17.94A10.4 10.4 0 0 1 12 19c-6.5 0-10-7-10-7a17.7 17.7 0 0 1 4.06-5.06M9.9 5.24A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a17.8 17.8 0 0 1-2.16 3.19M1 1l22 22" />
+                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+              </svg>
+            }
+          </button>
+        </div>
+
+        @if (showReady()) {
+          @for (order of readyOrders(); track order.id) {
+            <app-kitchen-order-card [order]="order" [showAction]="false" />
+          } @empty {
+            <p class="column__empty">No orders.</p>
+          }
+        }
+      </section>
+    </div>
+  }
+</main>
