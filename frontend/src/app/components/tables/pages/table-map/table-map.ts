@@ -68,8 +68,6 @@ export class TableMapComponent implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly isSaving = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly toastMessage = signal<string | null>(null);
-  private toastTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   // Map HUD & Filter state
   readonly activeFilter = signal<TableFilterMode>('all');
@@ -1097,13 +1095,7 @@ export class TableMapComponent implements OnInit {
     this.authService.logout();
   }
 
-  private showToast(msg: string): void {
-    this.toastMessage.set(msg);
-    if (this.toastTimeoutId) {
-      clearTimeout(this.toastTimeoutId);
-    }
-    this.toastTimeoutId = setTimeout(() => {
-      this.toastMessage.set(null);
-    }, 2800);
+  private showToast(_msg: string): void {
+    // Green toast UI notifications removed per user request to prevent visual interference
   }
 }

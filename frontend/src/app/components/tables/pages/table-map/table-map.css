@@ -1331,30 +1331,7 @@
   }
 }
 
-.table-map-root:has(.btn-exit-edit-pill) .toast {
-  bottom: 84px;
-}
-
-/* TOAST & RESPONSIVE */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  z-index: 95;
-  padding: 10px 20px;
-  border-radius: 999px;
-  background: var(--dark-green);
-  color: var(--cream);
-  font-size: 13px;
-  font-weight: 700;
-  box-shadow: var(--shadow-elevated);
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s ease;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
+/* RESPONSIVE */
 @media (max-width: 820px) {
   .floating-hud { top: 10px; left: 10px; right: 10px; flex-wrap: wrap; }
   .hud-center { order: 3; width: 100%; justify-content: space-between; overflow-x: auto; }
