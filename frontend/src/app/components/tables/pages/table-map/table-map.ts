@@ -530,6 +530,17 @@ export class TableMapComponent implements OnInit {
     this.showToast(next ? 'Floor layout edit mode enabled' : 'Floor layout saved');
   }
 
+  exitEditMode(event?: MouseEvent): void {
+    event?.stopPropagation();
+    if (!this.isEditMode()) return;
+    this.isEditMode.set(false);
+    this.isDeleteMode.set(false);
+    this.isDeleteConfirmModalOpen.set(false);
+    this.isWaiterSelectOpen.set(false);
+    this.selectedTableNumber.set(null);
+    this.showToast('Floor layout saved');
+  }
+
   toggleDeleteMode(event?: MouseEvent): void {
     event?.stopPropagation();
     if (!this.canEditLayout()) return;

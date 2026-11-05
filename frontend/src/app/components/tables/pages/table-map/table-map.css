@@ -659,26 +659,6 @@
   box-shadow: 0 8px 22px rgba(23, 66, 47, 0.32);
 }
 
-.edit-banner {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  padding: 5px 14px;
-  border-radius: 999px;
-  background: var(--state-ready-bg);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-.edit-banner.visible { opacity: 1; }
-
 /* TABLE NODES */
 .table-node {
   position: absolute;
@@ -770,9 +750,8 @@
   margin-top: -9px;
 }
 
-.t-top { display: flex; align-items: baseline; gap: 5px; }
-.t-num { font-size: 20px; font-weight: 800; line-height: 1; }
-.t-cap { font-size: 11px; font-weight: 700; opacity: 0.8; }
+.t-top { display: flex; align-items: center; justify-content: center; }
+.t-num { font-size: 20px; font-weight: 800; line-height: 1; text-align: center; }
 .t-badge {
   margin-top: 4px;
   padding: 2px 8px;
@@ -1273,6 +1252,87 @@
 @keyframes scaleInCard {
   from { opacity: 0; transform: scale(0.92) translateY(10px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* FLOATING BOTTOM-CENTER: EXIT EDIT MODE PILL CAPSULE */
+.btn-exit-edit-pill {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 75;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 48px;
+  padding: 4px 5px 4px 20px;
+  border-radius: 999px;
+  border: 2.5px solid var(--state-ready-bg);
+  background: rgba(255, 252, 245, 0.96);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 28px rgba(18, 52, 37, 0.2), 0 4px 12px rgba(217, 119, 6, 0.22);
+  cursor: pointer;
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.2s ease;
+  animation: slideUpExitPill 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-exit-edit-pill:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 14px 34px rgba(18, 52, 37, 0.26), 0 6px 16px rgba(217, 119, 6, 0.3);
+  background: #ffffff;
+}
+
+.btn-exit-edit-pill:active {
+  transform: translateX(-50%) translateY(0);
+}
+
+.exit-pill-mode-label {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--state-ready-bg);
+  white-space: nowrap;
+}
+
+.exit-pill-thumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--state-ready-bg);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  box-shadow: 0 3px 8px rgba(217, 119, 6, 0.35);
+  transition: background-color 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
+}
+
+.btn-exit-edit-pill:hover .exit-pill-thumb {
+  background: #b45309;
+  transform: scale(1.02);
+}
+
+@keyframes slideUpExitPill {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(24px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.table-map-root:has(.btn-exit-edit-pill) .toast {
+  bottom: 84px;
 }
 
 /* TOAST & RESPONSIVE */

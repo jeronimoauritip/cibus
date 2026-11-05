@@ -283,11 +283,6 @@
           <!-- Spotlight Shadow Overlay -->
           <div class="map-filter-shade" aria-hidden="true"></div>
 
-          <!-- Edit Mode Banner -->
-          <div class="edit-banner" [class.visible]="isEditMode()">
-            EDIT MODE — Drag tables to reposition (20px grid)
-          </div>
-
           <!-- Architectural Landmarks -->
           <div class="arch-zone zone-entrance" aria-hidden="true">MAIN ENTRANCE</div>
           <div class="arch-zone zone-bar" aria-hidden="true">BAR &amp; SOMMELIER</div>
@@ -387,7 +382,6 @@
 
               <div class="t-top">
                 <span class="t-num">T-{{ table.number }}</span>
-                <span class="t-cap">{{ table.capacity }}p</span>
               </div>
 
               @if (isDeleteMode()) {
@@ -694,6 +688,20 @@
         </div>
       </div>
     </div>
+  }
+
+  <!-- FLOATING BOTTOM-CENTER: EXIT EDIT MODE BUTTON -->
+  @if (isEditMode() && canEditLayout()) {
+    <button
+      type="button"
+      class="btn-exit-edit-pill"
+      (click)="exitEditMode($event)"
+      aria-label="Exit edit mode"
+      title="Exit edit mode"
+    >
+      <span class="exit-pill-mode-label">EDIT MODE</span>
+      <span class="exit-pill-thumb">EXIT</span>
+    </button>
   }
 
   <!-- TOAST NOTIFICATION -->
