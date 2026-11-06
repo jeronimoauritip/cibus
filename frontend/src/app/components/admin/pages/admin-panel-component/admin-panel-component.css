@@ -3,6 +3,35 @@
   z-index: 2;
   padding: 18px 24px 60px;
 }
+.admin-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: min(100%, 838px);
+  min-height: 64px;
+  margin: 0 auto 30px;
+  padding: 16px 24px;
+
+  border: 2px solid var(--light-green);
+  border-radius: 22px;
+
+  color: var(--dark-green);
+  font-size: 24px;
+  text-decoration: none;
+
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-stats:hover {
+  background: var(--light-green);
+  color: rgba(244, 240, 228, 0.95);
+}
+
+.admin-stats:focus-visible {
+  outline: 3px solid var(--light-green);
+  outline-offset: 4px;
+}
 
 .admin-options {
   display: flex;
@@ -60,4 +89,9 @@
     border-radius: 22px;
     font-size: clamp(19px, 4.8vw, 26px);
   }
+    .admin-stats {
+    margin-bottom: 20px;
+    font-size: clamp(18px, 4.5vw, 22px);
+  }
+
 }
