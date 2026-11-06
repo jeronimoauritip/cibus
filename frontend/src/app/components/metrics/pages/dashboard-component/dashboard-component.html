@@ -1,6 +1,10 @@
 <app-header-component> Statistics </app-header-component>
 
 <main class="dashboard">
+  <a class="dashboard-back" routerLink="/admin">
+    <span aria-hidden="true">←</span> Back to admin panel
+  </a>
+
   <label class="dashboard-branch">
     <span>Branch</span>
     <select #branchSelect (change)="selectBranch(branchSelect.value)">

@@ -7,11 +7,11 @@ import { MetricsService } from '../../service/metrics-service';
 import { ProductsReportComponent } from '../../components/products-report-component/products-report-component';
 import { OrdersReportComponent } from '../../components/orders-report-component/orders-report-component';
 import { WaitersReportComponent } from '../../components/waiters-report-component/waiters-report-component';
-
+import { RouterLink } from '@angular/router';
 type ReportTab = 'orders' | 'products' | 'waiters';
 
 @Component({
-  imports: [HeaderComponent, ProductsReportComponent, OrdersReportComponent, WaitersReportComponent],
+  imports: [HeaderComponent,RouterLink, ProductsReportComponent, OrdersReportComponent, WaitersReportComponent],
   selector: 'app-dashboard-component',
   styleUrl: './dashboard-component.css',
   templateUrl: './dashboard-component.html',

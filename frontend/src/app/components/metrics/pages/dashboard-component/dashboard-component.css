@@ -8,6 +8,30 @@
   margin-inline: auto;
   padding: 18px 24px 60px;
 }
+.dashboard-back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid var(--light-green);
+  border-radius: 14px;
+  color: var(--dark-green);
+  font-size: 17px;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-back:hover {
+  background: var(--light-green);
+  color: rgba(244, 240, 228, 0.95);
+}
+
+.dashboard-back:focus-visible {
+  outline: 3px solid var(--light-green);
+  outline-offset: 4px;
+}
+
 
 .dashboard-branch {
   display: flex;
