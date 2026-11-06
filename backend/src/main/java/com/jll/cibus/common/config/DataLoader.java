@@ -35,6 +35,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ public class DataLoader {
 
     @Bean
     CommandLineRunner initDatabase(
+            TransactionTemplate transactionTemplate,
             ProductRepository productRepository,
             ProductCategoryRepository categoryRepository,
             BranchProductRepository branchProductRepository,
@@ -62,34 +64,37 @@ public class DataLoader {
             TableRepository tableRepository) {
 
         return args -> {
-            // 1. SUCURSALES (BRANCHES)
-            List<BranchEntity> branches = loadBranches(branchRepository);
+            transactionTemplate.execute(status -> {
+                // 1. SUCURSALES (BRANCHES)
+                List<BranchEntity> branches = loadBranches(branchRepository);
 
-            // 2. CATEGORÍAS Y PRODUCTOS BASE (CATALOG)
-            Map<String, ProductEntity> catalog = loadCategoriesAndProducts(categoryRepository, productRepository);
+                // 2. CATEGORÍAS Y PRODUCTOS BASE (CATALOG)
+                Map<String, ProductEntity> catalog = loadCategoriesAndProducts(categoryRepository, productRepository);
 
-            // 3. MENÚS POR SUCURSAL (BRANCH PRODUCTS)
-            loadBranchProducts(branchRepository, productRepository, branchProductRepository);
+                // 3. MENÚS POR SUCURSAL (BRANCH PRODUCTS)
+                loadBranchProducts(branchRepository, productRepository, branchProductRepository);
 
-            // 4. ROLES Y PERMISOS
-            Map<Roles, RoleEntity> rolesMap = loadRolesAndPermits(roleRepository, permitRepository);
+                // 4. ROLES Y PERMISOS
+                Map<Roles, RoleEntity> rolesMap = loadRolesAndPermits(roleRepository, permitRepository);
 
-            // 5. MEDIOS DE PAGO Y ESTADOS DE ORDEN
-            List<PaymentMethodEntity> paymentMethods = loadPaymentMethods(paymentMethodRepository);
-            Map<String, OrderStatusEntity> orderStatuses = loadOrderStatuses(orderStatusRepository);
+                // 5. MEDIOS DE PAGO Y ESTADOS DE ORDEN
+                List<PaymentMethodEntity> paymentMethods = loadPaymentMethods(paymentMethodRepository);
+                Map<String, OrderStatusEntity> orderStatuses = loadOrderStatuses(orderStatusRepository);
 
-            // 6. EMPLEADOS Y CREDENCIALES POR SUCURSAL
-            Map<Long, List<UserEntity>> branchWaiters = loadUsersAndCredentials(
-                    branches, rolesMap, userRepository, credentialsRepository, passwordEncoder);
+                // 6. EMPLEADOS Y CREDENCIALES POR SUCURSAL
+                Map<Long, List<UserEntity>> branchWaiters = loadUsersAndCredentials(
+                        branches, rolesMap, userRepository, credentialsRepository, passwordEncoder);
 
-            // 7. MESAS POR SUCURSAL
-            Map<Long, List<TableEntity>> branchTables = loadTables(branches, branchWaiters, tableRepository);
+                // 7. MESAS POR SUCURSAL
+                Map<Long, List<TableEntity>> branchTables = loadTables(branches, branchWaiters, tableRepository);
 
-            // 8. PEDIDOS, DETALLES Y PAGOS (ACTIVOS E HISTÓRICOS)
-            loadOrders(branches, branchTables, branchWaiters, catalog, orderStatuses, paymentMethods,
-                    orderRepository, orderDetailRepository, orderPaymentRepository);
+                // 8. PEDIDOS, DETALLES Y PAGOS (ACTIVOS E HISTÓRICOS)
+                loadOrders(branches, branchTables, branchWaiters, catalog, orderStatuses, paymentMethods,
+                        orderRepository, orderDetailRepository, orderPaymentRepository);
 
-            System.out.println(">>> DataLoader completado exitosamente con datos completos para todas las sucursales. <<<");
+                System.out.println(">>> DataLoader completado exitosamente con datos completos para todas las sucursales. <<<");
+                return null;
+            });
         };
     }
 
