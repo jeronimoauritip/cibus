@@ -70,6 +70,16 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getStatuses());
     }
 
+    @PostMapping("/{orderId}/pending")
+    public ResponseEntity<OrderResponseDTO> setPendingStatus(@PathVariable Long branchId,@PathVariable Long orderId){
+        return ResponseEntity.ok(orderService.changeStatusInBranch(branchId,orderId, "PENDING"));
+    }
+
+    @PostMapping("/{orderId}/preparing")
+    public ResponseEntity<OrderResponseDTO> setPreparingStatus(@PathVariable Long branchId,@PathVariable Long orderId){
+        return ResponseEntity.ok(orderService.changeStatusInBranch(branchId,orderId, "PREPARING"));
+    }
+
     @PostMapping("/{orderId}/cancel")
     public ResponseEntity<OrderResponseDTO> setCancelStatus(@PathVariable Long branchId,@PathVariable Long orderId){
         return ResponseEntity.ok(orderService.changeStatusInBranch(branchId,orderId, "CANCELLED"));

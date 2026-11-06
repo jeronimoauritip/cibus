@@ -29,6 +29,7 @@ public class OrderStatusServiceImpl implements OrderStatusService{
 
     private void validateTransition(String current, String next) {
         switch (current) {
+            /*   Dejo comentado las validaciones de transicion salvo el paid y canceled que quedan inmutables, el resto puede pasar de cualquiera a cualquiera
             case "PENDING":
                 if (!next.equalsIgnoreCase("PREPARING") && !next.equalsIgnoreCase("CANCELLED"))
                     throw new BusinessException("Invalid status transition");
@@ -45,6 +46,7 @@ public class OrderStatusServiceImpl implements OrderStatusService{
                 if (!next.equalsIgnoreCase("PAID") && !next.equalsIgnoreCase("PREPARING") && !next.equalsIgnoreCase("CANCELLED"))
                     throw new BusinessException("Invalid status transition");
                 break;
+             */
             case "PAID", "CANCELLED":
                 throw new BusinessException("Order can no longer change status");
         }
