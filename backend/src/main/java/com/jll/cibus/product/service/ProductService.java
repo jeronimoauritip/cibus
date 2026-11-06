@@ -13,6 +13,7 @@ public interface ProductService {
     ProductResponseDTO findById(Long id);
     ProductResponseDTO create(ProductRequestDTO dto);
     ProductResponseDTO update(Long id, ProductRequestDTO dto);
+    ProductResponseDTO activate(Long id);
     void delete(Long id);
     List<String> getProductCategories();
 }

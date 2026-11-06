@@ -50,6 +50,12 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{productId}/activate")
+    public ResponseEntity<Void> activate(@PathVariable Long productId) {
+        productService.activate(productId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/categories")
     public ResponseEntity<List<String>> getProductCategories(){
         return ResponseEntity.ok(productService.getProductCategories());

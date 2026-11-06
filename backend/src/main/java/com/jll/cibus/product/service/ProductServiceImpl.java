@@ -79,9 +79,19 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
+    public ProductResponseDTO activate(Long id){
+        ProductEntity product = getEntity(id);
+        product.setActive(true);
+        ProductEntity updated = productRepository.save(product);
+        return productMapper.toDTO(updated);
+    }
+
+    @Override
+    @Transactional
     public void delete(Long id) {
         ProductEntity product = getEntity(id);
-        productRepository.delete(product);
+        product.setActive(false);
+        productRepository.save(product);
     }
 
     @Override

@@ -28,4 +28,8 @@ public class ProductEntity {
     @Column(name = "description")
     private String description;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean active = true;
+
 }
