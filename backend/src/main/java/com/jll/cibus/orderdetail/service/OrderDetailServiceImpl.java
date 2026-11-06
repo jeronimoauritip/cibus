@@ -118,9 +118,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
         OrderDetailEntity saved = orderDetailRepository.save(detail);
 
-        if (!order.getStatus().getName().equalsIgnoreCase("PREPARING")) {
-            orderService.changeStatus(orderId, "PREPARING");
-        }
         orderService.recalculateTotals(orderId);
         return orderDetailMapper.toDTO(saved);
     }
