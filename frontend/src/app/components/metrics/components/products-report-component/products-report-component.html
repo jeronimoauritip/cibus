@@ -1,0 +1,81 @@
+@if (hasData()) {
+  <section class="report">
+    <h2>Best and worst seller</h2>
+
+    @if (report().mostPopularProduct; as product) {
+      <div class="bar-row">
+        <span class="bar-label">Most popular product</span>
+        <strong class="bar-name">{{ product.productName }}</strong>
+        <div class="bar-line">
+          <div class="bar" [style.--ratio]="ratio(product.timesSold, maxTimesSold())"></div>
+          <span class="bar-value">{{ product.timesSold }} {{ product.timesSold === 1 ? 'time' : 'times' }}</span>
+        </div>
+      </div>
+    }
+
+    @if (report().lessPopularProduct; as product) {
+      <div class="bar-row">
+        <span class="bar-label">Least popular product</span>
+        <strong class="bar-name">{{ product.productName }}</strong>
+        <div class="bar-line">
+          <div class="bar bar--muted" [style.--ratio]="ratio(product.timesSold, maxTimesSold())"></div>
+          <span class="bar-value">{{ product.timesSold }} {{ product.timesSold === 1 ? 'time' : 'times' }}</span>
+        </div>
+      </div>
+    }
+  </section>
+
+  <section class="report">
+    <h2>Price range</h2>
+
+    @if (report().mostExpensiveProduct; as product) {
+      <div class="bar-row">
+        <span class="bar-label">Most expensive product</span>
+        <strong class="bar-name">{{ product.productName }}</strong>
+        <div class="bar-line">
+          <div class="bar" [style.--ratio]="ratio(product.productPrice, maxPrice())"></div>
+          <span class="bar-value">${{ product.productPrice | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    }
+
+    @if (report().cheapestProduct; as product) {
+      <div class="bar-row">
+        <span class="bar-label">Cheapest product</span>
+        <strong class="bar-name">{{ product.productName }}</strong>
+        <div class="bar-line">
+          <div class="bar bar--muted" [style.--ratio]="ratio(product.productPrice, maxPrice())"></div>
+          <span class="bar-value">${{ product.productPrice | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    }
+  </section>
+
+  <section class="report">
+    <h2>Categories</h2>
+
+    @if (report().mostPopularCategory; as category) {
+      <div class="bar-row">
+        <span class="bar-label">Most popular category</span>
+        <strong class="bar-name">{{ category.name }}</strong>
+        <div class="bar-line">
+          <div class="bar" [style.--ratio]="ratio(category.timesSold, maxCategoryTimesSold())"></div>
+          <span class="bar-value">{{ category.timesSold }} {{ category.timesSold === 1 ? 'time' : 'times' }}</span>
+        </div>
+      </div>
+    }
+
+    @if (report().lessPopularCategory; as category) {
+      <div class="bar-row">
+        <span class="bar-label">Least popular category</span>
+        <strong class="bar-name">{{ category.name }}</strong>
+        <div class="bar-line">
+          <div class="bar bar--muted" [style.--ratio]="ratio(category.timesSold, maxCategoryTimesSold())"></div>
+          <span class="bar-value">{{ category.timesSold }} {{ category.timesSold === 1 ? 'time' : 'times' }}</span>
+        </div>
+      </div>
+    }
+  </section>
+} @else {
+  <p class="report-empty">No sales in the selected period.</p>
+}

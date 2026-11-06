@@ -1,0 +1,82 @@
+.report {
+  margin-bottom: 36px;
+}
+
+.report h2 {
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--dark-green);
+  color: var(--dark-green);
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.report h2 {
+  margin: 0 0 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--dark-green);
+  color: var(--dark-green);
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 22px;
+}
+
+.bar-label {
+  color: var(--dark-green);
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+.bar-name {
+  color: var(--dark-green);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.bar-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+
+.bar {
+  flex: none;
+  width: calc((100% - 110px) * var(--ratio, 0));
+  min-width: 30px;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #205A40 0%, #2D805D 100%);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar--muted {
+  opacity: 0.45;
+}
+
+.bar-value {
+  color: var(--dark-green);
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.report-empty {
+  color: var(--dark-green);
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
+}
