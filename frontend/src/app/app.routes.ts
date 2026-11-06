@@ -17,6 +17,8 @@ import { OrderCreationComponent } from './components/orders/pages/order-creation
 import { TableMapComponent } from './components/tables/pages/table-map/table-map';
 import { MenuComponent } from './components/menu/pages/menu-component/menu-component';
 import { KitchenViewComponent } from './components/orders/pages/kitchen-view-component/kitchen-view-component';
+import { DashboardComponent } from './components/metrics/pages/dashboard-component/dashboard-component';
+
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
     { path: 'login', component: Login },
@@ -57,7 +59,8 @@ export const routes: Routes = [
             { path: 'employees/:id', component: UserDetail },
             { path: 'menu', component: ProductListComponent },
             { path: 'menu/:id', component: ProductDetailComponent },
-            { path: 'menu/branch/:branchId', component: MenuComponent }
+            { path: 'menu/branch/:branchId', component: MenuComponent },
+            { path: 'statistics', component: DashboardComponent}
         ]
     },
     {
