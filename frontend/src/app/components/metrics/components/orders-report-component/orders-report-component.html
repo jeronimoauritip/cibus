@@ -1,0 +1,65 @@
+@if (report().totalOrders > 0) {
+  <section class="report">
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-value">${{ report().totalRevenue | number:'1.0-0' }}</span>
+        <span class="stat-label">Total revenue</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ report().totalOrders }}</span>
+        <span class="stat-label">Orders</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">${{ report().averageRevenuePerDay | number:'1.0-0' }}</span>
+        <span class="stat-label">Revenue per day</span>
+      </div>
+    </div>
+  </section>
+
+  @if (report().lowestValueOrder; as lowest) {
+    @if (report().highestValueOrder; as highest) {
+      <section class="report">
+        <h2>Order value</h2>
+
+        <div class="range-track" [style.--avg]="averagePosition()">
+          <span class="range-dot range-dot--min"></span>
+          <span class="range-dot range-dot--max"></span>
+
+          <div class="range-average">
+            <div class="range-average-text">
+              <strong>${{ report().averageTicket | number:'1.0-0' }}</strong>
+              <span>Average ticket</span>
+            </div>
+            <span class="range-average-dot"></span>
+          </div>
+        </div>
+
+        <div class="tickets">
+          <article class="ticket ticket--min">
+            <span class="ticket-label">Lowest ticket</span>
+            <strong class="ticket-value">${{ lowest.ticketValue | number:'1.0-0' }}</strong>
+            <dl class="ticket-rows">
+              <div class="ticket-row"><dt>Order</dt><dd>#{{ lowest.orderId }}</dd></div>
+              <div class="ticket-row"><dt>Table</dt><dd>{{ lowest.tableId }}</dd></div>
+              <div class="ticket-row"><dt>Waiter</dt><dd>{{ lowest.waiterName }}</dd></div>
+              <div class="ticket-row"><dt>Date</dt><dd>{{ lowest.orderDate | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            </dl>
+          </article>
+
+          <article class="ticket ticket--max">
+            <span class="ticket-label">Highest ticket</span>
+            <strong class="ticket-value">${{ highest.ticketValue | number:'1.0-0' }}</strong>
+            <dl class="ticket-rows">
+              <div class="ticket-row"><dt>Order</dt><dd>#{{ highest.orderId }}</dd></div>
+              <div class="ticket-row"><dt>Table</dt><dd>{{ highest.tableId }}</dd></div>
+              <div class="ticket-row"><dt>Waiter</dt><dd>{{ highest.waiterName }}</dd></div>
+              <div class="ticket-row"><dt>Date</dt><dd>{{ highest.orderDate | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            </dl>
+          </article>
+        </div>
+      </section>
+    }
+  }
+} @else {
+  <p class="report-empty">No orders in the selected period.</p>
+}
