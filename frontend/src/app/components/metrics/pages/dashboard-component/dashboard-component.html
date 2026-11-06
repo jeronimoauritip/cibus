@@ -1,0 +1,60 @@
+<app-header-component> Statistics </app-header-component>
+
+<main class="dashboard">
+  <label class="dashboard-branch">
+    <span>Branch</span>
+    <select #branchSelect (change)="selectBranch(branchSelect.value)">
+      <option value="">All branches (global)</option>
+      @for (branch of branches(); track branch.id) {
+        <option [value]="branch.id">{{ branch.name }}</option>
+      }
+    </select>
+  </label>
+
+  <nav class="dashboard-tabs" aria-label="Reports">
+    @for (tab of tabs; track tab.key) {
+      <button
+        type="button"
+        [class.active]="activeTab() === tab.key"
+        (click)="activeTab.set(tab.key)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </nav>
+
+  <section class="dashboard-content">
+    @switch (activeTab()) {
+        @case ('orders') {
+        @if (ordersReport.isLoading()) {
+          <p>Loading…</p>
+        } @else if (ordersReport.error()) {
+          <p>Could not load the orders report.</p>
+        } @else if (ordersReport.value(); as report) {
+          <app-orders-report-component [report]="report" />
+        }
+      }
+
+        @case ('products') {
+        @if (productsReport.isLoading()) {
+          <p>Loading…</p>
+        } @else if (productsReport.error()) {
+          <p>Could not load the products report.</p>
+        } @else if (productsReport.value(); as report) {
+          <app-products-report-component [report]="report" />
+        }
+      }
+
+        @case ('waiters') {
+        @if (waitersReport.isLoading()) {
+          <p>Loading…</p>
+        } @else if (waitersReport.error()) {
+          <p>Could not load the waiters report.</p>
+        } @else if (waitersReport.value(); as report) {
+          <app-waiters-report-component [report]="report" />
+        }
+      }
+
+    }
+  </section>
+</main>

@@ -1,0 +1,57 @@
+.dashboard {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: min(100%, 838px);
+  margin-inline: auto;
+  padding: 18px 24px 60px;
+}
+
+.dashboard-branch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--dark-green);
+  font-weight: 600;
+}
+
+.dashboard-branch select {
+  padding: 14px 18px;
+  border: none;
+  border-radius: 16px;
+  background: #f8f5e8;
+  color: var(--dark-green);
+  font-size: 18px;
+}
+
+.dashboard-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 2px solid var(--dark-green);
+  padding-bottom: 12px;
+}
+
+.dashboard-tabs button {
+  padding: 10px 22px;
+  border: 2px solid var(--light-green);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--dark-green);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-tabs button.active,
+.dashboard-tabs button:hover {
+  background: var(--light-green);
+  color: rgba(244, 240, 228, 0.95);
+}
+
+.dashboard-content pre {
+  overflow-x: auto;
+  color: var(--dark-green);
+}
