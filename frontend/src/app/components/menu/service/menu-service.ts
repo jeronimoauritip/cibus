@@ -10,7 +10,7 @@ export class MenuService {
     
 
     getAll(branchId: number): Observable<Page<MenuItem>> {
-        return this.http.get<Page<MenuItem>>(`/api/branches/${branchId}/products`);
+        return this.http.get<Page<MenuItem>>(`/api/branches/${branchId}/products?page=0&size=1000`);
     }
 
     create(branchId: number, request: MenuItemRequest): Observable<MenuItem> {
