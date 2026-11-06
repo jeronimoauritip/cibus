@@ -43,7 +43,7 @@ export class OrderService {
 }
   getKitchenOrders(
   branchId: () => number | undefined,
-  status: Extract<OrderStatus, 'PREPARING' | 'READY'>
+  status: Extract<OrderStatus, 'PENDING' | 'PREPARING' | 'READY'>
 ) {
   return httpResource<Page<OrderResponse>>(() => {
     const id = branchId();
@@ -57,9 +57,10 @@ export class OrderService {
 }
 
   private static readonly STATUS_ACTIONS: Record<
-  Extract<OrderStatus, 'READY' | 'SERVED' | 'CANCELLED'>,
+  Extract<OrderStatus, 'PREPARING' | 'READY' | 'SERVED' | 'CANCELLED'>,
   string
 > = {
+  PREPARING: 'preparing',
   READY: 'ready',
   SERVED: 'serve',
   CANCELLED: 'cancel'

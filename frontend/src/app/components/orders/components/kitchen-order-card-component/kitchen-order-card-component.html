@@ -17,8 +17,8 @@
   </ul>
 
   @if (showAction()) {
-    <button type="button" class="kitchen-card__ready" (click)="onReady()">
-      Listo
+    <button type="button" class="kitchen-card__ready" (click)="onAdvance()">
+      {{ actionLabel() }}
     </button>
   }
 </article>

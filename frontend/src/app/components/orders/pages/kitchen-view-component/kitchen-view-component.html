@@ -2,8 +2,8 @@
 
 <main class="board">
   <p class="board__summary">
-    {{ preparingOrders().length + preparingOverflow() }}
-    {{ preparingOrders().length + preparingOverflow() === 1 ? 'pending order' : 'pending orders' }}
+    {{ pendingOrders().length + pendingOverflow() + preparingOrders().length + preparingOverflow() }}
+    {{ pendingOrders().length + pendingOverflow() + preparingOrders().length + preparingOverflow() === 1 ? 'active order' : 'active orders' }}
   </p>
 
   @if (errorMessage()) {
@@ -14,10 +14,33 @@
     <p class="board__message board__message--error" role="alert">
       Could not load the orders.
     </p>
-  } @else if (loading() && preparingOrders().length === 0 && readyOrders().length === 0) {
+  } @else if (loading() && pendingOrders().length === 0 && preparingOrders().length === 0 && readyOrders().length === 0) {
     <p class="board__message">Loading orders...</p>
   } @else {
     <div class="board__columns">
+      <section class="column" aria-label="Pending">
+        <div class="column__head">
+          <h2 class="column__title">Pending</h2>
+          <span class="column__count">{{ pendingOrders().length }}</span>
+        </div>
+
+        @if (pendingOverflow() > 0) {
+          <p class="board__message board__message--warning" role="status">
+            {{ pendingOverflow() }} more orders are not shown.
+          </p>
+        }
+
+        @for (order of pendingOrders(); track order.id) {
+          <app-kitchen-order-card
+            [order]="order"
+            actionLabel="Preparar"
+            (advance)="startPreparing($event)"
+          />
+        } @empty {
+          <p class="column__empty">No orders.</p>
+        }
+      </section>
+
       <section class="column" aria-label="Preparing">
         <div class="column__head">
           <h2 class="column__title">Preparing</h2>
@@ -31,7 +54,7 @@
         }
 
         @for (order of preparingOrders(); track order.id) {
-          <app-kitchen-order-card [order]="order" (ready)="markAsReady($event)" />
+          <app-kitchen-order-card [order]="order" (advance)="markAsReady($event)" />
         } @empty {
           <p class="column__empty">No orders.</p>
         }

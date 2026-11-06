@@ -5,7 +5,7 @@
 .board {
   position: relative;
   isolation: isolate;
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 1.25rem 1rem 2rem;
   color: var(--dark-green);
@@ -38,7 +38,7 @@
 
 .board__columns {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   align-items: stretch;
 }
 

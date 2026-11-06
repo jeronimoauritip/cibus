@@ -11,9 +11,10 @@ import { OrderResponse } from '../../models/order-response';
 export class KitchenOrderCardComponent {
   readonly order = input.required<OrderResponse>();
   readonly showAction = input(true);
-  readonly ready = output<number>();
+  readonly actionLabel = input('Listo');
+  readonly advance = output<number>();
 
-  onReady(): void {
-    this.ready.emit(this.order().id);
+  onAdvance(): void {
+    this.advance.emit(this.order().id);
   }
 }
