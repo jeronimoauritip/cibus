@@ -68,8 +68,6 @@ export class TableMapComponent implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly isSaving = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly toastMessage = signal<string | null>(null);
-  private toastTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   // Map HUD & Filter state
   readonly activeFilter = signal<TableFilterMode>('all');
@@ -528,6 +526,17 @@ export class TableMapComponent implements OnInit {
       this.isDeleteConfirmModalOpen.set(false);
     }
     this.showToast(next ? 'Floor layout edit mode enabled' : 'Floor layout saved');
+  }
+
+  exitEditMode(event?: MouseEvent): void {
+    event?.stopPropagation();
+    if (!this.isEditMode()) return;
+    this.isEditMode.set(false);
+    this.isDeleteMode.set(false);
+    this.isDeleteConfirmModalOpen.set(false);
+    this.isWaiterSelectOpen.set(false);
+    this.selectedTableNumber.set(null);
+    this.showToast('Floor layout saved');
   }
 
   toggleDeleteMode(event?: MouseEvent): void {
@@ -1086,13 +1095,7 @@ export class TableMapComponent implements OnInit {
     this.authService.logout();
   }
 
-  private showToast(msg: string): void {
-    this.toastMessage.set(msg);
-    if (this.toastTimeoutId) {
-      clearTimeout(this.toastTimeoutId);
-    }
-    this.toastTimeoutId = setTimeout(() => {
-      this.toastMessage.set(null);
-    }, 2800);
+  private showToast(_msg: string): void {
+    // Green toast UI notifications removed per user request to prevent visual interference
   }
 }
