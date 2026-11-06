@@ -1,0 +1,126 @@
+.report {
+  margin-bottom: 36px;
+}
+
+.report h2 {
+  margin: 0 0 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--dark-green);
+  color: var(--dark-green);
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.rankings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  column-gap: 32px;
+}
+
+.rankings > .report {
+  min-width: 0;
+}
+
+.stats {
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--dark-green);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--dark-green);
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+.ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rank-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.rank-position {
+  flex: none;
+  width: 28px;
+  color: var(--dark-green);
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 26px;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.rank-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rank-name {
+  color: var(--dark-green);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.rank-meta {
+  color: var(--dark-green);
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.bar-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+/* --ratio goes from 0 to 1; 140px is reserved for the value on the right */
+.bar {
+  flex: none;
+  width: calc((100% - 140px) * var(--ratio, 0));
+  min-width: 30px;
+  height: 24px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #205A40 0%, #2D805D 100%);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar-value {
+  color: var(--dark-green);
+  font-size: 17px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.report-empty {
+  color: var(--dark-green);
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
+}
