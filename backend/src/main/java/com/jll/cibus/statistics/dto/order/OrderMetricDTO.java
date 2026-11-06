@@ -13,7 +13,7 @@ public class OrderMetricDTO {
     private Long orderId;
     private Long branchId;
     private Long tableId;
-    private String WaiterName;
+    private String waiterName;
     private BigDecimal ticketValue;
     private LocalDateTime orderDate;
 }
