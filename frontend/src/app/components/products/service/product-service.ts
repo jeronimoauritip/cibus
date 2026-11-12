@@ -8,7 +8,7 @@ import { Product } from '../models/product';
 @Injectable({providedIn:'root'})
 export class ProductService {
     private readonly http= inject(HttpClient);
-    readonly products = httpResource<Product[]>(() => '/api/products?page=0&size=1000', { parse: (res: any) => res.content });
+    readonly products = httpResource<Product[]>(() => '/api/products?page=0&size=1000&active=true', { parse: (res: any) => res.content });
     readonly categories = httpResource<ProductCategory[]>(() => '/api/product-categories');
 
 
