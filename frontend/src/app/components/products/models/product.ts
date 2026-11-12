@@ -3,6 +3,7 @@ export interface Product {
     name:string;
     description?: string;
     categoryName: string;
+    active: boolean;
 }
 
 export interface ProductRequest {
