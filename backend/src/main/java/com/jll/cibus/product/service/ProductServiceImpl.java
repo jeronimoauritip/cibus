@@ -39,11 +39,12 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Page<ProductResponseDTO> findAll(Pageable pageable, String name, Long categoryId, String categoryName){
+    public Page<ProductResponseDTO> findAll(Pageable pageable, String name, Long categoryId, String categoryName, Boolean active){
         Specification<ProductEntity> spec = Specification.allOf(
                 ProductSpecification.nameContains(name),
                 ProductSpecification.equalsCategoryId(categoryId),
-                ProductSpecification.equalsCategoryName(categoryName));
+                ProductSpecification.equalsCategoryName(categoryName),
+                ProductSpecification.isActive(active));
         return productRepository.findAll(spec, pageable)
                 .map(productMapper::toDTO);
     }
