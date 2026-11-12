@@ -59,4 +59,10 @@ public class BranchProductSpecification {
                 ? cb.conjunction()
                 : cb.lessThanOrEqualTo(root.get("price"), maxPrice);
     }
+
+    public static Specification<BranchProductEntity> isGlobalProductActive(Boolean active) {
+        return (root, query, cb) -> active == null
+                ? cb.conjunction()
+                : cb.equal(root.get("product").get("active"), active);
+    }
 }

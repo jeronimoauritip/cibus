@@ -42,7 +42,7 @@ public class BranchProductServiceImpl implements BranchProductService{
     }
 
     @Override
-    public Page<BranchProductResponseDTO> findAll(Pageable pageable, Long branchId, Long productId, String productName, Long categoryId, Boolean available, BigDecimal minPrice, BigDecimal maxPrice){
+    public Page<BranchProductResponseDTO> findAll(Pageable pageable, Long branchId, Long productId, String productName, Long categoryId, Boolean available, BigDecimal minPrice, BigDecimal maxPrice, Boolean isGlobalProductActive){
         authenticateUserBelongsInBranch(branchId);
         Specification<BranchProductEntity> spec = Specification.allOf(
                 BranchProductSpecification.equalsBranchId(branchId),
@@ -51,7 +51,8 @@ public class BranchProductServiceImpl implements BranchProductService{
                 BranchProductSpecification.equalsCategoryId(categoryId),
                 BranchProductSpecification.isAvailable(available),
                 BranchProductSpecification.priceGreaterThanOrEqualTo(minPrice),
-                BranchProductSpecification.priceLessThanOrEqualTo(maxPrice)
+                BranchProductSpecification.priceLessThanOrEqualTo(maxPrice),
+                BranchProductSpecification.isGlobalProductActive(isGlobalProductActive)
         );
 
         return branchProductRepository.findAll(spec, pageable)

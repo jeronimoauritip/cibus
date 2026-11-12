@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 
 public interface BranchProductService {
-    Page<BranchProductResponseDTO> findAll(Pageable pageable, Long branchId, Long productId, String productName, Long categoryId, Boolean available, BigDecimal minPrice, BigDecimal maxPrice);
+    Page<BranchProductResponseDTO> findAll(Pageable pageable, Long branchId, Long productId, String productName, Long categoryId, Boolean available, BigDecimal minPrice, BigDecimal maxPrice, Boolean isGlobalProductActive);
     BranchProductEntity getEntityByBranchAndProduct(Long branchId, Long productId);
     BranchProductResponseDTO getByBranchAndProduct(Long branchId, Long productId);
     BranchProductResponseDTO create(Long branchId, BranchProductRequestDTO dto);

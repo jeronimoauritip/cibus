@@ -28,9 +28,10 @@ public class BranchProductController {
                                                                   @RequestParam(required = false) Long categoryId,
                                                                   @RequestParam(required = false) Boolean available,
                                                                   @RequestParam(required = false) BigDecimal minPrice,
-                                                                  @RequestParam(required = false) BigDecimal maxPrice){
+                                                                  @RequestParam(required = false) BigDecimal maxPrice,
+                                                                  @RequestParam(required = false) Boolean isGlobalProductActive){
 
-        return ResponseEntity.ok(branchProductService.findAll(pageable, branchId, productId, productName, categoryId, available, minPrice, maxPrice));
+        return ResponseEntity.ok(branchProductService.findAll(pageable, branchId, productId, productName, categoryId, available, minPrice, maxPrice, isGlobalProductActive));
     }
 
     @GetMapping("/{productId}")
