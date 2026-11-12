@@ -3,8 +3,8 @@
   --field-gradient: linear-gradient(100deg, #205a40, #2d805d);
   position: fixed;
   inset: 0;
-  display: flex;          /* <-- Cambiado a flex */
-  flex-direction: column; /* <-- Apila el header y la página */
+  display: flex;
+  flex-direction: column;
   font-family: "Instrument Sans", sans-serif;
 }
 
@@ -99,6 +99,7 @@
   padding: 1px 10px;
 }
 
+/* === Aca esta la magia para el fondo rayado === */
 .category app-menu-item-row-component:nth-of-type(even) {
   background: color-mix(in srgb, var(--light-cream) 55%, transparent);
 }
@@ -114,7 +115,7 @@
   opacity: 1;
 }
 
-/* --- Modal Styles --- */
+/* --- Modal Styles (Se mantienen idénticos) --- */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -301,7 +302,6 @@
   cursor: not-allowed;
 }
 
-/* === Responsive Modal & Layout Ajustes === */
 @media (max-width: 600px) {
   .toolbar__count { display: none; }
   
@@ -310,13 +310,8 @@
     border-radius: 12px;
   }
   
-  .modal-header {
-    padding: 1rem;
-  }
-  
-  .modal-body {
-    padding: 1rem;
-  }
+  .modal-header { padding: 1rem; }
+  .modal-body { padding: 1rem; }
   
   .actions {
     flex-direction: column;
