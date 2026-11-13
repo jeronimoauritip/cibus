@@ -8,26 +8,93 @@
     (input)="onSearch($event)"
   />
 
-  <div class="menu__tabs" role="tablist">
+  <div class="menu__controls">
     <button
       type="button"
-      class="menu__tab"
-      role="tab"
-      [attr.aria-selected]="selectedCategory() === null"
-      (click)="selectCategory(null)"
+      class="menu__pill"
+      [class.is-active]="selectedCategory() !== null || openMenu() === 'categories'"
+      aria-haspopup="listbox"
+      [attr.aria-expanded]="openMenu() === 'categories'"
+      (click)="toggleMenu('categories')"
     >
-      All
+      <span>{{ selectedCategory() ?? 'Categories' }}</span>
+      <span class="menu__pill-arrow" [class.is-open]="openMenu() === 'categories'" aria-hidden="true"></span>
     </button>
-    @for (category of categories(); track category) {
+
+    <div class="menu__price-anchor">
       <button
         type="button"
-        class="menu__tab"
-        role="tab"
-        [attr.aria-selected]="selectedCategory() === category"
-        (click)="selectCategory(category)"
+        class="menu__pill"
+        [class.is-active]="priceSort() !== 'none' || openMenu() === 'price'"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="openMenu() === 'price'"
+        (click)="toggleMenu('price')"
       >
-        {{ category }}
+        <span>{{ priceSortLabel() }}</span>
+        <span class="menu__pill-arrow" [class.is-open]="openMenu() === 'price'" aria-hidden="true"></span>
       </button>
+
+      @if (openMenu() === 'price') {
+        <div class="menu__dropdown menu__dropdown--price" role="menu" aria-label="Sort by price">
+          <button
+            type="button"
+            class="menu__option"
+            role="menuitemradio"
+            [attr.aria-checked]="priceSort() === 'none'"
+            [class.is-selected]="priceSort() === 'none'"
+            (click)="selectPriceSort('none')"
+          >
+            Default order
+          </button>
+          <button
+            type="button"
+            class="menu__option"
+            role="menuitemradio"
+            [attr.aria-checked]="priceSort() === 'asc'"
+            [class.is-selected]="priceSort() === 'asc'"
+            (click)="selectPriceSort('asc')"
+          >
+            Price: Low to High
+          </button>
+          <button
+            type="button"
+            class="menu__option"
+            role="menuitemradio"
+            [attr.aria-checked]="priceSort() === 'desc'"
+            [class.is-selected]="priceSort() === 'desc'"
+            (click)="selectPriceSort('desc')"
+          >
+            Price: High to Low
+          </button>
+        </div>
+      }
+    </div>
+
+    @if (openMenu() === 'categories') {
+      <div class="menu__dropdown menu__dropdown--categories" role="listbox" aria-label="Categories">
+        <button
+          type="button"
+          class="menu__option menu__option--pill"
+          role="option"
+          [attr.aria-selected]="selectedCategory() === null"
+          [class.is-selected]="selectedCategory() === null"
+          (click)="selectCategory(null)"
+        >
+          All
+        </button>
+        @for (category of categories(); track category) {
+          <button
+            type="button"
+            class="menu__option menu__option--pill"
+            role="option"
+            [attr.aria-selected]="selectedCategory() === category"
+            [class.is-selected]="selectedCategory() === category"
+            (click)="selectCategory(category)"
+          >
+            {{ category }}
+          </button>
+        }
+      </div>
     }
   </div>
 
