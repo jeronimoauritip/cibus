@@ -28,6 +28,8 @@ export class OrderCreationComponent implements OnInit {
   private readonly authService = inject(AuthService);
 
   readonly tableNumber = signal(0);
+  readonly resolvedBranchId = signal<number | null>(null);
+  readonly assignedWaiterId = signal<number | null>(null);
   readonly confirming = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
@@ -52,7 +54,7 @@ export class OrderCreationComponent implements OnInit {
   // Prices and availability are per branch, so the menu joins the catalog with the user's branch products.
   readonly branchProducts = httpResource<BranchProduct[]>(
     () => {
-      const branchId = this.authService.user()?.branchId;
+      const branchId = this.resolvedBranchId() ?? this.authService.user()?.branchId;
       return branchId ? `/api/branches/${branchId}/products?size=200` : undefined;
     },
     { parse: (res: any) => res.content }
@@ -72,6 +74,15 @@ export class OrderCreationComponent implements OnInit {
 
   ngOnInit(): void {
     this.tableNumber.set(Number(this.route.snapshot.paramMap.get('tableNumber')));
+    const queryBranch = Number(this.route.snapshot.queryParamMap.get('branchId')) || null;
+    const queryWaiter = Number(this.route.snapshot.queryParamMap.get('waiterId')) || null;
+    if (queryWaiter) {
+      this.assignedWaiterId.set(queryWaiter);
+    }
+
+    this.authService.ensureProfileLoaded().subscribe(profile => {
+      this.resolvedBranchId.set(queryBranch ?? profile?.branchId ?? null);
+    });
   }
 
   // Tapping a product adds to its line without a note; lines with a note stay untouched,
@@ -136,19 +147,21 @@ export class OrderCreationComponent implements OnInit {
 
   onConfirm(): void {
     const user = this.authService.user();
-    if (!user) {
+    const branchId = this.resolvedBranchId() ?? user?.branchId;
+    const waiterId = this.assignedWaiterId() ?? user?.id;
+    if (!user || !branchId || !waiterId) {
       this.errorMessage.set('Invalid session');
       return;
     }
     this.confirming.set(true);
     this.errorMessage.set(null);
     this.orderService.confirmOrder(
-      user.branchId,
+      branchId,
       this.tableNumber(),
-      user.id,
+      waiterId,
       this.toOrderDetails()
     ).subscribe({
-      next: () => this.router.navigate(['/tables']),
+      next: () => this.navigateBackToTables(branchId),
       error: (err: Error | HttpErrorResponse) => {
         this.errorMessage.set(
           err instanceof HttpErrorResponse
@@ -161,7 +174,15 @@ export class OrderCreationComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/tables']);
+    this.navigateBackToTables(this.resolvedBranchId() ?? this.authService.user()?.branchId ?? null);
     // the draft is discarded together with the component
+  }
+
+  private navigateBackToTables(branchId: number | null): void {
+    if (this.authService.isAdmin() && branchId) {
+      this.router.navigate(['/admin/branches', branchId, 'tables']);
+      return;
+    }
+    this.router.navigate(['/tables']);
   }
 }
