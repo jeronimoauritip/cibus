@@ -887,7 +887,24 @@
   justify-content: space-between;
 }
 .drawer-title-group h2 { margin: 0; font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-.cap-badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--background-green); color: var(--cream); }
+.btn-header-danger {
+  font: 700 12px inherit;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.btn-header-danger:hover:not(:disabled) {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-header-danger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .drawer-subtitle { margin: 3px 0 0; font-size: 13px; font-weight: 600; color: var(--background-green); }
 .btn-close-drawer {
   width: 36px;
@@ -908,7 +925,6 @@
 
 .drawer-body { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 18px; }
 .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.9px; color: var(--background-green); margin: 0 0 8px; }
-.section-label--spaced { margin-top: 14px; }
 .info-card { background: var(--cream-card); border: 1.5px solid rgba(32, 90, 64, 0.22); border-radius: 18px; padding: 14px 16px; }
 .info-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 14px; }
 .info-row .lbl { color: var(--background-green); font-weight: 600; }
@@ -924,28 +940,6 @@
   font-weight: 600;
   line-height: 1.4;
 }
-
-.state-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-.state-pill-btn {
-  padding: 9px 10px;
-  border-radius: 11px;
-  border: 1.5px solid var(--dark-green);
-  background: transparent;
-  color: var(--dark-green);
-  font: 700 12px inherit;
-  cursor: pointer;
-  transition: all 0.16s ease;
-}
-.state-pill-btn:hover { background: rgba(32, 90, 64, 0.1); }
-.state-pill-btn.active { background: var(--dark-green); color: var(--cream); }
-
-.btn-action { width: 100%; height: 44px; border-radius: 13px; font: 700 14px inherit; cursor: pointer; transition: all 0.18s ease; }
-.btn-primary-green { border: 0; background: var(--dark-green); color: var(--cream); }
-.btn-primary-green:hover:not(:disabled) { background: var(--dark-green-hover); }
-.btn-take-order, .btn-free-table { margin-top: 12px; }
-.btn-danger-outline { border: 1.5px solid var(--danger); background: transparent; color: var(--danger); }
-.btn-danger-outline:hover:not(:disabled) { background: var(--danger); color: #fff; }
-.btn-action:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* ORDER HISTORY */
 .empty-orders-card { padding: 18px; border-radius: 16px; background: rgba(255, 255, 255, 0.38); border: 1.5px dashed rgba(32, 90, 64, 0.25); text-align: center; font-size: 13px; font-weight: 600; color: var(--background-green); }

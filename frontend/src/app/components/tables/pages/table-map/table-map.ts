@@ -63,6 +63,7 @@ export class TableMapComponent implements OnInit {
   readonly branchOrders = signal<TableOrder[]>([]);
   readonly branchUsers = signal<User[]>([]);
   readonly localVisualOverrides = signal<Record<number, TableVisualState>>({});
+  readonly tableOccupiedAt = signal<Record<number, string>>({});
 
   // UI state
   readonly isLoading = signal<boolean>(false);
@@ -329,6 +330,7 @@ export class TableMapComponent implements OnInit {
           this.tables.set(tables ?? []);
           this.branchOrders.set(orders ?? []);
           this.branchUsers.set(users?.content ?? []);
+          this.syncOccupiedTimestamps(branchId, tables ?? [], orders ?? []);
 
           const selNum = this.selectedTableNumber();
           if (selNum !== null) {
@@ -411,19 +413,68 @@ export class TableMapComponent implements OnInit {
     }
   }
 
-  getStateReadableLabel(state: TableVisualState): string {
-    switch (state) {
-      case 'available':
-        return 'Available (Free)';
-      case 'occupied':
-        return 'Occupied — Seated';
-      case 'preparing':
-        return 'Order in Kitchen';
-      case 'ready':
-        return 'Order Ready to Serve!';
-      case 'served':
-        return 'Served at Table';
+  getOccupiedAtTime(table: BranchTable): string {
+    const activeOrder = this.branchOrders().find(
+      (o) =>
+        o.tableNumber === table.number &&
+        o.status?.toUpperCase() !== 'PAID' &&
+        o.status?.toUpperCase() !== 'CANCELLED'
+    );
+    const iso = this.tableOccupiedAt()[table.number] ?? activeOrder?.createdAt;
+    const d = iso ? new Date(iso) : new Date();
+    const target = isNaN(d.getTime()) ? new Date() : d;
+    return target.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  }
+
+  private occupiedStorageKey(branchId: number): string {
+    return `cibus_occupied_at_${branchId}`;
+  }
+
+  private readOccupiedStorage(branchId: number): Record<number, string> {
+    try {
+      const raw = localStorage.getItem(this.occupiedStorageKey(branchId));
+      return raw ? (JSON.parse(raw) as Record<number, string>) : {};
+    } catch {
+      return {};
     }
+  }
+
+  private writeOccupiedStorage(branchId: number, map: Record<number, string>): void {
+    try {
+      localStorage.setItem(this.occupiedStorageKey(branchId), JSON.stringify(map));
+    } catch {
+      // Ignore storage failures
+    }
+  }
+
+  private syncOccupiedTimestamps(
+    branchId: number,
+    tables: BranchTable[],
+    orders: TableOrder[]
+  ): void {
+    const map: Record<number, string> = { ...this.readOccupiedStorage(branchId) };
+    const nowIso = new Date().toISOString();
+
+    for (const table of tables) {
+      if (table.available) {
+        delete map[table.number];
+      } else if (!map[table.number]) {
+        const activeOrder = orders.find(
+          (o) =>
+            o.tableNumber === table.number &&
+            o.status?.toUpperCase() !== 'PAID' &&
+            o.status?.toUpperCase() !== 'CANCELLED'
+        );
+        map[table.number] = activeOrder?.createdAt || nowIso;
+      }
+    }
+
+    this.tableOccupiedAt.set(map);
+    this.writeOccupiedStorage(branchId, map);
   }
 
   setFilter(mode: TableFilterMode): void {
@@ -962,6 +1013,11 @@ export class TableMapComponent implements OnInit {
             ...prev,
             [updated.number]: 'occupied',
           }));
+          this.tableOccupiedAt.update((prev) => {
+            const next = { ...prev, [updated.number]: new Date().toISOString() };
+            this.writeOccupiedStorage(branchId, next);
+            return next;
+          });
           this.isWaiterSelectOpen.set(false);
           const suffix = option.isSelf ? ' (Self-assign)' : '';
           this.showToast(
@@ -976,48 +1032,37 @@ export class TableMapComponent implements OnInit {
       });
   }
 
-  setTableFloorState(state: TableVisualState): void {
+  cancelActiveOrder(order: TableOrder): void {
     const branchId = this.activeBranchId();
     const table = this.selectedTable();
     if (!branchId || !table || !this.canActOnSelectedTable()) return;
 
-    this.localVisualOverrides.update((prev) => ({
-      ...prev,
-      [table.number]: state,
-    }));
-
-    const activeOrder = this.selectedTableActiveOrder();
-    if (activeOrder) {
-      let targetOrderStatus: string | null = null;
-      if (state === 'preparing') targetOrderStatus = 'PREPARING';
-      else if (state === 'ready') targetOrderStatus = 'READY';
-      else if (state === 'served') targetOrderStatus = 'SERVED';
-
-      if (targetOrderStatus && activeOrder.status.toUpperCase() !== targetOrderStatus) {
-        this.tableService
-          .changeOrderStatus(branchId, activeOrder.id, targetOrderStatus)
-          .subscribe({
-            next: (updatedOrder) => {
-              this.branchOrders.update((list) =>
-                list.map((o) => (o.id === updatedOrder.id ? { ...o, ...updatedOrder } : o))
-              );
-              this.showToast(
-                `Order #${updatedOrder.id} marked as ${targetOrderStatus}`
-              );
-            },
-            error: () => {
-              this.showToast(
-                `Table #${table.number} state set to ${this.getStateReadableLabel(state)}`
-              );
-            },
+    this.isSaving.set(true);
+    this.tableService
+      .changeOrderStatus(branchId, order.id, 'CANCELLED')
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: (updatedOrder) => {
+          this.branchOrders.update((list) =>
+            list.map((o) =>
+              o.id === updatedOrder.id
+                ? { ...o, ...updatedOrder, status: updatedOrder.status || 'CANCELLED' }
+                : o
+            )
+          );
+          this.localVisualOverrides.update((prev) => {
+            const copy = { ...prev };
+            delete copy[table.number];
+            return copy;
           });
-        return;
-      }
-    }
-
-    this.showToast(
-      `Table #${table.number} state set to ${this.getStateReadableLabel(state)}`
-    );
+          this.showToast(`Order #${order.id} cancelled`);
+        },
+        error: (err) => {
+          this.showToast(
+            err?.error?.message || err?.error?.error || 'Could not cancel order'
+          );
+        },
+      });
   }
 
   freeSelectedTable(): void {
@@ -1039,6 +1084,12 @@ export class TableMapComponent implements OnInit {
             delete copy[updated.number];
             return copy;
           });
+          this.tableOccupiedAt.update((prev) => {
+            const copy = { ...prev };
+            delete copy[updated.number];
+            this.writeOccupiedStorage(branchId, copy);
+            return copy;
+          });
           this.showToast(`Table #${updated.number} is now free`);
         },
         error: (err) => {
@@ -1054,6 +1105,23 @@ export class TableMapComponent implements OnInit {
   openTicketModal(order: TableOrder, event?: MouseEvent): void {
     event?.stopPropagation();
     this.selectedTicketOrder.set(order);
+  }
+
+  goToNewOrder(table: BranchTable): void {
+    const branchId = this.activeBranchId();
+    this.router.navigate(['/tables', table.number, 'order'], {
+      queryParams: {
+        ...(branchId ? { branchId } : {}),
+        ...(table.waiterId ? { waiterId: table.waiterId } : {}),
+      },
+    });
+  }
+
+  goToCloseOrder(table: BranchTable, orderId: number): void {
+    const branchId = this.activeBranchId();
+    this.router.navigate(['/tables', table.number, 'order', orderId, 'close'], {
+      queryParams: branchId ? { branchId } : undefined,
+    });
   }
 
   closeTicketModal(): void {

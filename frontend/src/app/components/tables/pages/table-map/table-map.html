@@ -410,15 +410,35 @@
       (click)="$event.stopPropagation()"
     >
       @if (selectedTable(); as table) {
-        @let tableState = getTableVisualState(table);
-
         <div class="drawer-header">
           <div class="drawer-title-group">
             <h2>
               <span>Table #{{ table.number }}</span>
-              <span class="cap-badge">{{ table.capacity }} Guests</span>
+              @if (!table.available && canActOnSelectedTable()) {
+                @if (selectedTableActiveOrder(); as activeOrd) {
+                  <button
+                    type="button"
+                    class="btn-header-danger"
+                    [disabled]="isSaving()"
+                    (click)="cancelActiveOrder(activeOrd)"
+                  >
+                    Cancel Order
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn-header-danger"
+                    [disabled]="isSaving()"
+                    (click)="freeSelectedTable()"
+                  >
+                    Free
+                  </button>
+                }
+              }
             </h2>
-            <p class="drawer-subtitle">{{ getStateReadableLabel(tableState) }}</p>
+            @if (!table.available) {
+              <p class="drawer-subtitle">Occupied at: {{ getOccupiedAtTime(table) }}</p>
+            }
           </div>
           <button
             type="button"
@@ -467,52 +487,7 @@
                   </div>
                 }
 
-                @if (canActOnSelectedTable()) {
-                  <p class="section-label section-label--spaced">Floor &amp; Kitchen State</p>
-                  <div class="state-grid">
-                    <button
-                      type="button"
-                      class="state-pill-btn"
-                      [class.active]="tableState === 'occupied'"
-                      (click)="setTableFloorState('occupied')"
-                    >
-                      Seated
-                    </button>
-                    <button
-                      type="button"
-                      class="state-pill-btn"
-                      [class.active]="tableState === 'preparing'"
-                      (click)="setTableFloorState('preparing')"
-                    >
-                      In Kitchen
-                    </button>
-                    <button
-                      type="button"
-                      class="state-pill-btn"
-                      [class.active]="tableState === 'ready'"
-                      (click)="setTableFloorState('ready')"
-                    >
-                      Order Ready
-                    </button>
-                    <button
-                      type="button"
-                      class="state-pill-btn"
-                      [class.active]="tableState === 'served'"
-                      (click)="setTableFloorState('served')"
-                    >
-                      Served
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    class="btn-action btn-danger-outline btn-free-table"
-                    [disabled]="isSaving()"
-                    (click)="freeSelectedTable()"
-                  >
-                    Free &amp; Close Table
-                  </button>
-                } @else {
+                @if (!canActOnSelectedTable()) {
                   <div class="role-readonly-banner">
                     Read-only view — You can only perform actions on tables assigned to your name.
                   </div>
@@ -610,15 +585,26 @@
           </div>
         }
 
-        <!-- STICKY BOTTOM FOOTER: Occupied Table -> iOS 26 Pill "New Order" Button (Same location and shape as Open Table) -->
+        <!-- STICKY BOTTOM FOOTER: Occupied Table -> iOS 26 Pill "New Order" or "Close & Charge Order" Button -->
         @if (!table.available && !isEditMode() && canActOnSelectedTable()) {
           <div class="drawer-footer">
-            <button
-              type="button"
-              class="btn-order-pill-trigger"
-            >
-              <span class="btn-order-title">NEW ORDER</span>
-            </button>
+            @if (selectedTableActiveOrder(); as activeOrd) {
+              <button
+                type="button"
+                class="btn-order-pill-trigger"
+                (click)="goToCloseOrder(table, activeOrd.id)"
+              >
+                <span class="btn-order-title">CLOSE &amp; CHARGE #{{ activeOrd.id }}</span>
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="btn-order-pill-trigger"
+                (click)="goToNewOrder(table)"
+              >
+                <span class="btn-order-title">NEW ORDER</span>
+              </button>
+            }
           </div>
         }
       }
