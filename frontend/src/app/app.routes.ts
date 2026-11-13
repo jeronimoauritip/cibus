@@ -14,6 +14,7 @@ import { ProductListComponent } from './components/products/pages/product-list-c
 import { ProductDetailComponent } from './components/products/pages/product-detail-component/product-detail-component';
 import { AdminPanelComponent } from './components/admin/pages/admin-panel-component/admin-panel-component';
 import { OrderCreationComponent } from './components/orders/pages/order-creation-component/order-creation-component';
+import { OrderCloseComponent } from './components/orders/pages/order-close-component/order-close-component';
 import { TableMapComponent } from './components/tables/pages/table-map/table-map';
 import { MenuComponent } from './components/menu/pages/menu-component/menu-component';
 import { KitchenViewComponent } from './components/orders/pages/kitchen-view-component/kitchen-view-component';
@@ -64,10 +65,16 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'tables/:tableNumber/order/:orderId/close',
+        component: OrderCloseComponent,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Waiter', 'Host', 'Manager', 'Admin'] }
+    },
+    {
         path: 'tables/:tableNumber/order',
         component: OrderCreationComponent,
         canActivate: [authGuard, roleGuard],
-        data: { roles: ['Waiter'] }
+        data: { roles: ['Waiter', 'Host', 'Manager', 'Admin'] }
     },
     {
     path: 'kitchen',
