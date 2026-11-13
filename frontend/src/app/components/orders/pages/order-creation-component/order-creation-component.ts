@@ -6,7 +6,6 @@ import { OrderMenuComponent } from "../../components/order-menu-component/order-
 import { HttpErrorResponse, httpResource } from "@angular/common/http";
 import { ActivatedRoute, Router } from "@angular/router";
 import { OrderService } from "../../service/order-service";
-import { ProductService } from "../../../products/service/product-service";
 import { AuthService } from "../../../../Auth/services/auth-service";
 import { BackButtonDirective } from "../../../back-button/back-button.directive";
 import { OrderDetail } from "../../models/order-detail";
@@ -25,7 +24,6 @@ export class OrderCreationComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly orderService = inject(OrderService);
-  private readonly productService = inject(ProductService);
   private readonly authService = inject(AuthService);
 
   readonly backFallback = computed(() => this.authService.isAdmin() ? '/admin/tables' : '/tables');
@@ -52,28 +50,28 @@ export class OrderCreationComponent implements OnInit {
     this.draftItems().reduce((sum, i) => sum + i.quantity, 0)
   );
 
-  readonly products = this.productService.products;
-
-  // Prices and availability are per branch, so the menu joins the catalog with the user's branch products.
+  // Prices, availability and product details come directly from the branch menu endpoint.
   readonly branchProducts = httpResource<BranchProduct[]>(
     () => {
       const branchId = this.resolvedBranchId() ?? this.authService.user()?.branchId;
-      return branchId ? `/api/branches/${branchId}/products?size=200` : undefined;
+      return branchId
+        ? `/api/branches/${branchId}/products?page=0&size=200&isGlobalProductActive=true`
+        : undefined;
     },
-    { parse: (res: any) => res.content }
+    { parse: (res: any) => res?.content ?? [] }
   );
 
-  readonly menuProducts = computed<MenuProduct[]>(() => {
-    const byProduct = new Map((this.branchProducts.value() ?? []).map(bp => [bp.productId, bp]));
-    return (this.products.value() ?? []).flatMap(product => {
-      const branchProduct = byProduct.get(product.id);
-      return branchProduct
-        ? [{ ...product, price: branchProduct.price, available: branchProduct.available }]
-        : [];
-    });
-  });
+  readonly menuProducts = computed<MenuProduct[]>(() =>
+    (this.branchProducts.value() ?? [])
+      .filter(bp => bp.product?.active !== false)
+      .map(bp => ({
+        ...bp.product,
+        price: bp.price,
+        available: bp.available
+      }))
+  );
 
-  readonly loading = computed(() => this.products.isLoading() || this.branchProducts.isLoading());
+  readonly loading = computed(() => this.branchProducts.isLoading());
 
   ngOnInit(): void {
     this.tableNumber.set(Number(this.route.snapshot.paramMap.get('tableNumber')));

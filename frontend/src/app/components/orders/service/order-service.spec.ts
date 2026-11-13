@@ -157,4 +157,30 @@ describe('OrderService', () => {
       });
     expect(amountError?.message).toContain('greater than zero');
   });
+
+  it('should create an order and submit items sequentially to avoid concurrent row locks', () => {
+    let created: OrderResponse | undefined;
+    service
+      .confirmOrder(1, 3, 2, [
+        { productId: 101, productName: 'Milanesa', unitPrice: 4000, quantity: 1, subtotal: 4000 },
+        { productId: 102, productName: 'Agua', unitPrice: 1000, quantity: 2, subtotal: 2000, observation: 'Sin gas' },
+      ])
+      .subscribe((res) => (created = res));
+
+    const createReq = httpMock.expectOne('/api/branches/1/orders');
+    expect(createReq.request.method).toBe('POST');
+    createReq.flush(mockOrder({ id: 105, status: 'PENDING' }));
+
+    // Second item must not be sent until the first completes
+    const firstItemReq = httpMock.expectOne('/api/branches/1/orders/105/items');
+    expect(firstItemReq.request.body).toEqual({ productId: 101, quantity: 1, observation: undefined });
+    httpMock.expectNone('/api/branches/1/orders/105/items');
+    firstItemReq.flush({});
+
+    const secondItemReq = httpMock.expectOne('/api/branches/1/orders/105/items');
+    expect(secondItemReq.request.body).toEqual({ productId: 102, quantity: 2, observation: 'Sin gas' });
+    secondItemReq.flush({});
+
+    expect(created?.id).toBe(105);
+  });
 });

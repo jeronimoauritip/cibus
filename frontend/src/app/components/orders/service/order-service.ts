@@ -1,6 +1,6 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { concatMap, forkJoin, from, last, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { concatMap, from, last, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { OrderDetail } from '../models/order-detail';
 import { OrderDetailRequest } from '../models/order-detail-request';
 import { OrderPayment } from '../models/order-payment';
@@ -30,16 +30,18 @@ export class OrderService {
 
   return this.http.post<OrderResponse>(this.url(branchId), request).pipe(
     switchMap(order =>
-      forkJoin(
-        items.map(item => {
+      from(items).pipe(
+        concatMap(item => {
           const body: OrderDetailRequest = {
             productId: item.productId,
             quantity: item.quantity,
             observation: item.observation
           };
           return this.http.post<unknown>(`${this.url(branchId)}/${order.id}/items`, body);
-        })
-      ).pipe(map(() => order))
+        }),
+        last(),
+        map(() => order)
+      )
     )
   );
 }
