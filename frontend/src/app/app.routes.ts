@@ -58,11 +58,12 @@ export const routes: Routes = [
         ]
     },
     {
-        path: 'tables/:tableNumber/order',
-        component: OrderCreationComponent,
-        canActivate: [authGuard, roleGuard],
-        data: { roles: ['Waiter'] }
+    path: 'tables/:tableNumber/order',
+    component: OrderCreationComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'Host', 'Waiter'] }
     },
+
     {
     path: 'kitchen',
     component: KitchenViewComponent,
