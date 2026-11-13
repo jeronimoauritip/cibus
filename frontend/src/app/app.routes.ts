@@ -34,7 +34,7 @@ export const routes: Routes = [
     path: 'tables',
     component: TableMapComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Admin'] }
+    data: { roles: ['Admin', 'Manager', 'Host', 'Waiter'] }
     },
 
     {
