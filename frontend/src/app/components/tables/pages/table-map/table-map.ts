@@ -97,6 +97,9 @@ export class TableMapComponent implements OnInit {
   readonly selectedTableNumber = signal<number | null>(null);
   readonly isWaiterSelectOpen = signal<boolean>(false);
   readonly selectedTicketOrder = signal<TableOrder | null>(null);
+  readonly isHeaderActionExpanded = signal<boolean>(false);
+  readonly headerActionConfirmType = signal<'free-table' | 'cancel-order' | null>(null);
+  readonly orderToCancel = signal<TableOrder | null>(null);
 
   // Edit mode form fields for selected table
   readonly editNumber = signal<number>(1);
@@ -731,6 +734,7 @@ export class TableMapComponent implements OnInit {
     this.isWaiterSelectOpen.set(false);
     this.isCircleMenuOpen.set(false);
     this.isBranchMenuOpen.set(false);
+    this.isHeaderActionExpanded.set(false);
     this.syncEditForm(table);
   }
 
@@ -789,11 +793,15 @@ export class TableMapComponent implements OnInit {
     this.isCircleMenuOpen.set(false);
     this.isBranchMenuOpen.set(false);
     this.isWaiterSelectOpen.set(false);
+    this.isHeaderActionExpanded.set(false);
   }
 
   closeDrawer(): void {
     this.selectedTableNumber.set(null);
     this.isWaiterSelectOpen.set(false);
+    this.isHeaderActionExpanded.set(false);
+    this.headerActionConfirmType.set(null);
+    this.orderToCancel.set(null);
   }
 
   private syncEditForm(table: BranchTable): void {
@@ -1032,6 +1040,47 @@ export class TableMapComponent implements OnInit {
       });
   }
 
+  onHeaderTrashClick(event: MouseEvent): void {
+    event.stopPropagation();
+    if (!this.canActOnSelectedTable() || this.isSaving()) return;
+
+    if (!this.isHeaderActionExpanded()) {
+      this.isHeaderActionExpanded.set(true);
+      return;
+    }
+
+    const activeOrder = this.selectedTableActiveOrder();
+    if (activeOrder) {
+      this.orderToCancel.set(activeOrder);
+      this.headerActionConfirmType.set('cancel-order');
+    } else {
+      this.orderToCancel.set(null);
+      this.headerActionConfirmType.set('free-table');
+    }
+  }
+
+  collapseHeaderAction(): void {
+    this.isHeaderActionExpanded.set(false);
+  }
+
+  dismissHeaderActionConfirm(): void {
+    this.headerActionConfirmType.set(null);
+    this.orderToCancel.set(null);
+    this.isHeaderActionExpanded.set(false);
+  }
+
+  confirmHeaderAction(): void {
+    const type = this.headerActionConfirmType();
+    if (type === 'cancel-order') {
+      const order = this.orderToCancel();
+      if (order) {
+        this.cancelActiveOrder(order);
+      }
+    } else if (type === 'free-table') {
+      this.freeSelectedTable();
+    }
+  }
+
   cancelActiveOrder(order: TableOrder): void {
     const branchId = this.activeBranchId();
     const table = this.selectedTable();
@@ -1055,6 +1104,7 @@ export class TableMapComponent implements OnInit {
             delete copy[table.number];
             return copy;
           });
+          this.dismissHeaderActionConfirm();
           this.showToast(`Order #${order.id} cancelled`);
         },
         error: (err) => {
@@ -1090,6 +1140,7 @@ export class TableMapComponent implements OnInit {
             this.writeOccupiedStorage(branchId, copy);
             return copy;
           });
+          this.dismissHeaderActionConfirm();
           this.showToast(`Table #${updated.number} is now free`);
         },
         error: (err) => {

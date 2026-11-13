@@ -67,7 +67,7 @@ describe('TableMapComponent', () => {
     });
   });
 
-  it('should display Occupied at in 12h format, remove Guests & Floor & Kitchen State, and switch between Free and Cancel Order', () => {
+  it('should expand trash pill next to close button and show distinct confirmation modals for Free Table vs Cancel Order', () => {
     const auth = TestBed.inject(AuthService) as any;
     auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
 
@@ -88,12 +88,36 @@ describe('TableMapComponent', () => {
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    const text = el.textContent ?? '';
-    expect(text).not.toContain('Guests');
-    expect(text).not.toContain('Floor & Kitchen State');
+    expect(el.textContent ?? '').not.toContain('Guests');
+    expect(el.textContent ?? '').not.toContain('Floor & Kitchen State');
     expect(el.querySelector('.drawer-subtitle')?.textContent?.trim()).toBe('Occupied at: 12:41 PM');
-    expect(el.querySelector('.btn-header-danger')?.textContent?.trim()).toBe('Free');
 
+    const trashBtn = el.querySelector('.btn-header-trash') as HTMLButtonElement;
+    expect(trashBtn).toBeTruthy();
+    expect(trashBtn.classList.contains('expanded')).toBe(false);
+    expect(el.querySelector('.trash-label')?.textContent?.trim()).toBe('Free Table');
+
+    // First click expands the pill
+    trashBtn.click();
+    fixture.detectChanges();
+    expect(trashBtn.classList.contains('expanded')).toBe(true);
+    expect(component.headerActionConfirmType()).toBeNull();
+
+    // Second click opens Free Table confirmation modal (no cancellation warning)
+    trashBtn.click();
+    fixture.detectChanges();
+    expect(component.headerActionConfirmType()).toBe('free-table');
+    expect(el.querySelector('#header-action-confirm-title')?.textContent?.trim()).toBe(
+      'Free Table #4?'
+    );
+    expect(el.querySelector('.delete-confirm-subtitle')?.textContent?.trim()).not.toContain(
+      'CANCELLED'
+    );
+
+    component.dismissHeaderActionConfirm();
+    fixture.detectChanges();
+
+    // Now simulate an active order on the table
     component.branchOrders.set([
       {
         id: 88,
@@ -114,15 +138,32 @@ describe('TableMapComponent', () => {
     ]);
     fixture.detectChanges();
 
-    const cancelBtn = el.querySelector('.btn-header-danger') as HTMLButtonElement;
-    expect(cancelBtn.textContent?.trim()).toBe('Cancel Order');
+    expect(el.querySelector('.trash-label')?.textContent?.trim()).toBe('Cancel Order');
 
-    cancelBtn.click();
+    // First click expands, second click opens Cancel Order confirmation modal with CANCELLED warning
+    trashBtn.click();
+    fixture.detectChanges();
+    expect(trashBtn.classList.contains('expanded')).toBe(true);
+
+    trashBtn.click();
+    fixture.detectChanges();
+    expect(component.headerActionConfirmType()).toBe('cancel-order');
+    expect(el.querySelector('#header-action-confirm-title')?.textContent?.trim()).toBe(
+      'Cancel Order #88?'
+    );
+    expect(el.querySelector('.delete-confirm-subtitle')?.textContent?.trim()).toContain(
+      'CANCELLED'
+    );
+
+    const confirmBtn = el.querySelector('.btn-delete-confirm') as HTMLButtonElement;
+    confirmBtn.click();
+
     const cancelReq = httpMock.expectOne('/api/branches/2/orders/88/cancel');
     expect(cancelReq.request.method).toBe('POST');
     cancelReq.flush({ ...component.branchOrders()[0], status: 'CANCELLED' });
 
     fixture.detectChanges();
-    expect(el.querySelector('.btn-header-danger')?.textContent?.trim()).toBe('Free');
+    expect(component.headerActionConfirmType()).toBeNull();
+    expect(el.querySelector('.trash-label')?.textContent?.trim()).toBe('Free Table');
   });
 });

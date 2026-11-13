@@ -407,47 +407,57 @@
       class="right-drawer"
       [class.open]="selectedTable() !== null && !isEditMode()"
       aria-label="Table Inspector"
-      (click)="$event.stopPropagation()"
+      (click)="$event.stopPropagation(); collapseHeaderAction()"
     >
       @if (selectedTable(); as table) {
         <div class="drawer-header">
           <div class="drawer-title-group">
             <h2>
               <span>Table #{{ table.number }}</span>
-              @if (!table.available && canActOnSelectedTable()) {
-                @if (selectedTableActiveOrder(); as activeOrd) {
-                  <button
-                    type="button"
-                    class="btn-header-danger"
-                    [disabled]="isSaving()"
-                    (click)="cancelActiveOrder(activeOrd)"
-                  >
-                    Cancel Order
-                  </button>
-                } @else {
-                  <button
-                    type="button"
-                    class="btn-header-danger"
-                    [disabled]="isSaving()"
-                    (click)="freeSelectedTable()"
-                  >
-                    Free
-                  </button>
-                }
-              }
             </h2>
             @if (!table.available) {
               <p class="drawer-subtitle">Occupied at: {{ getOccupiedAtTime(table) }}</p>
             }
           </div>
-          <button
-            type="button"
-            class="btn-close-drawer"
-            (click)="closeDrawer()"
-            aria-label="Close panel"
-          >
-            ✕
-          </button>
+          <div class="drawer-header-actions">
+            @if (!table.available && canActOnSelectedTable()) {
+              <button
+                type="button"
+                class="btn-header-trash"
+                [class.expanded]="isHeaderActionExpanded()"
+                [disabled]="isSaving()"
+                [attr.aria-label]="selectedTableActiveOrder() ? 'Cancel order' : 'Free table'"
+                (click)="onHeaderTrashClick($event)"
+              >
+                <svg
+                  class="trash-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.1"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                <span class="trash-label">
+                  {{ selectedTableActiveOrder() ? 'Cancel Order' : 'Free Table' }}
+                </span>
+              </button>
+            }
+            <button
+              type="button"
+              class="btn-close-drawer"
+              (click)="closeDrawer()"
+              aria-label="Close panel"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         <div class="drawer-body">
@@ -670,6 +680,63 @@
             (click)="confirmDeleteTable()"
           >
             Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- FREE TABLE / CANCEL ORDER CONFIRMATION MODAL -->
+  @if (headerActionConfirmType(); as confirmType) {
+    <div
+      class="delete-confirm-backdrop"
+      (click)="dismissHeaderActionConfirm()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="header-action-confirm-title"
+    >
+      <div class="delete-confirm-card" (click)="$event.stopPropagation()">
+        <div class="delete-confirm-icon-box" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </div>
+
+        @if (confirmType === 'cancel-order') {
+          <h2 id="header-action-confirm-title" class="delete-confirm-title">
+            Cancel Order #{{ orderToCancel()?.id }}?
+          </h2>
+          <p class="delete-confirm-subtitle">
+            This will change the order status to CANCELLED. This action cannot be undone.
+          </p>
+        } @else {
+          <h2 id="header-action-confirm-title" class="delete-confirm-title">
+            Free Table #{{ selectedTable()?.number }}?
+          </h2>
+          <p class="delete-confirm-subtitle">
+            Please confirm that you want to mark this table as available.
+          </p>
+        }
+
+        <div class="delete-confirm-actions">
+          <button
+            type="button"
+            class="btn-delete-cancel"
+            [disabled]="isSaving()"
+            (click)="dismissHeaderActionConfirm()"
+          >
+            {{ confirmType === 'cancel-order' ? 'Keep Order' : 'Cancel' }}
+          </button>
+          <button
+            type="button"
+            class="btn-delete-confirm"
+            [disabled]="isSaving()"
+            (click)="confirmHeaderAction()"
+          >
+            {{ confirmType === 'cancel-order' ? 'Cancel Order' : 'Free Table' }}
           </button>
         </div>
       </div>
