@@ -17,6 +17,10 @@ export class KitchenViewComponent {
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
+  logout(): void {
+    this.authService.logout();
+  }
+
   private readonly branchId = computed(() => this.authService.user()?.branchId);
 
   private readonly pendingResource = this.orderService.getKitchenOrders(this.branchId, 'PENDING');

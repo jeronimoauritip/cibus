@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { OrderService } from "../../service/order-service";
 import { ProductService } from "../../../products/service/product-service";
 import { AuthService } from "../../../../Auth/services/auth-service";
+import { BackButtonDirective } from "../../../back-button/back-button.directive";
 import { OrderDetail } from "../../models/order-detail";
 import { DraftItem } from "../../models/draft-item";
 import { BranchProduct } from "../../models/branch-product";
@@ -16,7 +17,7 @@ import { MenuProduct } from "../../models/menu-product";
 @Component({
   selector: 'app-order-creation',
   standalone: true,
-  imports: [OrderMenuComponent, OrderItemComponent, OrderConfirmComponent, HeaderComponent],
+  imports: [OrderMenuComponent, OrderItemComponent, OrderConfirmComponent, HeaderComponent, BackButtonDirective],
   templateUrl: './order-creation-component.html',
   styleUrl: './order-creation-component.css'
 })
@@ -26,6 +27,8 @@ export class OrderCreationComponent implements OnInit {
   private readonly orderService = inject(OrderService);
   private readonly productService = inject(ProductService);
   private readonly authService = inject(AuthService);
+
+  readonly backFallback = computed(() => this.authService.isAdmin() ? '/admin/tables' : '/tables');
 
   readonly tableNumber = signal(0);
   readonly resolvedBranchId = signal<number | null>(null);

@@ -1,4 +1,9 @@
-<app-header-component>Table {{ tableNumber() }}</app-header-component>
+<app-header-component>
+  <button type="button" class="btn-return" [appBackButton]="backFallback()" aria-label="Go back">
+    <span aria-hidden="true">←</span> Return
+  </button>
+  Table {{ tableNumber() }}
+</app-header-component>
 
 <div class="page">
   <section class="menu-panel">
