@@ -30,7 +30,7 @@
       </form>
 
       <!-- New Branch button -->
-      <a class="btn-new-branch" routerLink="/branches/new" aria-label="New branch">
+      <a class="btn-new-branch" routerLink="/admin/branches/new" aria-label="New branch">
         <svg class="plus-icon" viewBox="0 0 24 24" aria-hidden="true">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -114,7 +114,7 @@
               @if (branch.id) {
                 <a
                   class="btn-tables"
-                  [routerLink]="['/branches', branch.id, 'tables']"
+                  [routerLink]="['/admin/branches', branch.id, 'tables']"
                   title="Open branch table map"
                   aria-label="Open branch table map"
                 >
@@ -122,7 +122,7 @@
                 </a>
                 <a
                   class="btn-employees"
-                  [routerLink]="['/branches', branch.id, 'employees']"
+                  [routerLink]="['/admin/branches', branch.id, 'employees']"
                   title="Manage branch employees"
                   aria-label="Manage branch employees"
                 >
