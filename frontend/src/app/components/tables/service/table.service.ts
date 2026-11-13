@@ -72,16 +72,25 @@ export class TableService {
       .pipe(map((page) => page?.content ?? []));
   }
 
+  private static readonly ORDER_STATUS_ACTIONS: Record<string, string> = {
+    PENDING: 'pending',
+    PREPARING: 'preparing',
+    READY: 'ready',
+    SERVED: 'serve',
+    CANCELLED: 'cancel',
+  };
+
   changeOrderStatus(
     branchId: number,
     orderId: number,
     newStatus: string
   ): Observable<TableOrder> {
-    const params = new HttpParams().set('newStatus', newStatus);
-    return this.http.patch<TableOrder>(
-      `${this.ordersUrl(branchId)}/${orderId}/status`,
-      {},
-      { params }
+    const action =
+      TableService.ORDER_STATUS_ACTIONS[newStatus.toUpperCase()] ??
+      newStatus.toLowerCase();
+    return this.http.post<TableOrder>(
+      `${this.ordersUrl(branchId)}/${orderId}/${action}`,
+      {}
     );
   }
 }
