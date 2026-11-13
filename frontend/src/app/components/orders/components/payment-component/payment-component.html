@@ -1,0 +1,206 @@
+<section class="payment-card" aria-label="Payment configuration">
+  <header class="payment-card__header">
+    <h2 class="payment-card__title">Payment &amp; Closing</h2>
+    <p class="payment-card__subtitle">
+      Apply an optional discount and assign one or more payment methods.
+    </p>
+  </header>
+
+  <!-- DISCOUNT SECTION -->
+  <div class="payment-section">
+    <div class="payment-section__top">
+      <label class="payment-label" for="discount-input">Discount (optional)</label>
+      <div class="mode-toggle" role="group" aria-label="Discount mode">
+        <button
+          type="button"
+          class="mode-toggle__btn"
+          [class.active]="discountMode() === 'amount'"
+          [disabled]="submitting()"
+          (click)="setDiscountMode('amount')"
+        >
+          $ Amount
+        </button>
+        <button
+          type="button"
+          class="mode-toggle__btn"
+          [class.active]="discountMode() === 'percent'"
+          [disabled]="submitting()"
+          (click)="setDiscountMode('percent')"
+        >
+          % Percent
+        </button>
+      </div>
+    </div>
+
+    <div class="discount-row">
+      <div class="input-with-prefix">
+        <span class="input-prefix">{{ discountMode() === 'amount' ? '$' : '%' }}</span>
+        <input
+          id="discount-input"
+          type="number"
+          min="0"
+          step="0.01"
+          [max]="discountMode() === 'percent' ? 99.99 : maxDiscount()"
+          [value]="discountInput() === 0 ? '' : discountInput()"
+          [disabled]="submitting() || maxDiscount() <= 0"
+          placeholder="0.00"
+          (input)="onDiscountInput($event)"
+        />
+      </div>
+      @if (discountMode() === 'percent' && appliedDraftDiscount() > 0) {
+        <span class="discount-equivalent">
+          = {{ appliedDraftDiscount() | currency }}
+        </span>
+      }
+    </div>
+
+    @if (discountError()) {
+      <p class="field-error" role="alert">{{ discountError() }}</p>
+    }
+  </div>
+
+  <!-- QUICK PAYMENT METHODS -->
+  <div class="payment-section">
+    <div class="payment-section__top">
+      <span class="payment-label">Quick Pay (Full Amount)</span>
+      <span class="due-pill">Due: {{ netRemaining() | currency }}</span>
+    </div>
+
+    @if (paymentMethods().length === 0) {
+      <p class="field-hint">Loading payment methods...</p>
+    } @else {
+      <div class="method-grid">
+        @for (method of paymentMethods(); track method.id) {
+          <button
+            type="button"
+            class="method-chip"
+            [class.active]="isQuickSelected(method.id)"
+            [disabled]="submitting()"
+            (click)="selectQuickMethod(method.id)"
+          >
+            {{ method.name }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- SPLIT / DETAILED PAYMENT LINES -->
+  <div class="payment-section">
+    <div class="payment-section__top">
+      <span class="payment-label">Payment Breakdown</span>
+      <button
+        type="button"
+        class="btn-add-split"
+        [disabled]="submitting() || paymentMethods().length === 0"
+        (click)="addPaymentLine()"
+      >
+        + Split payment
+      </button>
+    </div>
+
+    <div class="payment-lines">
+      @for (line of paymentLines(); track line.lineId; let idx = $index) {
+        <div class="payment-line">
+          <select
+            class="payment-line__select"
+            [value]="line.paymentMethodId"
+            [disabled]="submitting()"
+            [attr.aria-label]="'Payment method ' + (idx + 1)"
+            (change)="updateLineMethod(line.lineId, $event)"
+          >
+            @for (method of paymentMethods(); track method.id) {
+              <option [value]="method.id">{{ method.name }}</option>
+            }
+          </select>
+
+          <div class="input-with-prefix payment-line__amount">
+            <span class="input-prefix">$</span>
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              [value]="line.amount"
+              [disabled]="submitting()"
+              [attr.aria-label]="'Payment amount ' + (idx + 1)"
+              (input)="updateLineAmount(line.lineId, $event)"
+            />
+          </div>
+
+          @if (unallocatedBalance() > 0.005) {
+            <button
+              type="button"
+              class="btn-line-fill"
+              [disabled]="submitting()"
+              (click)="fillRemainingOnLine(line.lineId)"
+              title="Assign remaining balance to this line"
+            >
+              Fill
+            </button>
+          }
+
+          @if (paymentLines().length > 1) {
+            <button
+              type="button"
+              class="btn-line-remove"
+              [disabled]="submitting()"
+              (click)="removePaymentLine(line.lineId)"
+              aria-label="Remove payment line"
+              title="Remove line"
+            >
+              ✕
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- BALANCE STATUS -->
+  <div
+    class="balance-box"
+    [class.balance-box--ok]="absUnallocated < 0.005 && netRemaining() > 0"
+    [class.balance-box--warn]="absUnallocated >= 0.005"
+  >
+    <div class="balance-box__row">
+      <span>Allocated</span>
+      <span>{{ allocatedTotal() | currency }}</span>
+    </div>
+    <div class="balance-box__row balance-box__row--status">
+      @if (unallocatedBalance() > 0.005) {
+        <span>Remaining to assign</span>
+        <span>{{ unallocatedBalance() | currency }}</span>
+      } @else if (unallocatedBalance() < -0.005) {
+        <span>Exceeds amount due by</span>
+        <span>{{ absUnallocated | currency }}</span>
+      } @else {
+        <span>Ready to charge</span>
+        <span>Exact match</span>
+      }
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="submit-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  <div class="payment-actions">
+    <button
+      type="button"
+      class="btn-cancel"
+      [disabled]="submitting()"
+      (click)="onCancel()"
+    >
+      Back to floor
+    </button>
+    <button
+      type="button"
+      class="btn-confirm"
+      [disabled]="!canConfirm()"
+      (click)="onConfirm()"
+    >
+      {{ submitting() ? 'Processing...' : 'Confirm & Close Order' }}
+    </button>
+  </div>
+</section>
+
