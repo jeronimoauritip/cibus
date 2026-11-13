@@ -4,6 +4,7 @@ import { MetricsFilter } from '../models/metrics-filter';
 import { OrderInsight } from '../models/order-insight';
 import { ProductInsight } from '../models/product-insight';
 import { WaiterInsight } from '../models/waiter-insight';
+
 @Injectable({ providedIn: 'root' })
 export class MetricsService {
     private readonly url = '/api/statistics';
@@ -21,7 +22,7 @@ export class MetricsService {
 
 
     private buildRequest(report: string, filter: MetricsFilter) {
-        const scope = filter.branchId !== undefined ? `branch/${filter.branchId}` : 'global';
+        const scope = filter.branchId != null ? `branch/${filter.branchId}` : 'global';
         return {
             url: `${this.url}/${scope}/${report}`,
             params: this.buildDateParams(filter),
