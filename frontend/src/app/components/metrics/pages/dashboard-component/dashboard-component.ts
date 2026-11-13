@@ -7,14 +7,14 @@ import { MetricsService } from '../../service/metrics-service';
 import { ProductsReportComponent } from '../../components/products-report-component/products-report-component';
 import { OrdersReportComponent } from '../../components/orders-report-component/orders-report-component';
 import { WaitersReportComponent } from '../../components/waiters-report-component/waiters-report-component';
-import { RouterLink } from '@angular/router';
+import { BackButtonDirective } from '../../../back-button/back-button.directive';
 import { AuthService } from '../../../../Auth/services/auth-service';
 import { EMPTY } from 'rxjs';
 
 type ReportTab = 'orders' | 'products' | 'waiters';
 
 @Component({
-  imports: [HeaderComponent, RouterLink, ProductsReportComponent, OrdersReportComponent, WaitersReportComponent],
+  imports: [HeaderComponent, BackButtonDirective, ProductsReportComponent, OrdersReportComponent, WaitersReportComponent],
   selector: 'app-dashboard-component',
   styleUrl: './dashboard-component.css',
   templateUrl: './dashboard-component.html',

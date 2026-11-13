@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { BackButtonDirective } from '../../../back-button/back-button.directive';
 import { HeaderComponent } from '../../../header-component/header-component';
 import { MenuItemRowComponent } from '../../components/menu-item-row-component/menu-item-row-component';
 import { MenuItemFilterComponent } from '../../components/menu-item-filter-component/menu-item-filter-component';
@@ -9,7 +10,7 @@ import { Product } from '../../../products/models/product';
 import { ProductListComponent } from '../../../products/pages/product-list-component/product-list-component';
 
 @Component({
-  imports: [HeaderComponent, MenuItemRowComponent, MenuItemFilterComponent, ProductListComponent],
+  imports: [BackButtonDirective, HeaderComponent, MenuItemRowComponent, MenuItemFilterComponent, ProductListComponent],
   selector: 'app-menu-component',
   styleUrl: './menu-component.css',
   templateUrl: './menu-component.html',

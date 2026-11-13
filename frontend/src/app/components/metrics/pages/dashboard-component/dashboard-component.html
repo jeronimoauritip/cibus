@@ -1,10 +1,11 @@
-<app-header-component> Statistics </app-header-component>
+<app-header-component>
+  <button type="button" class="btn-return" appBackButton aria-label="Go back">
+    <span aria-hidden="true">←</span> Return
+  </button>
+  Statistics
+</app-header-component>
 
 <main class="dashboard">
-  <!-- Dynamic back button based on role -->
-  <a class="dashboard-back" [routerLink]="auth.isAdmin() ? '/admin' : '/manager'">
-    <span aria-hidden="true">←</span> Back
-  </a>
 
   <label class="dashboard-branch">
     <span>Branch</span>

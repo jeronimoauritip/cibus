@@ -1,5 +1,10 @@
 <app-header-component> Branch Menu </app-header-component>
 
+<!-- Fixed so the page container cannot cover it -->
+<button type="button" appBackButton class="btn-back menu-return" aria-label="Back" title="Back">
+  <span aria-hidden="true">←</span> Back
+</button>
+
 <div class="page">
   <main class="content">
     <app-menu-item-filter-component [(filter)]="filter">
