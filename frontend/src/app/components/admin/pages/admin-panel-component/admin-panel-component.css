@@ -95,3 +95,112 @@
   }
 
 }
+
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border: 2px solid var(--cream);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--cream);
+  font-size: 19px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logout-btn:hover {
+  background: var(--cream);
+  color: var(--dark-green);
+}
+
+.logout-btn:focus-visible {
+  outline: 3px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.logout-icon {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 480px) {
+  .logout-btn span {
+    display: none;
+  }
+  .logout-btn {
+    padding: 12px 14px;
+  }
+}
+
+.logout-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(32, 90, 64, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.logout-card {
+  width: min(420px, 100%);
+  background-color: var(--cream);
+  border: 2px solid var(--dark-green);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(32, 90, 64, 0.28);
+  color: var(--dark-green);
+  text-align: center;
+}
+
+.logout-title {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.logout-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.logout-confirm-no,
+.logout-confirm-yes {
+  min-width: 110px;
+  padding: 10px 22px;
+  border: 2px solid var(--dark-green);
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logout-confirm-no {
+  background: transparent;
+  color: var(--dark-green);
+}
+
+.logout-confirm-no:hover {
+  background: rgba(32, 90, 64, 0.1);
+}
+
+.logout-confirm-yes {
+  background: var(--dark-green);
+  color: var(--cream);
+}
+
+.logout-confirm-yes:hover {
+  background: var(--dark-green-hover);
+}

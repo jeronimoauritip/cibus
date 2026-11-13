@@ -95,3 +95,34 @@
   }
 
 }
+
+/* Action button aligned to the right end of the logo row */
+.header-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border: 2px solid var(--cream);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--cream);
+  font: 600 16px "Instrument Sans", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.header-action:hover {
+  background: var(--cream);
+  color: var(--dark-green);
+}
+
+.header-action svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
