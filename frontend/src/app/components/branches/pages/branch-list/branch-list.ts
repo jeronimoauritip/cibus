@@ -5,11 +5,12 @@ import { finalize } from 'rxjs/operators';
 import { BranchService } from '../../service/branch-service';
 import { Branch } from '../../models/branch.model';
 import { HeaderComponent } from '../../../header-component/header-component';
+import { BackButtonDirective } from '../../../back-button/back-button.directive';
 
 type SortOption = 'name-asc' | 'name-desc' | 'address-asc';
 
 @Component({
-  imports: [FormsModule, RouterLink, HeaderComponent],
+  imports: [FormsModule, RouterLink, HeaderComponent, BackButtonDirective],
   selector: 'app-branch-list',
   styleUrl: './branch-list.css',
   templateUrl: './branch-list.html',

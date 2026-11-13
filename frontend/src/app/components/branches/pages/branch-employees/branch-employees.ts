@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { BackButtonDirective } from '../../../back-button/back-button.directive';
 import { HeaderComponent } from '../../../header-component/header-component';
 import { User } from '../../../users/user.model';
 import { UserService } from '../../../users/user.service';
@@ -14,7 +14,7 @@ import { EmployeeAddModalComponent } from '../../components/employee-add-modal/e
   selector: 'app-branch-employees',
   imports: [
     FormsModule,
-    RouterLink,
+    BackButtonDirective,
     HeaderComponent,
     EmployeeEditModalComponent,
     EmployeeAddModalComponent,
