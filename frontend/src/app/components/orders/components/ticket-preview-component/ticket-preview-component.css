@@ -1,0 +1,203 @@
+:host {
+  display: block;
+}
+
+.ticket {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+  padding: 1.5rem;
+  background: var(--light-cream);
+  color: var(--dark-green);
+  filter: drop-shadow(0 4px 10px rgba(32, 90, 64, 0.16));
+}
+
+.ticket::before,
+.ticket::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-repeat: repeat-x;
+  background-size: 16px 8px;
+}
+
+.ticket::before {
+  bottom: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='8' viewBox='0 0 16 8'%3E%3Cpath d='M0 8h16L8 0z' fill='%23f8f5e9'/%3E%3C/svg%3E");
+}
+
+.ticket::after {
+  top: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='8' viewBox='0 0 16 8'%3E%3Cpath d='M0 0h16L8 8z' fill='%23f8f5e9'/%3E%3C/svg%3E");
+}
+
+.ticket__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px dashed var(--icon);
+  text-align: center;
+}
+
+.ticket__brand {
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 1.65rem;
+  letter-spacing: 0.14em;
+}
+
+.ticket__branch {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--background-green);
+}
+
+.ticket__status {
+  margin-top: 0.25rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--background-green) 14%, transparent);
+  color: var(--dark-green);
+}
+
+.ticket__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1rem;
+  margin: 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px dashed var(--icon);
+}
+
+.ticket__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.ticket__meta-item dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--background-green);
+}
+
+.ticket__meta-item dd {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.ticket__empty {
+  margin: 0;
+  padding: 1.25rem 0;
+  text-align: center;
+  font-size: 0.95rem;
+  opacity: 0.65;
+  border-bottom: 2px dashed var(--icon);
+}
+
+.ticket__items {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  border-bottom: 2px dashed var(--icon);
+}
+
+.ticket__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.ticket__item + .ticket__item {
+  padding-top: 0.65rem;
+  border-top: 1px dashed color-mix(in srgb, var(--icon) 60%, transparent);
+}
+
+.ticket__item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.ticket__item-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.ticket__item-obs {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--background-green);
+}
+
+.ticket__item-unit {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.ticket__item-subtotal {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ticket__totals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ticket__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket__row--discount {
+  color: var(--background-green);
+}
+
+.ticket__row--net {
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--icon);
+  font-weight: 700;
+}
+
+.ticket__row--due {
+  margin-top: 0.35rem;
+  padding-top: 0.65rem;
+  border-top: 2px solid var(--dark-green);
+  font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.ticket__dots {
+  flex: 1;
+  border-bottom: 2px dotted var(--icon);
+}
+

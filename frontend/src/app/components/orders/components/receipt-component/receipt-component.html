@@ -1,0 +1,106 @@
+<section class="receipt-shell" aria-label="Order closing receipt">
+  <article class="receipt-paper">
+    <header class="receipt__header">
+      <h2 class="receipt__brand">CIBUS</h2>
+      <p class="receipt__branch">{{ order().branchName }} • Table #{{ order().tableNumber }}</p>
+    </header>
+
+    <dl class="receipt__meta">
+      <div>
+        <dt>Ticket</dt>
+        <dd>#{{ order().id }}</dd>
+      </div>
+      <div>
+        <dt>Waiter</dt>
+        <dd>{{ order().waiterFirstName }} {{ order().waiterLastName }}</dd>
+      </div>
+      <div>
+        <dt>Opened</dt>
+        <dd>{{ order().createdAt | date: 'MMM d, HH:mm' }}</dd>
+      </div>
+      <div>
+        <dt>Closed</dt>
+        <dd>{{ order().closedAt ? (order().closedAt | date: 'MMM d, HH:mm') : 'Just now' }}</dd>
+      </div>
+    </dl>
+
+    @if (order().items.length > 0) {
+      <ul class="receipt__items">
+        @for (item of order().items; track item.productId + '-' + item.productName) {
+          <li class="receipt__item">
+            <div class="receipt__item-left">
+              <span class="receipt__item-name">{{ item.quantity }}x {{ item.productName }}</span>
+              <span class="receipt__item-unit">{{ item.unitPrice | currency }} each</span>
+            </div>
+            <span class="receipt__item-subtotal">{{ item.subtotal | currency }}</span>
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="receipt__totals">
+      <div class="receipt__row">
+        <span>Subtotal</span>
+        <span>{{ order().subtotal | currency }}</span>
+      </div>
+      @if (order().discount > 0) {
+        <div class="receipt__row receipt__row--discount">
+          <span>Discount</span>
+          <span>-{{ order().discount | currency }}</span>
+        </div>
+      }
+      <div class="receipt__row receipt__row--final">
+        <span>Total Paid</span>
+        <span>{{ order().finalTotal | currency }}</span>
+      </div>
+    </div>
+
+    @if (paymentBreakdown().length > 0) {
+      <div class="receipt__payments">
+        <h3 class="receipt__payments-title">Payment Methods</h3>
+        <ul class="receipt__payments-list">
+          @for (entry of paymentBreakdown(); track $index) {
+            <li>
+              <span>{{ entry.methodName }}</span>
+              <span>{{ entry.amount | currency }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    <p class="receipt__thanks">THANK YOU FOR DINING WITH CIBUS</p>
+  </article>
+
+  <div class="receipt-actions">
+    @if (!tableAlreadyFree()) {
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="freeingTable()"
+        (click)="onFinishAndFreeTable()"
+      >
+        {{ freeingTable() ? 'Freeing table...' : 'Free Table & Return to Floor' }}
+      </button>
+    }
+    <div class="receipt-actions__secondary">
+      <button
+        type="button"
+        class="btn-outline"
+        [disabled]="freeingTable()"
+        (click)="onFinishKeepTable()"
+      >
+        {{ tableAlreadyFree() ? 'Return to Floor' : 'Return (Keep Table Occupied)' }}
+      </button>
+      <button
+        type="button"
+        class="btn-outline"
+        [disabled]="freeingTable()"
+        (click)="onPrint()"
+      >
+        Print Receipt
+      </button>
+    </div>
+  </div>
+</section>
+

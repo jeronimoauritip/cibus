@@ -1,0 +1,69 @@
+<app-header-component>
+  @if (closedOrder()) {
+    Receipt #{{ orderId() }}
+  } @else {
+    Table {{ tableNumber() }}
+  }
+</app-header-component>
+
+<main class="close-page">
+  @if (loading()) {
+    <div class="state-card">
+      <p>Loading order #{{ orderId() }}...</p>
+    </div>
+  } @else if (loadError()) {
+    <div class="state-card state-card--error" role="alert">
+      <p>{{ loadError() }}</p>
+      <div class="state-card__actions">
+        <button type="button" class="btn-outline" (click)="navigateToFloor()">
+          Back to Floor
+        </button>
+        @if (branchId() && orderId() && order()?.status !== 'CANCELLED') {
+          <button type="button" class="btn-solid" (click)="retryLoad()">
+            Retry
+          </button>
+        }
+      </div>
+    </div>
+  } @else if (closedOrder(); as paid) {
+    <div class="receipt-container">
+      @if (receiptError()) {
+        <p class="receipt-error" role="alert">{{ receiptError() }}</p>
+      }
+      <app-receipt
+        [order]="paid"
+        [payments]="appliedPayments()"
+        [paymentMethods]="paymentMethods()"
+        [freeingTable]="freeingTable()"
+        [tableAlreadyFree]="tableAlreadyFree()"
+        (finishAndFreeTable)="onFinishAndFreeTable()"
+        (finishKeepTable)="navigateToFloor()"
+        (printReceipt)="onPrintReceipt()"
+      />
+    </div>
+  } @else if (order(); as activeOrder) {
+    <div class="close-grid">
+      <aside class="close-grid__ticket">
+        <app-ticket-preview
+          [order]="activeOrder"
+          [draftDiscount]="draftDiscount()"
+        />
+      </aside>
+
+      <section class="close-grid__payment">
+        <app-payment
+          [paymentMethods]="paymentMethods()"
+          [subtotal]="activeOrder.subtotal"
+          [existingDiscount]="activeOrder.discount"
+          [remainingAmount]="activeOrder.remainingAmount"
+          [submitting]="submitting()"
+          [errorMessage]="submitError()"
+          (discountChange)="onDiscountChange($event)"
+          (confirmPayment)="onConfirmPayment($event)"
+          (cancel)="navigateToFloor()"
+        />
+      </section>
+    </div>
+  }
+</main>
+
