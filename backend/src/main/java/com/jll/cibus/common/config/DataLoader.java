@@ -436,7 +436,7 @@ public class DataLoader {
         List<BranchStaffDefinition> branchStaffList = List.of(
                 new BranchStaffDefinition(
                         0, // Index branch 0: Centro
-                        new UserSpec(1L, "Esteban", "Manager", "2222222222", "manager@gmail.com", "manager@gmail.com", "1234"),
+                        new UserSpec(1L, "Esteban", "Manager", "2222222222", "manager@gmail.com", "manager@gmail.com", "manager1234"),
                         List.of(
                                 new UserSpec(2L, "Carlos", "Gómez", "3333333331", "waiter@gmail.com", "1111", "1111"),
                                 new UserSpec(10002L, "Valentina", "Ríos", "3333333332", "valentina.rios@cibus.com", "1112", "1112"),
@@ -448,7 +448,7 @@ public class DataLoader {
                 ),
                 new BranchStaffDefinition(
                         1, // Index branch 1: Norte
-                        new UserSpec(20000001L, "Mariana", "López", "2222222223", "manager.norte@cibus.com", "manager.norte@cibus.com", "1234"),
+                        new UserSpec(20000001L, "Mariana", "López", "2222222223", "manager.norte@cibus.com", "manager.norte@cibus.com", "manager1234"),
                         List.of(
                                 new UserSpec(20001L, "Lucas", "Pereyra", "3333333341", "lucas.pereyra@cibus.com", "2111", "2111"),
                                 new UserSpec(20002L, "Gonzalo", "Fernández", "3333333342", "gonzalo.fernandez@cibus.com", "2112", "2112"),
@@ -460,7 +460,7 @@ public class DataLoader {
                 ),
                 new BranchStaffDefinition(
                         2, // Index branch 2: Sur
-                        new UserSpec(30000001L, "Rodrigo", "Paz", "2222222224", "manager.sur@cibus.com", "manager.sur@cibus.com", "1234"),
+                        new UserSpec(30000001L, "Rodrigo", "Paz", "2222222224", "manager.sur@cibus.com", "manager.sur@cibus.com", "manager1234"),
                         List.of(
                                 new UserSpec(30001L, "Julián", "Herrera", "3333333351", "julian.herrera@cibus.com", "3111", "3111"),
                                 new UserSpec(30002L, "Lucía", "Castro", "3333333352", "lucia.castro@cibus.com", "3112", "3112"),
@@ -472,7 +472,7 @@ public class DataLoader {
                 ),
                 new BranchStaffDefinition(
                         3, // Index branch 3: Palermo (si existe)
-                        new UserSpec(40000001L, "Valeria", "Suárez", "2222222225", "manager.palermo@cibus.com", "manager.palermo@cibus.com", "1234"),
+                        new UserSpec(40000001L, "Valeria", "Suárez", "2222222225", "manager.palermo@cibus.com", "manager.palermo@cibus.com", "manager1234"),
                         List.of(
                                 new UserSpec(40001L, "Santiago", "Medina", "3333333361", "santiago.medina@cibus.com", "4111", "4111"),
                                 new UserSpec(40002L, "Paula", "Alvarez", "3333333362", "paula.alvarez@cibus.com", "4112", "4112"),

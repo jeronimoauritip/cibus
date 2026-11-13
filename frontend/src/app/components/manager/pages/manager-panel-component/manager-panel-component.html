@@ -1,0 +1,18 @@
+<app-header-component> Manager Panel </app-header-component>
+
+<main class="manager-panel">
+    <nav class="manager-options" aria-label="Administration">
+      <a class="manager-option" [routerLink]="['/branches', branchId(), 'tables']">
+        Table map
+      </a>
+      <a class="manager-option" [routerLink]="['/branches', branchId(), 'employees']">
+        Manage your employees
+      </a>
+      <a class="manager-option" [routerLink]="['/manager/menu/branch', branchId()]">
+        Manage your menu
+      </a>
+      <a class="manager-stats" routerLink="/manager/statistics">
+        View statistics <span aria-hidden="true">→</span>
+      </a>
+    </nav>
+</main>

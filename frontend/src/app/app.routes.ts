@@ -18,6 +18,7 @@ import { TableMapComponent } from './components/tables/pages/table-map/table-map
 import { MenuComponent } from './components/menu/pages/menu-component/menu-component';
 import { KitchenViewComponent } from './components/orders/pages/kitchen-view-component/kitchen-view-component';
 import { DashboardComponent } from './components/metrics/pages/dashboard-component/dashboard-component';
+import { ManagerPanelComponent } from './components/manager/pages/manager-panel-component/manager-panel-component';
 
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
@@ -59,6 +60,16 @@ export const routes: Routes = [
             { path: 'employees/:id', component: UserDetail },
             { path: 'menu', component: ProductListComponent },
             { path: 'menu/:id', component: ProductDetailComponent },
+            { path: 'menu/branch/:branchId', component: MenuComponent },
+            { path: 'statistics', component: DashboardComponent}
+        ]
+    },
+    {
+        path: 'manager',
+        canActivate: [roleGuard],
+        data: { roles: ['Manager'] },
+        children: [
+            { path: '', component: ManagerPanelComponent },
             { path: 'menu/branch/:branchId', component: MenuComponent },
             { path: 'statistics', component: DashboardComponent}
         ]

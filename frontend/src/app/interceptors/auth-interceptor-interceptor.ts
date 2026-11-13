@@ -5,19 +5,20 @@ import { AuthService } from '../Auth/services/auth-service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
-  const isAuthUrl = req.url.includes('/api/auth');
   const token = auth.accessToken();
+  
+  const isPublicAuthUrl = req.url.includes('/api/auth') && req.method === 'POST';
 
-  const authReq = token && !isAuthUrl
+  const authReq = token && !isPublicAuthUrl
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req;
 
-    const retryWithCurrentToken = () =>
+  const retryWithCurrentToken = () =>
     next(req.clone({ setHeaders: { Authorization: `Bearer ${auth.accessToken()}` } }));
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status !== 401 || isAuthUrl) {
+      if (error.status !== 401 || isPublicAuthUrl) {
         return throwError(() => error);
       }
 
@@ -26,14 +27,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return retryWithCurrentToken();
       }
 
-          return auth.refresh().pipe(
+      return auth.refresh().pipe(
         catchError(refreshError => {
           auth.logout();
           return throwError(() => refreshError);
         }),
         switchMap(() => retryWithCurrentToken())
       );
-
     })
   );
 };

@@ -125,9 +125,23 @@ export class AuthService {
         this._loading.set(false);
         if (this.setSession(response)) {
             this.hydrateProfileInBackground();
-           const home = this.role() === 'Kitchen' ? '/kitchen' : this.isAdmin() ? '/admin' : '/tables';
-            this.router.navigate([home]);
-
+            let homeRoute = '/tables';
+            switch (this.role()) {
+                case 'Admin':
+                    homeRoute = '/admin';
+                    break;
+                case 'Manager':
+                    homeRoute = '/manager';
+                    break;
+                case 'Kitchen':
+                    homeRoute = '/kitchen';
+                    break;
+                case 'Host':
+                case 'Waiter':
+                    homeRoute = '/tables';
+                    break;
+            }
+        this.router.navigate([homeRoute]);
         } else {
             this._error.set('Invalid server response');
         }
