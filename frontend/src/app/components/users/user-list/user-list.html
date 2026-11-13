@@ -1,11 +1,7 @@
 <app-header-component>
-  <a class="btn-back" routerLink="/admin" aria-label="Back to admin panel" title="Back">
-    <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Return</span>
-  </a>
+  <button type="button" class="btn-return" appBackButton="/admin" aria-label="Go back">
+    <span aria-hidden="true">←</span> Return
+  </button>
   Employee list
 </app-header-component>
 

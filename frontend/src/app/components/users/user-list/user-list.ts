@@ -8,9 +8,10 @@ import { HeaderComponent } from '../../header-component/header-component';
 import { Branch } from '../../branches/models/branch.model';
 import { BranchService } from '../../branches/service/branch-service';
 import { AuthService } from '../../../Auth/services/auth-service';
+import { BackButtonDirective } from '../../back-button/back-button.directive';
 
 @Component({
-  imports: [FormsModule, HeaderComponent, RouterLink],
+  imports: [FormsModule, HeaderComponent, RouterLink, BackButtonDirective],
   selector: 'app-user-list',
   styleUrl: './user-list.css',
   templateUrl: './user-list.html',

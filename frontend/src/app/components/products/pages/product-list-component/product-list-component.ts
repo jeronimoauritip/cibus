@@ -6,9 +6,10 @@ import { ProductRowComponent } from '../../components/product-row-component/prod
 import { ProductFilterComponent } from '../../components/product-filter-component/product-filter-component';
 import { HeaderComponent } from '../../../header-component/header-component';
 import { Router } from '@angular/router';
+import { BackButtonDirective } from '../../../back-button/back-button.directive';
 
 @Component({
-  imports: [ProductRowComponent, ProductFilterComponent, HeaderComponent],
+  imports: [ProductRowComponent, ProductFilterComponent, HeaderComponent, BackButtonDirective],
   selector: 'app-product-list-component',
   styleUrl: './product-list-component.css',
   templateUrl: './product-list-component.html',

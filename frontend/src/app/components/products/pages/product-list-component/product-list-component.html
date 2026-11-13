@@ -1,6 +1,11 @@
 <!-- Ocultamos el header global si estamos adentro del modal -->
 @if (!isSelectionMode()) {
-  <app-header-component> Products </app-header-component>
+  <app-header-component>
+    <button type="button" class="btn-return" appBackButton="/admin" aria-label="Go back">
+      <span aria-hidden="true">←</span> Return
+    </button>
+    Products
+  </app-header-component>
 }
 
 <div class="page">
