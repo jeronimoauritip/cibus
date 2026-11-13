@@ -81,7 +81,57 @@ button, input {
   stroke-linejoin: round;
 }
 
+/* Outlined "Return" button for section headers (navigates to the previous screen) */
+.btn-return, .title .btn-return {
+  position: absolute;
+  left: max(24px, calc(50% - 340px));
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid var(--light-green);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--dark-green);
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: normal;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-return:hover, .title .btn-return:hover {
+  background: var(--light-green);
+  color: rgba(244, 240, 228, 0.95);
+}
+
+.btn-return:focus-visible {
+  outline: 3px solid var(--light-green);
+  outline-offset: 4px;
+}
+
+.btn-return .back-icon {
+  width: 18px;
+  height: 18px;
+}
+
 @media (max-width: 768px) {
+  /* Move the button up to the logo row so it never overlaps the centered title */
+  .btn-return, .title .btn-return {
+    left: auto;
+    right: 20px;
+    top: -88px;
+    transform: none;
+    padding: 8px 14px;
+    font-size: 15px;
+  }
+
   .btn-back, .title .btn-back {
     left: 20px;
     height: 42px;
