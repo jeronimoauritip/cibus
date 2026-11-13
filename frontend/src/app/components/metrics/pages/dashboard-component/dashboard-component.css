@@ -7,7 +7,9 @@
   width: min(100%, 838px);
   margin-inline: auto;
   padding: 18px 24px 60px;
+  box-sizing: border-box;
 }
+
 .dashboard-back {
   align-self: flex-start;
   display: inline-flex;
@@ -32,7 +34,6 @@
   outline-offset: 4px;
 }
 
-
 .dashboard-branch {
   display: flex;
   flex-direction: column;
@@ -41,13 +42,17 @@
   font-weight: 600;
 }
 
-.dashboard-branch select {
+
+.dashboard-branch select,
+.branch-badge-readonly {
+  width: 100%;
   padding: 14px 18px;
   border: none;
   border-radius: 16px;
   background: #f8f5e8;
   color: var(--dark-green);
   font-size: 18px;
+  box-sizing: border-box;
 }
 
 .dashboard-tabs {
@@ -78,4 +83,35 @@
 .dashboard-content pre {
   overflow-x: auto;
   color: var(--dark-green);
+}
+
+
+@media (max-width: 600px) {
+  .dashboard {
+    padding: 16px 16px 40px;
+    gap: 16px;
+  }
+
+  .dashboard-back {
+    font-size: 15px;
+    padding: 8px 16px;
+  }
+
+  .dashboard-branch select,
+  .branch-badge-readonly {
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+
+  .dashboard-tabs {
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+
+  .dashboard-tabs button {
+    flex: 1 1 auto;
+    padding: 8px 12px;
+    font-size: 15px;
+    text-align: center;
+  }
 }

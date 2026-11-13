@@ -1,18 +1,27 @@
 <app-header-component> Statistics </app-header-component>
 
 <main class="dashboard">
-  <a class="dashboard-back" routerLink="/admin">
-    <span aria-hidden="true">←</span> Back to admin panel
+  <!-- Dynamic back button based on role -->
+  <a class="dashboard-back" [routerLink]="auth.isAdmin() ? '/admin' : '/manager'">
+    <span aria-hidden="true">←</span> Back
   </a>
 
   <label class="dashboard-branch">
     <span>Branch</span>
-    <select #branchSelect (change)="selectBranch(branchSelect.value)">
-      <option value="">All branches (global)</option>
-      @for (branch of branches(); track branch.id) {
-        <option [value]="branch.id">{{ branch.name }}</option>
-      }
-    </select>
+    
+    @if (auth.isAdmin()) {
+      <select #branchSelect (change)="selectBranch(branchSelect.value)">
+        <option value="">All branches (global)</option>
+        @for (branch of branches(); track branch.id) {
+          <option [value]="branch.id">{{ branch.name }}</option>
+        }
+      </select>
+    } @else {
+      <!-- Read-only branch badge for Managers -->
+      <div class="branch-badge-readonly">
+        {{ auth.user()?.branchName ?? 'Loading...' }}
+      </div>
+    }
   </label>
 
   <nav class="dashboard-tabs" aria-label="Reports">
