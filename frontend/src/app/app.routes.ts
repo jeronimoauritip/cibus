@@ -28,13 +28,13 @@ export const routes: Routes = [
     path: 'branches/:branchId/tables',
     component: TableMapComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Admin'] }
+    data: { roles: ['Admin', 'Manager', 'Host', 'Waiter'] }
     },
     {
     path: 'tables',
     component: TableMapComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Admin', 'Host', 'Waiter'] }
+    data: { roles: ['Admin'] }
     },
 
     {
