@@ -74,7 +74,7 @@ export class ProductListComponent {
 
   onNewProduct(): void {
     if (this.isSelectionMode()) return;
-    this.router.navigate(['/products/new']);
+    this.router.navigate(['/admin/menu/new']);
   }
 
 }

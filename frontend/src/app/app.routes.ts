@@ -22,29 +22,22 @@ import { DashboardComponent } from './components/metrics/pages/dashboard-compone
 export const routes: Routes = [
     { path: '', component: Local, pathMatch: 'full' },
     { path: 'login', component: Login },
-    { path: 'users', component: UserList },
-    { path: 'users/new', component: UserCreate },
-    { path: 'users/:id', component: UserDetail },
-    { path: 'branches', component: BranchListComponent },
-    { path: 'branches/new', component: BranchComponent },
-    { path: 'branches/employees', component: BranchEmployeesComponent },
-    { path: 'branches/:branchId/employees', component: BranchEmployeesComponent },
     {
-        path: 'branches/:branchId/tables',
-        component: TableMapComponent,
-        canActivate: [authGuard]
+    path: 'branches/:branchId/tables',
+    component: TableMapComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin'] }
     },
     {
-        path: 'tables',
-        component: TableMapComponent,
-        canActivate: [authGuard]
+    path: 'tables',
+    component: TableMapComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'Host', 'Waiter'] }
     },
-    { path: 'products', component: ProductListComponent },
-    { path: 'products/new', component: ProductsComponent },
-    { path: 'list-of-products', component: ProductListComponent },
+
     {
         path: 'admin',
-        canActivate: [roleGuard],
+        canActivate: [authGuard, roleGuard],
         data: { roles: ['Admin'] },
         children: [
             { path: '', component: AdminPanelComponent },
@@ -58,6 +51,7 @@ export const routes: Routes = [
             { path: 'employees/new', component: UserCreate },
             { path: 'employees/:id', component: UserDetail },
             { path: 'menu', component: ProductListComponent },
+            { path: 'menu/new', component: ProductsComponent },
             { path: 'menu/:id', component: ProductDetailComponent },
             { path: 'menu/branch/:branchId', component: MenuComponent },
             { path: 'statistics', component: DashboardComponent}
