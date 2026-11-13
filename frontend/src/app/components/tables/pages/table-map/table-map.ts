@@ -2,6 +2,7 @@ import { CommonModule, Location } from '@angular/common';
 import {
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   HostListener,
   inject,
@@ -32,6 +33,8 @@ import {
 } from '../../models/table.model';
 import { TableService } from '../../service/table.service';
 
+const FLOOR_REFRESH_INTERVAL_MS = 10_000;
+
 @Component({
   selector: 'app-table-map',
   standalone: true,
@@ -43,6 +46,7 @@ export class TableMapComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
   private readonly tableService = inject(TableService);
   private readonly branchService = inject(BranchService);
@@ -276,6 +280,8 @@ export class TableMapComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeContext();
+    const timer = setInterval(() => this.refreshFloorDataSilently(), FLOOR_REFRESH_INTERVAL_MS);
+    this.destroyRef.onDestroy(() => clearInterval(timer));
   }
 
   private initializeContext(): void {
@@ -356,6 +362,30 @@ export class TableMapComponent implements OnInit {
       });
   }
 
+  private refreshFloorDataSilently(): void {
+    const branchId = this.activeBranchId();
+    if (!branchId || document.hidden || this.isEditMode() || this.draggingTableNumber() !== null) {
+      return;
+    }
+
+    forkJoin({
+      tables: this.tableService.getTablesByBranch(branchId),
+      orders: this.tableService
+        .getBranchOrders(branchId)
+        .pipe(catchError(() => of([] as TableOrder[]))),
+    }).subscribe({
+      next: ({ tables, orders }) => {
+        if (this.activeBranchId() !== branchId || this.isEditMode()) return;
+        this.tables.set(tables ?? []);
+        this.branchOrders.set(orders ?? []);
+        this.syncOccupiedTimestamps(branchId, tables ?? [], orders ?? []);
+      },
+      error: () => {
+        // Ignore silent background refresh errors
+      },
+    });
+  }
+
   switchBranch(branchId: number, event?: MouseEvent): void {
     event?.stopPropagation();
     this.isBranchMenuOpen.set(false);
@@ -381,10 +411,6 @@ export class TableMapComponent implements OnInit {
     if (table.available) {
       return 'available';
     }
-    const override = this.localVisualOverrides()[table.number];
-    if (override && override !== 'available') {
-      return override;
-    }
     const activeOrder = this.branchOrders().find(
       (o) =>
         o.tableNumber === table.number &&
@@ -392,11 +418,16 @@ export class TableMapComponent implements OnInit {
         o.status?.toUpperCase() !== 'CANCELLED'
     );
     if (!activeOrder) {
+      const override = this.localVisualOverrides()[table.number];
+      if (override && override !== 'available') {
+        return override;
+      }
       return 'occupied';
     }
     const st = activeOrder.status.toUpperCase();
     if (st === 'READY') return 'ready';
-    if (st === 'PREPARING' || st === 'PENDING') return 'preparing';
+    if (st === 'PREPARING') return 'preparing';
+    if (st === 'PENDING') return 'pending';
     if (st === 'SERVED') return 'served';
     return 'occupied';
   }
@@ -407,8 +438,10 @@ export class TableMapComponent implements OnInit {
         return 'FREE';
       case 'occupied':
         return 'SEATED';
+      case 'pending':
+        return 'PENDING';
       case 'preparing':
-        return 'KITCHEN';
+        return 'PREPARING';
       case 'ready':
         return 'READY!';
       case 'served':

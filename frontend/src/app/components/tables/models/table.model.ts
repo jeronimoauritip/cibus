@@ -1,6 +1,6 @@
 import { OrderDetail } from '../../orders/models/order-detail';
 
-export type TableVisualState = 'available' | 'occupied' | 'preparing' | 'ready' | 'served';
+export type TableVisualState = 'available' | 'occupied' | 'pending' | 'preparing' | 'ready' | 'served';
 export type TableFilterMode = 'all' | 'available' | 'occupied' | 'ready';
 export type TableShape = 'square' | 'rectangular' | 'round';
 

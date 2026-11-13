@@ -82,6 +82,7 @@ describe('TableMapComponent', () => {
       waiterId: 7,
       branchId: 2,
     };
+    component.isLoading.set(false);
     component.tables.set([table]);
     component.tableOccupiedAt.set({ 4: '2026-11-13T12:41:00' });
     component.selectedTableNumber.set(4);
@@ -165,5 +166,53 @@ describe('TableMapComponent', () => {
     fixture.detectChanges();
     expect(component.headerActionConfirmType()).toBeNull();
     expect(el.querySelector('.trash-label')?.textContent?.trim()).toBe('Free Table');
+  });
+
+  it('should display PENDING when an order is created and PREPARING when kitchen starts preparing', () => {
+    const table = {
+      id: 5,
+      number: 4,
+      capacity: 4,
+      available: false,
+      posX: 100,
+      posY: 100,
+      waiterId: 7,
+      branchId: 2,
+    };
+    component.isLoading.set(false);
+    component.tables.set([table]);
+    component.branchOrders.set([
+      {
+        id: 88,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'PENDING',
+        createdAt: '2026-11-13T12:45:00',
+        subtotal: 1000,
+        discount: 0,
+        finalTotal: 1000,
+        remainingAmount: 1000,
+        items: [],
+      },
+    ]);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(component.getTableVisualState(table)).toBe('pending');
+    expect(el.querySelector('.table-node')?.classList.contains('state-pending')).toBe(true);
+    expect(el.querySelector('.t-badge')?.textContent?.trim()).toBe('PENDING');
+
+    component.branchOrders.set([
+      { ...component.branchOrders()[0], status: 'PREPARING' },
+    ]);
+    fixture.detectChanges();
+
+    expect(component.getTableVisualState(table)).toBe('preparing');
+    expect(el.querySelector('.table-node')?.classList.contains('state-preparing')).toBe(true);
+    expect(el.querySelector('.t-badge')?.textContent?.trim()).toBe('PREPARING');
   });
 });

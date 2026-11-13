@@ -706,6 +706,7 @@
 
 .table-node.state-available { background: var(--cream); color: var(--dark-green); border-color: var(--background-green); box-shadow: 0 6px 16px rgba(114, 148, 114, 0.22); }
 .table-node.state-occupied { background: var(--dark-green); color: var(--cream); border-color: var(--dark-green); box-shadow: 0 10px 22px rgba(32, 90, 64, 0.32); }
+.table-node.state-pending { background: var(--dark-green); color: var(--cream); border-color: #f59e0b; box-shadow: 0 10px 22px rgba(32, 90, 64, 0.32); }
 .table-node.state-preparing { background: var(--dark-green); color: var(--cream); border-color: var(--state-ready-bg); box-shadow: 0 10px 22px rgba(32, 90, 64, 0.32); }
 .table-node.state-ready { background: var(--state-ready-light); color: #7c2d12; border-color: var(--state-ready-bg); animation: pulse-ready 2s infinite; }
 .table-node.state-served { background: var(--state-served-bg); color: var(--cream); border-color: var(--background-green); box-shadow: 0 8px 18px rgba(32, 90, 64, 0.26); }
@@ -725,6 +726,7 @@
 .chair-h { width: 22px; height: 6px; }
 .chair-v { width: 6px; height: 22px; }
 .table-node.state-occupied .chair-h, .table-node.state-occupied .chair-v,
+.table-node.state-pending .chair-h, .table-node.state-pending .chair-v,
 .table-node.state-preparing .chair-h, .table-node.state-preparing .chair-v,
 .table-node.state-served .chair-h, .table-node.state-served .chair-v { background: var(--dark-green); opacity: 0.95; }
 .table-node.state-ready .chair-h, .table-node.state-ready .chair-v { background: var(--state-ready-bg); opacity: 1; }
@@ -770,6 +772,7 @@
     color 0.45s ease;
 }
 .state-occupied .t-badge, .state-served .t-badge { background: rgba(231, 219, 191, 0.2); color: var(--cream); }
+.state-pending .t-badge { background: #fef3c7; color: #92400e; }
 .state-preparing .t-badge, .state-ready .t-badge { background: var(--state-ready-bg); color: #fff; }
 .t-sub {
   margin-top: 3px;
