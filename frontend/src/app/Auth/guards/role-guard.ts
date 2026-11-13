@@ -3,6 +3,12 @@ import { CanActivateFn, ActivatedRouteSnapshot, Router } from '@angular/router'
 import { AuthService } from '../services/auth-service'
 import { RoleModel } from '../../Roles/role-model'
 
+const HOME_BY_ROLE: Partial<Record<RoleModel['role'], string>> = {
+  Admin: '/admin',
+  Kitchen: '/kitchen',
+  Waiter: '/tables',
+  Host: '/tables'
+}
 
 export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth   = inject(AuthService)
@@ -14,6 +20,7 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   if (permitRoles?.length && role && permitRoles.includes(role)) {
     return true
   }
-// '/tables' doesn't exist in the frontend yet; this redirect is intentional and will be valid once that feature is added.
-  return router.createUrlTree(['/tables'])
+
+  return router.createUrlTree([(role && HOME_BY_ROLE[role]) || '/login'])
+
 }
