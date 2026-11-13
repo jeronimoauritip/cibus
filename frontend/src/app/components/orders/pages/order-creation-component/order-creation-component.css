@@ -92,10 +92,11 @@
 
 @media (max-width: 900px) {
   .page {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .order-panel {
+    order: -1;
     position: static;
     max-height: none;
   }
