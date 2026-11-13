@@ -8,8 +8,9 @@ export interface OrderResponse {
     waiterId: number;
     waiterFirstName: string;
     waiterLastName:string;
-    status:string;
-    createdAt:string;
+    status: OrderStatus;
+    createdAt: string;
+    closedAt?: string | null;
     subtotal:number;
     discount:number;
     finalTotal:number;

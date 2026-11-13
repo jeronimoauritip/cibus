@@ -1,0 +1,85 @@
+<section class="ticket" aria-label="Order ticket preview">
+  <header class="ticket__header">
+    <div class="ticket__brand">CIBUS</div>
+    <p class="ticket__branch">{{ order().branchName }} • Table #{{ order().tableNumber }}</p>
+    <span class="ticket__status" [attr.data-status]="order().status">{{ order().status }}</span>
+  </header>
+
+  <dl class="ticket__meta">
+    <div class="ticket__meta-item">
+      <dt>Ticket</dt>
+      <dd>#{{ order().id }}</dd>
+    </div>
+    <div class="ticket__meta-item">
+      <dt>Waiter</dt>
+      <dd>{{ order().waiterFirstName }} {{ order().waiterLastName }}</dd>
+    </div>
+    <div class="ticket__meta-item">
+      <dt>Opened</dt>
+      <dd>{{ order().createdAt | date: 'MMM d, HH:mm' }}</dd>
+    </div>
+    <div class="ticket__meta-item">
+      <dt>Items</dt>
+      <dd>{{ order().items.length }}</dd>
+    </div>
+  </dl>
+
+  @if (order().items.length === 0) {
+    <p class="ticket__empty">No items recorded in this order.</p>
+  } @else {
+    <ul class="ticket__items">
+      @for (item of order().items; track item.productId + '-' + item.productName) {
+        <li class="ticket__item">
+          <div class="ticket__item-info">
+            <span class="ticket__item-name">{{ item.quantity }}x {{ item.productName }}</span>
+            @if (item.observation) {
+              <span class="ticket__item-obs">"{{ item.observation }}"</span>
+            }
+            <span class="ticket__item-unit">{{ item.unitPrice | currency }} each</span>
+          </div>
+          <span class="ticket__item-subtotal">{{ item.subtotal | currency }}</span>
+        </li>
+      }
+    </ul>
+  }
+
+  <footer class="ticket__totals">
+    <div class="ticket__row">
+      <span>Subtotal</span>
+      <span>{{ order().subtotal | currency }}</span>
+    </div>
+
+    @if (order().discount > 0) {
+      <div class="ticket__row ticket__row--discount">
+        <span>Applied discount</span>
+        <span>-{{ order().discount | currency }}</span>
+      </div>
+    }
+
+    @if (sanitizedDraftDiscount() > 0) {
+      <div class="ticket__row ticket__row--discount">
+        <span>New discount</span>
+        <span>-{{ sanitizedDraftDiscount() | currency }}</span>
+      </div>
+    }
+
+    <div class="ticket__row ticket__row--net">
+      <span>Order total</span>
+      <span>{{ netTotal() | currency }}</span>
+    </div>
+
+    @if (alreadyPaid() > 0) {
+      <div class="ticket__row">
+        <span>Already paid</span>
+        <span>-{{ alreadyPaid() | currency }}</span>
+      </div>
+    }
+
+    <div class="ticket__row ticket__row--due">
+      <span>Amount due</span>
+      <span class="ticket__dots"></span>
+      <span>{{ netRemaining() | currency }}</span>
+    </div>
+  </footer>
+</section>
+
