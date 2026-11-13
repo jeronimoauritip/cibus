@@ -123,31 +123,46 @@ export class AuthService {
 
     private onAuthSuccess(response: AuthResponse): void {
         this._loading.set(false);
-        if (this.setSession(response)) {
-            this.hydrateProfileInBackground();
-            let homeRoute = '/tables';
-            switch (this.role()) {
+        if (!this.setSession(response)) {
+            this._error.set('Invalid server response');
+            return;
+        }
+        this.hydrateProfileInBackground();
+        const role = this.role();
+        const navigateToHome = () => {
+            let homeRoute = '/tables'; 
+            switch (role) {
                 case 'Admin':
                     homeRoute = '/admin';
                     break;
                 case 'Manager':
-                    homeRoute = '/manager';
+                    homeRoute = '/manager'; 
                     break;
                 case 'Kitchen':
                     homeRoute = '/kitchen';
                     break;
                 case 'Host':
                 case 'Waiter':
-                    homeRoute = '/tables';
+                    homeRoute = `/branches/${this.user()?.branchId}/tables`;
                     break;
             }
-        this.router.navigate([homeRoute]);
+            this.router.navigate([homeRoute]);
+        };
+        // Si necesita el ID se espera a que cargue. Si no, navega instantaneo.
+        if (role === 'Host' || role === 'Waiter') {
+            const check = setInterval(() => {
+                if (this.user()?.branchId != null) {
+                    clearInterval(check);
+                    navigateToHome();
+                }
+            }, 50);
         } else {
-            this._error.set('Invalid server response');
+            navigateToHome();
         }
     }
 
     loginWithPin(pin: string): void {
+        this.clearSession();
         this._loading.set(true);
         this._error.set(null);
 
