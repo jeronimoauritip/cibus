@@ -4,15 +4,19 @@
     <div class="floating-hud">
       <!-- Top-Left: Return Button + Branch Pill / Selector -->
       <div class="hud-left">
-        @if (isAdmin()) {
+        @if (isAdmin() || isManager()) {
           <button type="button" class="btn-back" (click)="goBack()">
             <span class="arrow-left" aria-hidden="true"></span>
             <span>Return</span>
           </button>
         } @else {
           <button type="button" class="btn-back" (click)="logout()">
-            <span class="arrow-left" aria-hidden="true"></span>
-            <span>Return</span>
+            <svg class="logout-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Logout</span>
           </button>
         }
 

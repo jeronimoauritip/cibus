@@ -49,6 +49,11 @@
 .branch-selector-wrapper, .circle-menu-wrapper { position: relative; }
 
 .btn-back {
+  /* Reset the global header-style positioning from styles.css */
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -77,6 +82,15 @@
   transition: transform 0.2s ease;
 }
 .btn-back:hover .arrow-left { transform: translateX(-2px); }
+.logout-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* TOP-LEFT BRANCH SELECTOR & MORPHING PILL */
 .branch-selector-wrapper {

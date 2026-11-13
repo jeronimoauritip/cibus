@@ -1199,15 +1199,12 @@ export class TableMapComponent implements OnInit {
   }
 
   goBack(): void {
-    if (this.isAdmin()) {
-      this.router.navigate(['/admin/branches']);
-      return;
-    }
+    // Return to wherever the user came from (admin panel, branch list, ...)
     if (window.history.length > 1) {
       this.location.back();
-    } else {
-      this.router.navigate(['/']);
+      return;
     }
+    this.router.navigate([this.isAdmin() ? '/admin' : this.isManager() ? '/manager' : '/']);
   }
 
   logout(): void {
