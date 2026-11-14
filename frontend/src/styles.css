@@ -25,7 +25,10 @@ button, input {
 
 @font-face {
   font-family: "Croogla";
-  src: url("/assets/fonts/fonnts.com-croogla_4f-bold.woff") format("woff");
+  src:
+    url("/assets/fonts/Croogla4F.woff2") format("woff2"),
+    url("/assets/fonts/Croogla4F.woff") format("woff"),
+    url("/assets/fonts/Croogla4F.ttf") format("truetype");
   font-style: normal;
   font-weight: 700;
   font-display: swap;
