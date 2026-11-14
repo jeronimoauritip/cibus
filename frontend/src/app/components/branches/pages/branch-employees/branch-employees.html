@@ -1,16 +1,13 @@
 <app-header-component>
-  <button type="button" appBackButton class="btn-back" aria-label="Back" title="Back">
-    <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Return</span>
-  </button>
   {{ branch()?.name ? branch()!.name + ' employees' : 'Branch employees' }}
 </app-header-component>
 
 <div class="page">
   <main class="content">
+    <button type="button" appBackButton class="btn-back page-return" aria-label="Back" title="Back">
+      <span aria-hidden="true">←</span> Back
+    </button>
+
     <!-- Search bar by name + "+ Add employee" button -->
     <div class="search-row">
       <form class="searcher" (submit)="$event.preventDefault()">

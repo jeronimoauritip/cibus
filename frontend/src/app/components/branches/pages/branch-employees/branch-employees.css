@@ -337,3 +337,42 @@
     align-self: flex-end;
   }
 }
+
+/* Back button: same look as the statistics one, above the search bar */
+.btn-back.page-return {
+  position: static;
+  transform: none;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: auto;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  border: 2px solid var(--light-green);
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--dark-green);
+  font: 400 17px "Instrument Sans", sans-serif;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-back.page-return:hover {
+  background: var(--light-green);
+  color: rgba(244, 240, 228, 0.95);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-back.page-return:focus-visible {
+  outline: 3px solid var(--light-green);
+  outline-offset: 4px;
+}
+
+@media (max-width: 768px) {
+  .btn-back.page-return {
+    padding: 8px 16px;
+    font-size: 15px;
+  }
+}
