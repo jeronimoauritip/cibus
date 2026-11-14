@@ -640,6 +640,10 @@ public class DataLoader {
 
                 // Si ya existía, sincronizamos para asegurar estado ocupado/libre consistente
                 boolean needSave = false;
+                if (table.getActive() == null) {
+                    table.setActive(true);
+                    needSave = true;
+                }
                 if (table.getShape() == null || !table.getShape().equalsIgnoreCase(spec.shape())) {
                     table.setShape(spec.shape());
                     table.setPosX(spec.posX());
@@ -647,7 +651,7 @@ public class DataLoader {
                     table.setCapacity(spec.capacity());
                     needSave = true;
                 }
-                if (isOccupied && (table.getWaiter() == null || table.getAvailable()) && finalWaiter != null) {
+                if (Boolean.TRUE.equals(table.getActive()) && isOccupied && (table.getWaiter() == null || table.getAvailable()) && finalWaiter != null) {
                     table.setWaiter(finalWaiter);
                     table.setAvailable(false);
                     needSave = true;

@@ -36,4 +36,10 @@ public class TableSpecification {
                     : cb.equal(root.get("waiter").get("id"), waiterId);
         }
 
+        public static Specification<TableEntity> isActive(Boolean active) {
+            return (root, query, cb) -> active == null
+                    ? cb.conjunction()
+                    : cb.equal(root.get("active"), active);
+        }
+
 }

@@ -8,6 +8,7 @@ import com.jll.cibus.common.exception.ForbiddenOperationException;
 import com.jll.cibus.common.exception.ResourceNotFoundException;
 import com.jll.cibus.credential.entity.CredentialsEntity;
 import com.jll.cibus.credential.repository.CredentialsRepository;
+import com.jll.cibus.order.repository.OrderRepository;
 import com.jll.cibus.role.enums.Roles;
 import com.jll.cibus.table.dto.TableCreateDTO;
 import com.jll.cibus.table.dto.TableUpdateDTO;
@@ -34,11 +35,12 @@ public class TableServiceImpl implements TableService {
     private final BranchRepository branchRepository;
     private final CredentialsRepository credentialsRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final AuthService authService;
 
 
     private TableEntity getTableByBranchIdAndNumber(Long branchId, Integer number) {
-        return tableRepository.findByBranch_IdAndNumber(branchId, number)
+        return tableRepository.findByBranch_IdAndNumberAndActiveTrue(branchId, number)
                 .orElseThrow(() -> new ResourceNotFoundException("table number", number));
     }
 
@@ -57,7 +59,8 @@ public class TableServiceImpl implements TableService {
                 TableSpecification.equalsTableNumber(tableNumber),
                 TableSpecification.equalsCapacity(capacity),
                 TableSpecification.isAvailable(available),
-                TableSpecification.equalsWaiterId(waiterId));
+                TableSpecification.equalsWaiterId(waiterId),
+                TableSpecification.isActive(true));
         return tableRepository.findAll(spec,pageable)
                 .map(tableMapper::toDTO);
     }
@@ -81,16 +84,31 @@ public class TableServiceImpl implements TableService {
         if(tableRepository.existsByBranchIdAndNumber(branchId, dto.getNumber())){
             throw new BusinessException("A table with number "+ dto.getNumber() +" already exists in the branch.");
         }
-        TableEntity table = tableMapper.toEntity(dto);
-        table.setBranch(branchRepository.findById(branchId)
-                .orElseThrow(() -> new ResourceNotFoundException("branch", branchId)));
-        table.setAvailable(Boolean.TRUE);
-        table.setWaiter(null);
-        if (dto.getShape() != null && !dto.getShape().isBlank()) {
-            table.setShape(dto.getShape().toUpperCase());
-        } else {
-            table.setShape("ROUND");
-        }
+        String resolvedShape = (dto.getShape() != null && !dto.getShape().isBlank())
+                ? dto.getShape().toUpperCase()
+                : "ROUND";
+
+        TableEntity table = tableRepository.findByBranch_IdAndNumber(branchId, dto.getNumber())
+                .map(existing -> {
+                    existing.setCapacity(dto.getCapacity());
+                    existing.setPosX(dto.getPosX() != null ? dto.getPosX() : 0);
+                    existing.setPosY(dto.getPosY() != null ? dto.getPosY() : 0);
+                    existing.setShape(resolvedShape);
+                    existing.setAvailable(Boolean.TRUE);
+                    existing.setWaiter(null);
+                    existing.setActive(Boolean.TRUE);
+                    return existing;
+                })
+                .orElseGet(() -> {
+                    TableEntity created = tableMapper.toEntity(dto);
+                    created.setBranch(branchRepository.findById(branchId)
+                            .orElseThrow(() -> new ResourceNotFoundException("branch", branchId)));
+                    created.setAvailable(Boolean.TRUE);
+                    created.setWaiter(null);
+                    created.setShape(resolvedShape);
+                    created.setActive(Boolean.TRUE);
+                    return created;
+                });
         TableEntity saved = tableRepository.save(table);
         return tableMapper.toDTO(saved);
     }
@@ -169,6 +187,11 @@ public class TableServiceImpl implements TableService {
             if (existsByBranchIdAndNumber(branchId, newTable.getNumber())) {
                 throw new BusinessException("There is another table with number " + newTable.getNumber());
             }
+            tableRepository.findByBranch_IdAndNumber(branchId, newTable.getNumber())
+                    .ifPresent(inactive -> {
+                        inactive.setNumber(-inactive.getId().intValue());
+                        tableRepository.saveAndFlush(inactive);
+                    });
             table.setNumber(newTable.getNumber());
         }
         if (newTable.getCapacity() != null) {
@@ -210,6 +233,15 @@ public class TableServiceImpl implements TableService {
     public void delete(Long branchId, Integer tableNumber) {
         authenticateUserBelongsInBranch(branchId);
         TableEntity table = getTableByBranchIdAndNumber(branchId, tableNumber);
-        tableRepository.delete(table);
+        if (!Boolean.TRUE.equals(table.getAvailable())) {
+            throw new BusinessException("Cannot delete an occupied table. Free the table first.");
+        }
+        if (Boolean.TRUE.equals(orderRepository.tableHasOrdersActive(table.getId()))) {
+            throw new BusinessException("Cannot delete table that has active orders.");
+        }
+        table.setActive(false);
+        table.setAvailable(true);
+        table.setWaiter(null);
+        tableRepository.save(table);
     }
 }

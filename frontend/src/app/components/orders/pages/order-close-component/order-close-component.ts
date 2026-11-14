@@ -108,6 +108,10 @@ export class OrderCloseComponent implements OnInit {
             this.closedOrder.set(order);
           } else if (order.status === 'CANCELLED') {
             this.loadError.set(`Order #${order.id} is cancelled and cannot be closed.`);
+          } else if (order.status !== 'SERVED') {
+            this.loadError.set(
+              `Order #${order.id} is currently ${order.status}. All orders must be served before charging and closing the table.`
+            );
           }
         },
         error: (err) => {
