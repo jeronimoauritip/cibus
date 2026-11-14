@@ -61,9 +61,10 @@ export class OrderService {
 }
 
   private static readonly STATUS_ACTIONS: Record<
-  Extract<OrderStatus, 'PREPARING' | 'READY' | 'SERVED' | 'CANCELLED'>,
+  Extract<OrderStatus, 'PENDING' | 'PREPARING' | 'READY' | 'SERVED' | 'CANCELLED'>,
   string
 > = {
+  PENDING: 'pending',
   PREPARING: 'preparing',
   READY: 'ready',
   SERVED: 'serve',

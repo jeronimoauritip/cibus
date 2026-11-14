@@ -27,7 +27,7 @@
   } @else if (loading() && pendingOrders().length === 0 && preparingOrders().length === 0 && readyOrders().length === 0) {
     <p class="board__message">Loading orders...</p>
   } @else {
-    <div class="board__columns">
+    <div class="board__columns" cdkDropListGroup>
       <section class="column" aria-label="Pending">
         <div class="column__head">
           <h2 class="column__title">Pending</h2>
@@ -40,15 +40,20 @@
           </p>
         }
 
-        @for (order of pendingOrders(); track order.id) {
-          <app-kitchen-order-card
-            [order]="order"
-            actionLabel="Preparar"
-            (advance)="startPreparing($event)"
-          />
-        } @empty {
-          <p class="column__empty">No orders.</p>
-        }
+        <div class="column__list" cdkDropList cdkDropListSortingDisabled cdkDropListData="PENDING" (cdkDropListDropped)="onDrop($event)">
+          @for (order of pendingOrders(); track order.id) {
+            <app-kitchen-order-card
+              cdkDrag
+              [cdkDragData]="order"
+              [cdkDragStartDelay]="dragDelay"
+              [order]="order"
+              status="PENDING"
+              (move)="moveOrder(order.id, $event)"
+            />
+          } @empty {
+            <p class="column__empty">No orders.</p>
+          }
+        </div>
       </section>
 
       <section class="column" aria-label="Preparing">
@@ -63,11 +68,20 @@
           </p>
         }
 
-        @for (order of preparingOrders(); track order.id) {
-          <app-kitchen-order-card [order]="order" (advance)="markAsReady($event)" />
-        } @empty {
-          <p class="column__empty">No orders.</p>
-        }
+        <div class="column__list" cdkDropList cdkDropListSortingDisabled cdkDropListData="PREPARING" (cdkDropListDropped)="onDrop($event)">
+          @for (order of preparingOrders(); track order.id) {
+            <app-kitchen-order-card
+              cdkDrag
+              [cdkDragData]="order"
+              [cdkDragStartDelay]="dragDelay"
+              [order]="order"
+              status="PREPARING"
+              (move)="moveOrder(order.id, $event)"
+            />
+          } @empty {
+            <p class="column__empty">No orders.</p>
+          }
+        </div>
       </section>
 
       <section class="column" aria-label="Ready">
@@ -96,13 +110,29 @@
         </div>
 
         @if (showReady()) {
-          @for (order of readyOrders(); track order.id) {
-            <app-kitchen-order-card [order]="order" [showAction]="false" />
-          } @empty {
-            <p class="column__empty">No orders.</p>
-          }
+          <div class="column__list" cdkDropList cdkDropListSortingDisabled cdkDropListData="READY" (cdkDropListDropped)="onDrop($event)">
+            @for (order of readyOrders(); track order.id) {
+              <app-kitchen-order-card
+              cdkDrag
+              [cdkDragData]="order"
+              [cdkDragStartDelay]="dragDelay"
+              [order]="order"
+              status="READY"
+              (move)="moveOrder(order.id, $event)"
+            />
+            } @empty {
+              <p class="column__empty">No orders.</p>
+            }
+          </div>
         }
       </section>
+    </div>
+  }
+
+  @if (lastMove(); as move) {
+    <div class="toast" role="status">
+      <span>Order moved to {{ statusLabels[move.to] }}</span>
+      <button type="button" class="toast__undo" (click)="undo()">Undo</button>
     </div>
   }
 </main>
