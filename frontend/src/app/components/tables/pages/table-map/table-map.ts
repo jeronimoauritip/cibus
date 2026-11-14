@@ -86,11 +86,16 @@ export class TableMapComponent implements OnInit {
   readonly modalInitialCapacity = signal<number>(4);
   readonly editingTableNumber = signal<number | null>(null);
   readonly zoomLevel = signal<number>(1);
+  readonly panX = signal<number>(0);
+  readonly panY = signal<number>(0);
+  readonly isPanning = signal<boolean>(false);
+  readonly isMapViewFree = signal<boolean>(false);
 
   // Delete mode & confirmation
   readonly isDeleteMode = signal<boolean>(false);
   readonly tableToDelete = signal<BranchTable | null>(null);
   readonly isDeleteConfirmModalOpen = signal<boolean>(false);
+  readonly deleteErrorMessage = signal<string | null>(null);
 
   readonly nextNewTableNumber = computed(() => {
     const existing = this.tables().map((t) => t.number);
@@ -104,6 +109,7 @@ export class TableMapComponent implements OnInit {
   readonly isHeaderActionExpanded = signal<boolean>(false);
   readonly headerActionConfirmType = signal<'free-table' | 'cancel-order' | null>(null);
   readonly orderToCancel = signal<TableOrder | null>(null);
+  readonly isUnservedOrderModalOpen = signal<boolean>(false);
 
   // Edit mode form fields for selected table
   readonly editNumber = signal<number>(1);
@@ -116,6 +122,12 @@ export class TableMapComponent implements OnInit {
   private dragOffsetX = 0;
   private dragOffsetY = 0;
   private dragMoved = false;
+
+  // Map panning state (ephemeral, never persisted across refreshes)
+  private panStartClientX = 0;
+  private panStartClientY = 0;
+  private panOriginX = 0;
+  private panOriginY = 0;
 
   // Role-based permissions
   readonly isAdmin = computed(() => this.role() === 'Admin');
@@ -222,6 +234,15 @@ export class TableMapComponent implements OnInit {
       ) ?? null
     );
   });
+
+  readonly hasUnservedActiveOrder = computed(() =>
+    this.selectedTableOrders().some(
+      (o) =>
+        o.status?.toUpperCase() !== 'PAID' &&
+        o.status?.toUpperCase() !== 'CANCELLED' &&
+        !this.isOrderServed(o)
+    )
+  );
 
   /**
    * Counts for the top HUD filter pills.
@@ -354,9 +375,9 @@ export class TableMapComponent implements OnInit {
         error: (err) => {
           this.errorMessage.set(
             err?.error?.message ||
-              err?.error?.error ||
-              err?.message ||
-              'Could not load branch floor map.'
+            err?.error?.error ||
+            err?.message ||
+            'Could not load branch floor map.'
           );
         },
       });
@@ -611,6 +632,7 @@ export class TableMapComponent implements OnInit {
     if (!next) {
       this.isDeleteMode.set(false);
       this.isDeleteConfirmModalOpen.set(false);
+      this.deleteErrorMessage.set(null);
     }
     this.showToast(next ? 'Floor layout edit mode enabled' : 'Floor layout saved');
   }
@@ -621,6 +643,7 @@ export class TableMapComponent implements OnInit {
     this.isEditMode.set(false);
     this.isDeleteMode.set(false);
     this.isDeleteConfirmModalOpen.set(false);
+    this.deleteErrorMessage.set(null);
     this.isWaiterSelectOpen.set(false);
     this.selectedTableNumber.set(null);
     this.showToast('Floor layout saved');
@@ -631,23 +654,43 @@ export class TableMapComponent implements OnInit {
     if (!this.canEditLayout()) return;
     const next = !this.isDeleteMode();
     this.isDeleteMode.set(next);
+    this.draggingTableNumber.set(null);
+    this.dragMoved = false;
+    this.deleteErrorMessage.set(null);
     this.selectedTableNumber.set(null);
     this.showToast(next ? 'Tap any table to delete' : 'Delete mode disabled');
+  }
+
+  toggleMapViewMode(event?: MouseEvent): void {
+    event?.stopPropagation();
+    const next = !this.isMapViewFree();
+    this.isMapViewFree.set(next);
+    if (!next) {
+      this.resetPanToCenter();
+    }
+  }
+
+  resetPanToCenter(): void {
+    this.panX.set(0);
+    this.panY.set(0);
   }
 
   adjustZoom(delta: number, event?: MouseEvent): void {
     event?.stopPropagation();
     const clamped = Math.min(1.3, Math.max(0.65, Math.round((this.zoomLevel() + delta) * 100) / 100));
     this.zoomLevel.set(clamped);
+    this.resetPanToCenter();
   }
 
   setZoomPreset(value: number, event?: MouseEvent): void {
     event?.stopPropagation();
     this.zoomLevel.set(value);
+    this.resetPanToCenter();
   }
 
   fitZoomToViewport(event?: MouseEvent): void {
     event?.stopPropagation();
+    this.resetPanToCenter();
     const stageEl = this.floorStageRef?.nativeElement;
     if (!stageEl) {
       this.zoomLevel.set(1);
@@ -661,11 +704,24 @@ export class TableMapComponent implements OnInit {
     this.zoomLevel.set(best);
   }
 
-  // ── Table Selection, Drag & Drop, and Layout Editing ─────
+  // ── Stage Panning & Table Drag/Drop ──────────────────────
+
+  onStagePointerDown(event: PointerEvent): void {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (this.isLoading() || this.errorMessage() || this.draggingTableNumber() !== null) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('button, a, input, select, textarea')) return;
+
+    this.panStartClientX = event.clientX;
+    this.panStartClientY = event.clientY;
+    this.panOriginX = this.panX();
+    this.panOriginY = this.panY();
+    this.isPanning.set(true);
+  }
 
   onTablePointerDown(table: BranchTable, event: PointerEvent): void {
     event.stopPropagation();
-    if (!this.isEditMode() || !this.canEditLayout()) {
+    if (!this.isEditMode() || !this.canEditLayout() || this.isDeleteMode()) {
       return;
     }
     const canvasEl = this.floorCanvasRef?.nativeElement;
@@ -687,7 +743,14 @@ export class TableMapComponent implements OnInit {
   @HostListener('window:pointermove', ['$event'])
   onWindowPointerMove(event: PointerEvent): void {
     const draggingNum = this.draggingTableNumber();
-    if (draggingNum === null || !this.isEditMode() || !this.canEditLayout()) return;
+    if (draggingNum === null) {
+      if (!this.isPanning()) return;
+      this.panX.set(this.panOriginX + (event.clientX - this.panStartClientX));
+      this.panY.set(this.panOriginY + (event.clientY - this.panStartClientY));
+      return;
+    }
+
+    if (!this.isEditMode() || !this.canEditLayout()) return;
     const canvasEl = this.floorCanvasRef?.nativeElement;
     if (!canvasEl) return;
 
@@ -712,8 +775,15 @@ export class TableMapComponent implements OnInit {
     this.editPosY.set(snappedY);
   }
 
+  @HostListener('window:pointercancel')
+  onWindowPointerCancel(): void {
+    this.finishPanning();
+  }
+
   @HostListener('window:pointerup')
   onWindowPointerUp(): void {
+    this.finishPanning();
+
     const draggingNum = this.draggingTableNumber();
     if (draggingNum === null) return;
     this.draggingTableNumber.set(null);
@@ -745,6 +815,14 @@ export class TableMapComponent implements OnInit {
       });
   }
 
+  private finishPanning(): void {
+    if (!this.isPanning()) return;
+    this.isPanning.set(false);
+    if (!this.isMapViewFree()) {
+      this.resetPanToCenter();
+    }
+  }
+
   onTableClick(table: BranchTable, event: MouseEvent): void {
     event.stopPropagation();
     if (this.dragMoved) {
@@ -768,6 +846,7 @@ export class TableMapComponent implements OnInit {
     this.isCircleMenuOpen.set(false);
     this.isBranchMenuOpen.set(false);
     this.isHeaderActionExpanded.set(false);
+    this.isUnservedOrderModalOpen.set(false);
     this.syncEditForm(table);
   }
 
@@ -775,29 +854,30 @@ export class TableMapComponent implements OnInit {
     const hasActiveOrders = this.branchOrders().some(
       (o) =>
         o.tableNumber === table.number &&
-        o.status.toUpperCase() !== 'CLOSED' &&
-        o.status.toUpperCase() !== 'CANCELLED'
+        o.status?.toUpperCase() !== 'PAID' &&
+        o.status?.toUpperCase() !== 'CANCELLED'
     );
-    if (!table.available || hasActiveOrders) {
-      this.showToast(
-        `Cannot delete Table #${table.number} because it has active orders. Free or close the table first.`
-      );
-      return;
-    }
-
     this.tableToDelete.set(table);
+    if (!table.available || hasActiveOrders) {
+      this.deleteErrorMessage.set(
+        `Table #${table.number} cannot be deleted while it is occupied or has active orders. Free or close the table first.`
+      );
+    } else {
+      this.deleteErrorMessage.set(null);
+    }
     this.isDeleteConfirmModalOpen.set(true);
   }
 
   cancelDeleteTable(): void {
     this.isDeleteConfirmModalOpen.set(false);
     this.tableToDelete.set(null);
+    this.deleteErrorMessage.set(null);
   }
 
   confirmDeleteTable(): void {
     const table = this.tableToDelete();
     const branchId = this.activeBranchId();
-    if (!table || !branchId) return;
+    if (!table || !branchId || this.deleteErrorMessage()) return;
 
     this.isSaving.set(true);
     this.tableService
@@ -808,6 +888,7 @@ export class TableMapComponent implements OnInit {
           this.tables.update((list) => list.filter((t) => t.number !== table.number));
           this.isDeleteConfirmModalOpen.set(false);
           this.tableToDelete.set(null);
+          this.deleteErrorMessage.set(null);
           this.selectedTableNumber.set(null);
           this.showToast(`Table #${table.number} deleted`);
           if (this.tables().length === 0) {
@@ -815,8 +896,8 @@ export class TableMapComponent implements OnInit {
           }
         },
         error: (err) => {
-          this.showToast(
-            err?.error?.message || err?.error?.error || 'Could not delete table'
+          this.deleteErrorMessage.set(
+            err?.error?.details || err?.error?.message || err?.error?.error || 'Could not delete table.'
           );
         },
       });
@@ -835,6 +916,7 @@ export class TableMapComponent implements OnInit {
     this.isHeaderActionExpanded.set(false);
     this.headerActionConfirmType.set(null);
     this.orderToCancel.set(null);
+    this.isUnservedOrderModalOpen.set(false);
   }
 
   private syncEditForm(table: BranchTable): void {
@@ -1199,6 +1281,22 @@ export class TableMapComponent implements OnInit {
         ...(table.waiterId ? { waiterId: table.waiterId } : {}),
       },
     });
+  }
+
+  isOrderServed(order: TableOrder | null | undefined): boolean {
+    return order?.status?.toUpperCase() === 'SERVED';
+  }
+
+  onCloseOrderClick(table: BranchTable, order: TableOrder): void {
+    if (this.hasUnservedActiveOrder() || !this.isOrderServed(order)) {
+      this.isUnservedOrderModalOpen.set(true);
+      return;
+    }
+    this.goToCloseOrder(table, order.id);
+  }
+
+  dismissUnservedOrderModal(): void {
+    this.isUnservedOrderModalOpen.set(false);
   }
 
   goToCloseOrder(table: BranchTable, orderId: number): void {

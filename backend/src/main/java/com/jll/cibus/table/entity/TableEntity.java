@@ -39,6 +39,10 @@ public class TableEntity {
     @Builder.Default
     private String shape = "ROUND";
 
+    @Column(name = "active", nullable = false, columnDefinition = "boolean default true")
+    @Builder.Default
+    private Boolean active = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "waiter_id")
     private UserEntity waiter;

@@ -74,9 +74,9 @@ describe('OrderCloseComponent', () => {
     httpMock.verify();
   });
 
-  it('should load order and payment methods and transition to receipt upon closing', () => {
+  it('should load a SERVED order and payment methods and transition to receipt upon closing', () => {
     const orderReq = httpMock.expectOne('/api/branches/1/orders/10');
-    orderReq.flush(mockOrder());
+    orderReq.flush(mockOrder({ status: 'SERVED' }));
 
     const methodsReq = httpMock.expectOne('/api/payment-methods');
     methodsReq.flush([{ id: 1, name: 'EFECTIVO' }]);
@@ -90,9 +90,6 @@ describe('OrderCloseComponent', () => {
       payments: [{ paymentMethodId: 1, amount: 1500 }],
       discount: 0,
     });
-
-    const serveReq = httpMock.expectOne('/api/branches/1/orders/10/serve');
-    serveReq.flush(mockOrder({ status: 'SERVED' }));
 
     const payReq = httpMock.expectOne('/api/branches/1/orders/10/payments');
     payReq.flush({ paymentMethodId: 1, amount: 1500 });
@@ -118,6 +115,24 @@ describe('OrderCloseComponent', () => {
     freeReq.flush({ id: 3, number: 3, available: true, waiterId: null });
 
     expect(navSpy).toHaveBeenCalledWith(['/tables']);
+  });
+
+  it('should block charging an order that has not been marked as SERVED', () => {
+    const orderReq = httpMock.expectOne('/api/branches/1/orders/10');
+    orderReq.flush(mockOrder({ status: 'READY' }));
+
+    const methodsReq = httpMock.expectOne('/api/payment-methods');
+    methodsReq.flush([{ id: 1, name: 'EFECTIVO' }]);
+
+    fixture.detectChanges();
+    expect(component.loading()).toBe(false);
+    expect(component.loadError()).toContain('All orders must be served');
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('app-payment')).toBeNull();
+    expect(el.querySelector('[role="alert"]')?.textContent).toContain(
+      'All orders must be served'
+    );
   });
 });
 

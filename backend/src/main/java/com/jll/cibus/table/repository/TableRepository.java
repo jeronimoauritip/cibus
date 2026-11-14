@@ -16,19 +16,60 @@ import java.util.Optional;
 public interface TableRepository extends JpaRepository<TableEntity, Long> {
 
 
-    List<TableEntity> findByBranchId(Long branchId);
+    @Query("""
+    SELECT t
+    FROM TableEntity t
+    WHERE t.branch.id = :branchId
+    AND t.active = true
+    """)
+    List<TableEntity> findByBranchId(@Param("branchId") Long branchId);
 
     Optional<TableEntity> findByBranch_IdAndNumber(Long branchId, Integer number);
 
-    List<TableEntity> findByWaiter_id(Long waiterId);
+    Optional<TableEntity> findByBranch_IdAndNumberAndActiveTrue(Long branchId, Integer number);
 
-    Long countByBranchId(Long branchId);
+    @Query("""
+    SELECT t
+    FROM TableEntity t
+    WHERE t.waiter.id = :waiterId
+    AND t.active = true
+    """)
+    List<TableEntity> findByWaiter_id(@Param("waiterId") Long waiterId);
+
+    @Query("""
+    SELECT COUNT(t)
+    FROM TableEntity t
+    WHERE t.branch.id = :branchId
+    AND t.active = true
+    """)
+    Long countByBranchId(@Param("branchId") Long branchId);
+
+    @Query("""
+    SELECT COUNT(t)
+    FROM TableEntity t
+    WHERE t.active = true
+    """)
+    long countActiveTables();
 
     boolean existsById(Long id);
 
-    Boolean existsByIdAndBranchId(Long tableId, Long branchId);
+    @Query("""
+    SELECT COUNT(t) > 0
+    FROM TableEntity t
+    WHERE t.id = :tableId
+    AND t.branch.id = :branchId
+    AND t.active = true
+    """)
+    Boolean existsByIdAndBranchId(@Param("tableId") Long tableId, @Param("branchId") Long branchId);
 
-    boolean existsByBranchIdAndNumber(Long branchId, Integer number);
+    @Query("""
+    SELECT COUNT(t) > 0
+    FROM TableEntity t
+    WHERE t.branch.id = :branchId
+    AND t.number = :number
+    AND t.active = true
+    """)
+    boolean existsByBranchIdAndNumber(@Param("branchId") Long branchId, @Param("number") Integer number);
 
     Page<TableEntity> findAll(Specification<TableEntity> spec, Pageable pageable);
 
@@ -36,6 +77,7 @@ public interface TableRepository extends JpaRepository<TableEntity, Long> {
     SELECT COUNT(t) > 0
     FROM TableEntity t
     WHERE t.branch.id = :branchId
+    AND t.active = true
     """)
     Boolean hasActiveTables(@Param("branchId") Long branchId);
 }

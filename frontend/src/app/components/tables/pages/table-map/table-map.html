@@ -5,158 +5,114 @@
       <!-- Top-Left: Return Button + Branch Pill / Selector -->
       <div class="hud-left">
         @if (isAdmin()) {
-          <button type="button" class="btn-back" (click)="goBack()">
-            <span class="arrow-left" aria-hidden="true"></span>
-            <span>Return</span>
-          </button>
+        <button type="button" class="btn-back" (click)="goBack()">
+          <span class="arrow-left" aria-hidden="true"></span>
+          <span>Return</span>
+        </button>
         } @else {
-          <button type="button" class="btn-back" (click)="logout()">
-            <span class="arrow-left" aria-hidden="true"></span>
-            <span>Return</span>
-          </button>
+        <button type="button" class="btn-back" (click)="logout()">
+          <span class="arrow-left" aria-hidden="true"></span>
+          <span>Return</span>
+        </button>
         }
 
         <div class="branch-selector-wrapper">
           @if (canSwitchBranch()) {
-            <div
-              class="branch-morph-shell"
-              [class.open]="isBranchMenuOpen()"
-              (click)="$event.stopPropagation()"
-            >
-              <button
-                type="button"
-                class="branch-morph-trigger"
-                (click)="toggleBranchMenu($event)"
-                [attr.aria-expanded]="isBranchMenuOpen()"
-              >
-                <span class="hud-branch-dot" aria-hidden="true"></span>
-                <span class="hud-branch-name">{{ activeBranchName() }}</span>
-                @if (role()) {
-                  <span class="hud-role-tag">{{ role() }}</span>
-                }
-                <span class="hud-branch-chevron" [class.open]="isBranchMenuOpen()" aria-hidden="true">▾</span>
-              </button>
-
-              <div class="branch-morph-body">
-                <div class="branch-morph-header">
-                  <span>Switch Branch</span>
-                  <span class="branch-morph-count">{{ branches().length }} available</span>
-                </div>
-                <div class="branch-options-list">
-                  @for (branch of branches(); track branch.id) {
-                    <button
-                      type="button"
-                      class="branch-option-item"
-                      [class.active]="branch.id === activeBranchId()"
-                      (click)="switchBranch(branch.id!, $event)"
-                    >
-                      <div class="branch-option-info">
-                        <span class="branch-option-name">{{ branch.name }}</span>
-                        <span class="branch-option-id">ID #{{ branch.id }}</span>
-                      </div>
-                      @if (branch.id === activeBranchId()) {
-                        <span class="branch-active-pill">Active</span>
-                      }
-                    </button>
-                  }
-                </div>
-              </div>
-            </div>
-          } @else {
-            <div class="branch-static-pill">
+          <div class="branch-morph-shell" [class.open]="isBranchMenuOpen()" (click)="$event.stopPropagation()">
+            <button type="button" class="branch-morph-trigger" (click)="toggleBranchMenu($event)"
+              [attr.aria-expanded]="isBranchMenuOpen()">
               <span class="hud-branch-dot" aria-hidden="true"></span>
               <span class="hud-branch-name">{{ activeBranchName() }}</span>
               @if (role()) {
-                <span class="hud-role-tag">{{ role() }}</span>
+              <span class="hud-role-tag">{{ role() }}</span>
               }
+              <span class="hud-branch-chevron" [class.open]="isBranchMenuOpen()" aria-hidden="true">▾</span>
+            </button>
+
+            <div class="branch-morph-body">
+              <div class="branch-morph-header">
+                <span>Switch Branch</span>
+                <span class="branch-morph-count">{{ branches().length }} available</span>
+              </div>
+              <div class="branch-options-list">
+                @for (branch of branches(); track branch.id) {
+                <button type="button" class="branch-option-item" [class.active]="branch.id === activeBranchId()"
+                  (click)="switchBranch(branch.id!, $event)">
+                  <div class="branch-option-info">
+                    <span class="branch-option-name">{{ branch.name }}</span>
+                    <span class="branch-option-id">ID #{{ branch.id }}</span>
+                  </div>
+                  @if (branch.id === activeBranchId()) {
+                  <span class="branch-active-pill">Active</span>
+                  }
+                </button>
+                }
+              </div>
             </div>
+          </div>
+          } @else {
+          <div class="branch-static-pill">
+            <span class="hud-branch-dot" aria-hidden="true"></span>
+            <span class="hud-branch-name">{{ activeBranchName() }}</span>
+            @if (role()) {
+            <span class="hud-role-tag">{{ role() }}</span>
+            }
+          </div>
           }
         </div>
       </div>
 
       <!-- Top-Center: Status Spotlight Filter Pills (Normal) OR Edit Actions (Edit Mode) -->
       @if (!isEditMode()) {
-        <div class="hud-center" role="group" aria-label="Filter tables by status">
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="activeFilter() === 'all'"
-            (click)="setFilter('all')"
-          >
-            <span>All</span>
-            <span class="chip-count">{{ countAll() }}</span>
-          </button>
+      <div class="hud-center" role="group" aria-label="Filter tables by status">
+        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+          <span>All</span>
+          <span class="chip-count">{{ countAll() }}</span>
+        </button>
 
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="activeFilter() === 'available'"
-            (click)="setFilter('available')"
-          >
-            <span class="chip-dot dot-free" aria-hidden="true"></span>
-            <span>Free</span>
-            <span class="chip-count">{{ countFree() }}</span>
-          </button>
+        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'available'"
+          (click)="setFilter('available')">
+          <span class="chip-dot dot-free" aria-hidden="true"></span>
+          <span>Free</span>
+          <span class="chip-count">{{ countFree() }}</span>
+        </button>
 
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="activeFilter() === 'occupied'"
-            (click)="setFilter('occupied')"
-          >
-            <span class="chip-dot dot-occupied" aria-hidden="true"></span>
-            <span>Occupied</span>
-            <span class="chip-count">{{ countOccupied() }}</span>
-          </button>
+        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'occupied'"
+          (click)="setFilter('occupied')">
+          <span class="chip-dot dot-occupied" aria-hidden="true"></span>
+          <span>Occupied</span>
+          <span class="chip-count">{{ countOccupied() }}</span>
+        </button>
 
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="activeFilter() === 'ready'"
-            (click)="setFilter('ready')"
-          >
-            <span class="chip-dot dot-ready" aria-hidden="true"></span>
-            <span>Ready</span>
-            <span class="chip-count">{{ countReady() }}</span>
-          </button>
-        </div>
+        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'ready'"
+          (click)="setFilter('ready')">
+          <span class="chip-dot dot-ready" aria-hidden="true"></span>
+          <span>Ready</span>
+          <span class="chip-count">{{ countReady() }}</span>
+        </button>
+      </div>
       } @else {
-        <div class="hud-center hud-center--edit" role="group" aria-label="Edit floor layout actions">
-          <button
-            type="button"
-            class="btn-hud-edit btn-hud-add"
-            (click)="openNewTableModal($event)"
-            title="Create and configure a new table"
-          >
-            <span class="btn-hud-icon">+</span>
-            <span>New table</span>
-          </button>
+      <div class="hud-center hud-center--edit" role="group" aria-label="Edit floor layout actions">
+        <button type="button" class="btn-hud-edit btn-hud-add" (click)="openNewTableModal($event)"
+          title="Create and configure a new table">
+          <span class="btn-hud-icon">+</span>
+          <span>New table</span>
+        </button>
 
-          <button
-            type="button"
-            class="btn-hud-edit btn-hud-delete"
-            [class.btn-hud-delete--active]="isDeleteMode()"
-            (click)="onDeleteTableFromHud($event)"
-            [title]="isDeleteMode() ? 'Cancel delete mode' : 'Delete a table'"
-          >
-            <span class="btn-hud-icon">{{ isDeleteMode() ? '✕' : '−' }}</span>
-            <span>{{ isDeleteMode() ? 'Cancel delete' : 'Delete table' }}</span>
-          </button>
-        </div>
+        <button type="button" class="btn-hud-edit btn-hud-delete" [class.btn-hud-delete--active]="isDeleteMode()"
+          (click)="onDeleteTableFromHud($event)" [title]="isDeleteMode() ? 'Cancel delete mode' : 'Delete a table'">
+          <span class="btn-hud-icon">{{ isDeleteMode() ? '✕' : '−' }}</span>
+          <span>{{ isDeleteMode() ? 'Cancel delete' : 'Delete table' }}</span>
+        </button>
+      </div>
       }
 
       <!-- Top-Right: Floating Circular Menu (Edit Layout + Zoom) -->
       <div class="hud-right">
         <div class="circle-menu-wrapper">
-          <button
-            type="button"
-            class="btn-circle-menu"
-            [class.menu-open]="isCircleMenuOpen()"
-            [class.edit-mode-ring]="isEditMode()"
-            (click)="toggleCircleMenu($event)"
-            aria-label="Map options and zoom"
-            title="Map options & zoom"
-          >
+          <button type="button" class="btn-circle-menu" [class.menu-open]="isCircleMenuOpen()"
+            [class.edit-mode-ring]="isEditMode()" (click)="toggleCircleMenu($event)" aria-label="Map options and zoom"
+            title="Map options & zoom">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <line x1="4" y1="7" x2="20" y2="7"></line>
               <line x1="4" y1="12" x2="20" y2="12"></line>
@@ -167,30 +123,22 @@
             </svg>
           </button>
 
-          <div
-            class="circle-dropdown"
-            [class.open]="isCircleMenuOpen()"
-            (click)="$event.stopPropagation()"
-          >
+          <div class="circle-dropdown" [class.open]="isCircleMenuOpen()" (click)="$event.stopPropagation()">
             @if (canEditLayout()) {
-              <div class="dropdown-section-label">Floor Layout</div>
-              <button
-                type="button"
-                class="dropdown-action-btn"
-                [class.active]="isEditMode()"
-                (click)="toggleEditMode($event)"
-              >
-                <span class="dropdown-action-left">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                  </svg>
-                  <span>{{ isEditMode() ? 'Done Editing' : 'Edit Map Layout' }}</span>
-                </span>
-                <span class="dropdown-badge">{{ isEditMode() ? 'ON' : 'OFF' }}</span>
-              </button>
+            <div class="dropdown-section-label">Floor Layout</div>
+            <button type="button" class="dropdown-action-btn" [class.active]="isEditMode()"
+              (click)="toggleEditMode($event)">
+              <span class="dropdown-action-left">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+                <span>{{ isEditMode() ? 'Done Editing' : 'Edit Map Layout' }}</span>
+              </span>
+              <span class="dropdown-badge">{{ isEditMode() ? 'ON' : 'OFF' }}</span>
+            </button>
 
-              <div class="dropdown-divider"></div>
+            <div class="dropdown-divider"></div>
             }
 
             <div class="dropdown-zoom-header">
@@ -199,561 +147,476 @@
             </div>
 
             <div class="zoom-stepper-row">
-              <button
-                type="button"
-                class="zoom-step-btn"
-                (click)="adjustZoom(-0.1, $event)"
-                aria-label="Zoom out"
-              >
+              <button type="button" class="zoom-step-btn" (click)="adjustZoom(-0.1, $event)" aria-label="Zoom out">
                 −
               </button>
-              <button
-                type="button"
-                class="zoom-step-btn zoom-reset-btn"
-                (click)="setZoomPreset(1, $event)"
-              >
+              <button type="button" class="zoom-step-btn zoom-reset-btn" (click)="setZoomPreset(1, $event)">
                 Reset
               </button>
-              <button
-                type="button"
-                class="zoom-step-btn"
-                (click)="adjustZoom(0.1, $event)"
-                aria-label="Zoom in"
-              >
+              <button type="button" class="zoom-step-btn" (click)="adjustZoom(0.1, $event)" aria-label="Zoom in">
                 +
               </button>
             </div>
 
             <div class="zoom-presets-row">
-              <button
-                type="button"
-                class="zoom-preset-chip"
-                (click)="setZoomPreset(0.75, $event)"
-              >
+              <button type="button" class="zoom-preset-chip" (click)="setZoomPreset(0.75, $event)">
                 75%
               </button>
-              <button
-                type="button"
-                class="zoom-preset-chip"
-                (click)="setZoomPreset(1, $event)"
-              >
+              <button type="button" class="zoom-preset-chip" (click)="setZoomPreset(1, $event)">
                 100%
               </button>
-              <button
-                type="button"
-                class="zoom-preset-chip"
-                (click)="fitZoomToViewport($event)"
-              >
+              <button type="button" class="zoom-preset-chip" (click)="fitZoomToViewport($event)">
                 Fit
               </button>
             </div>
+
+            <div class="dropdown-divider"></div>
+
+            <div class="dropdown-section-label">Navigation</div>
+            <button type="button" class="dropdown-action-btn" [class.active]="isMapViewFree()"
+              (click)="toggleMapViewMode($event)">
+              <span class="dropdown-action-left">
+                @if (isMapViewFree()) {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                </svg>
+                } @else {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                }
+                <span>Map View: {{ isMapViewFree() ? 'Free' : 'Locked' }}</span>
+              </span>
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- FLOOR MAP STAGE -->
-    <div class="floor-stage" [class.edit-mode]="isEditMode()" #floorStage>
+    <div class="floor-stage" [class.edit-mode]="isEditMode()" [class.panning]="isPanning()"
+      (pointerdown)="onStagePointerDown($event)" #floorStage>
       @if (isLoading()) {
-        <div class="floor-status-card">
-          <span>Loading branch floor plan...</span>
-        </div>
+      <div class="floor-status-card">
+        <span>Loading branch floor plan...</span>
+      </div>
       } @else if (errorMessage()) {
-        <div class="floor-status-card floor-status-card--error">
-          <span>{{ errorMessage() }}</span>
-          @if (activeBranchId()) {
-            <button
-              type="button"
-              class="btn-retry-floor"
-              (click)="loadBranchFloorData(activeBranchId()!)"
-            >
-              Retry
-            </button>
+      <div class="floor-status-card floor-status-card--error">
+        <span>{{ errorMessage() }}</span>
+        @if (activeBranchId()) {
+        <button type="button" class="btn-retry-floor" (click)="loadBranchFloorData(activeBranchId()!)">
+          Retry
+        </button>
+        }
+      </div>
+      } @else {
+      <div class="floor-canvas" #floorCanvas [class.edit-grid]="isEditMode()" [class.delete-mode]="isDeleteMode()"
+        [class.panning]="isPanning()" [class.has-filter]="activeFilter() !== 'all'"
+        [style.transform]="'translate3d(' + panX() + 'px, ' + panY() + 'px, 0) scale(' + zoomLevel() + ')'">
+        <!-- Spotlight Shadow Overlay -->
+        <div class="map-filter-shade" aria-hidden="true"></div>
+
+        <!-- Architectural Landmarks -->
+        <div class="arch-zone zone-entrance" aria-hidden="true">MAIN ENTRANCE</div>
+        <div class="arch-zone zone-bar" aria-hidden="true">BAR &amp; SOMMELIER</div>
+        <div class="arch-zone zone-kitchen" aria-hidden="true">KITCHEN PASS</div>
+        <!-- Empty Floor State Message -->
+        @if (tables().length === 0) {
+        <div class="empty-canvas-message" role="status">
+          <div class="empty-canvas-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="6" width="16" height="12" rx="3"></rect>
+              <line x1="8" y1="18" x2="8" y2="21"></line>
+              <line x1="16" y1="18" x2="16" y2="21"></line>
+              <line x1="2" y1="10" x2="4" y2="10"></line>
+              <line x1="20" y1="10" x2="22" y2="10"></line>
+            </svg>
+          </div>
+          <h3 class="empty-canvas-title">There are no tables yet.</h3>
+          <p class="empty-canvas-subtitle">Try adding one.</p>
+          @if (canEditLayout()) {
+          <button type="button" class="btn-empty-add-table" (click)="openNewTableModal($event)">
+            <span class="btn-hud-icon">+</span>
+            <span>Add Table</span>
+          </button>
           }
         </div>
-      } @else {
-        <div
-          class="floor-canvas"
-          #floorCanvas
-          [class.edit-grid]="isEditMode()"
-          [class.delete-mode]="isDeleteMode()"
-          [class.has-filter]="activeFilter() !== 'all'"
-          [style.transform]="'scale(' + zoomLevel() + ')'"
-        >
-          <!-- Spotlight Shadow Overlay -->
-          <div class="map-filter-shade" aria-hidden="true"></div>
+        }
 
-          <!-- Architectural Landmarks -->
-          <div class="arch-zone zone-entrance" aria-hidden="true">MAIN ENTRANCE</div>
-          <div class="arch-zone zone-bar" aria-hidden="true">BAR &amp; SOMMELIER</div>
-          <div class="arch-zone zone-kitchen" aria-hidden="true">KITCHEN PASS</div>
-          <!-- Empty Floor State Message -->
-          @if (tables().length === 0) {
-            <div class="empty-canvas-message" role="status">
-              <div class="empty-canvas-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="4" y="6" width="16" height="12" rx="3"></rect>
-                  <line x1="8" y1="18" x2="8" y2="21"></line>
-                  <line x1="16" y1="18" x2="16" y2="21"></line>
-                  <line x1="2" y1="10" x2="4" y2="10"></line>
-                  <line x1="20" y1="10" x2="22" y2="10"></line>
-                </svg>
-              </div>
-              <h3 class="empty-canvas-title">There are no tables yet.</h3>
-              <p class="empty-canvas-subtitle">Try adding one.</p>
-              @if (canEditLayout()) {
-                <button
-                  type="button"
-                  class="btn-empty-add-table"
-                  (click)="openNewTableModal($event)"
-                >
-                  <span class="btn-hud-icon">+</span>
-                  <span>Add Table</span>
-                </button>
-              }
-            </div>
-          }
+        <!-- Dynamic Table Nodes -->
+        @for (table of tables(); track table.id || table.number) {
+        @let state = getTableVisualState(table);
+        @let chairs = getChairDistribution(table);
+        @let matches = matchesActiveFilter(table);
 
-          <!-- Dynamic Table Nodes -->
-          @for (table of tables(); track table.id || table.number) {
-            @let state = getTableVisualState(table);
-            @let chairs = getChairDistribution(table);
-            @let matches = matchesActiveFilter(table);
-
-            <div
-              class="table-node"
-              [ngClass]="[
+        <div class="table-node" [ngClass]="[
                 getTableShapeClass(table),
                 getTableSizeClass(table.capacity),
                 'state-' + state
-              ]"
-              [class.selected]="selectedTableNumber() === table.number"
-              [class.edit-draggable]="isEditMode() && canEditLayout()"
-              [class.dragging]="draggingTableNumber() === table.number"
-              [class.filter-highlighted]="activeFilter() !== 'all' && matches"
-              [class.filter-dimmed]="activeFilter() !== 'all' && !matches"
-              [class.my-assigned-table]="isAssignedToCurrentUser(table)"
-              [style.left.px]="table.posX"
-              [style.top.px]="table.posY"
-              (pointerdown)="onTablePointerDown(table, $event)"
-              (click)="onTableClick(table, $event)"
-            >
-              @if (chairs.isRadial) {
-                <div class="chairs-radial" aria-hidden="true">
-                  @for (angle of chairs.radialAngles; track angle) {
-                    <div
-                      class="chair-spoke"
-                      [style.transform]="'rotate(' + angle + 'deg)'"
-                    >
-                      <span class="chair-h"></span>
-                    </div>
-                  }
-                </div>
-              } @else {
-                @if (chairs.top.length) {
-                  <div class="chairs-top" aria-hidden="true">
-                    @for (c of chairs.top; track c) {
-                      <span class="chair-h"></span>
-                    }
-                  </div>
-                }
-                @if (chairs.bottom.length) {
-                  <div class="chairs-bottom" aria-hidden="true">
-                    @for (c of chairs.bottom; track c) {
-                      <span class="chair-h"></span>
-                    }
-                  </div>
-                }
-                @if (chairs.left.length) {
-                  <div class="chairs-left" aria-hidden="true">
-                    @for (c of chairs.left; track c) {
-                      <span class="chair-v"></span>
-                    }
-                  </div>
-                }
-                @if (chairs.right.length) {
-                  <div class="chairs-right" aria-hidden="true">
-                    @for (c of chairs.right; track c) {
-                      <span class="chair-v"></span>
-                    }
-                  </div>
-                }
-              }
-
-              <div class="t-top">
-                <span class="t-num">T-{{ table.number }}</span>
-              </div>
-
-              @if (isDeleteMode()) {
-                <span class="tap-to-delete-tag">Tap to delete</span>
-              } @else {
-                <span class="t-badge">{{ getStateBadgeText(state) }}</span>
-                <div class="t-sub">{{ getTableSubtext(table) }}</div>
-              }
+              ]" [class.selected]="selectedTableNumber() === table.number"
+          [class.edit-draggable]="isEditMode() && canEditLayout()"
+          [class.dragging]="draggingTableNumber() === table.number"
+          [class.filter-highlighted]="activeFilter() !== 'all' && matches"
+          [class.filter-dimmed]="activeFilter() !== 'all' && !matches"
+          [class.my-assigned-table]="isAssignedToCurrentUser(table)" [style.left.px]="table.posX"
+          [style.top.px]="table.posY" (pointerdown)="onTablePointerDown(table, $event)"
+          (click)="onTableClick(table, $event)">
+          @if (chairs.isRadial) {
+          <div class="chairs-radial" aria-hidden="true">
+            @for (angle of chairs.radialAngles; track angle) {
+            <div class="chair-spoke" [style.transform]="'rotate(' + angle + 'deg)'">
+              <span class="chair-h"></span>
             </div>
+            }
+          </div>
+          } @else {
+          @if (chairs.top.length) {
+          <div class="chairs-top" aria-hidden="true">
+            @for (c of chairs.top; track c) {
+            <span class="chair-h"></span>
+            }
+          </div>
+          }
+          @if (chairs.bottom.length) {
+          <div class="chairs-bottom" aria-hidden="true">
+            @for (c of chairs.bottom; track c) {
+            <span class="chair-h"></span>
+            }
+          </div>
+          }
+          @if (chairs.left.length) {
+          <div class="chairs-left" aria-hidden="true">
+            @for (c of chairs.left; track c) {
+            <span class="chair-v"></span>
+            }
+          </div>
+          }
+          @if (chairs.right.length) {
+          <div class="chairs-right" aria-hidden="true">
+            @for (c of chairs.right; track c) {
+            <span class="chair-v"></span>
+            }
+          </div>
+          }
+          }
+
+          <div class="t-top">
+            <span class="t-num">T-{{ table.number }}</span>
+          </div>
+
+          @if (isDeleteMode()) {
+          <span class="tap-to-delete-tag">Tap to delete</span>
+          } @else {
+          <span class="t-badge">{{ getStateBadgeText(state) }}</span>
+          <div class="t-sub">{{ getTableSubtext(table) }}</div>
           }
         </div>
+        }
+      </div>
       }
     </div>
 
     <!-- RIGHT SLIDE-OVER DRAWER -->
-    <div
-      class="drawer-backdrop"
-      [class.open]="selectedTable() !== null && !isEditMode()"
-      (click)="closeDrawer()"
-    ></div>
+    <div class="drawer-backdrop" [class.open]="selectedTable() !== null && !isEditMode()" (click)="closeDrawer()"></div>
 
-    <aside
-      class="right-drawer"
-      [class.open]="selectedTable() !== null && !isEditMode()"
-      aria-label="Table Inspector"
-      (click)="$event.stopPropagation(); collapseHeaderAction()"
-    >
+    <aside class="right-drawer" [class.open]="selectedTable() !== null && !isEditMode()" aria-label="Table Inspector"
+      (click)="$event.stopPropagation(); collapseHeaderAction()">
       @if (selectedTable(); as table) {
-        <div class="drawer-header">
-          <div class="drawer-title-group">
-            <h2>
-              <span>Table #{{ table.number }}</span>
-            </h2>
-            @if (!table.available) {
-              <p class="drawer-subtitle">Occupied at: {{ getOccupiedAtTime(table) }}</p>
-            }
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <h2>
+            <span>Table #{{ table.number }}</span>
+          </h2>
+          @if (!table.available) {
+          <p class="drawer-subtitle">Occupied at: {{ getOccupiedAtTime(table) }}</p>
+          }
+        </div>
+        <div class="drawer-header-actions">
+          @if (!table.available && canActOnSelectedTable()) {
+          <button type="button" class="btn-header-trash" [class.expanded]="isHeaderActionExpanded()"
+            [disabled]="isSaving()" [attr.aria-label]="selectedTableActiveOrder() ? 'Cancel order' : 'Free table'"
+            (click)="onHeaderTrashClick($event)">
+            <svg class="trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+            <span class="trash-label">
+              {{ selectedTableActiveOrder() ? 'Cancel Order' : 'Free Table' }}
+            </span>
+          </button>
+          }
+          <button type="button" class="btn-close-drawer" (click)="closeDrawer()" aria-label="Close panel">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="drawer-body">
+        <!-- OPERATIONAL TABLE SESSION CARD -->
+        @if (table.available) {
+        <div class="info-card">
+          <p class="section-label">Current Status</p>
+          <div class="info-row">
+            <span class="lbl">Availability</span>
+            <span class="val val-free">Ready to Seat Guests</span>
           </div>
-          <div class="drawer-header-actions">
-            @if (!table.available && canActOnSelectedTable()) {
-              <button
-                type="button"
-                class="btn-header-trash"
-                [class.expanded]="isHeaderActionExpanded()"
-                [disabled]="isSaving()"
-                [attr.aria-label]="selectedTableActiveOrder() ? 'Cancel order' : 'Free table'"
-                (click)="onHeaderTrashClick($event)"
-              >
-                <svg
-                  class="trash-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.1"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                  <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-                <span class="trash-label">
-                  {{ selectedTableActiveOrder() ? 'Cancel Order' : 'Free Table' }}
+          <div class="info-row">
+            <span class="lbl">Assigned Waiter</span>
+            <span class="val">— Unassigned —</span>
+          </div>
+        </div>
+        } @else {
+        <div class="info-card">
+          <p class="section-label">Active Table Session</p>
+          <div class="info-row">
+            <span class="lbl">Assigned Waiter</span>
+            <span class="val">{{ getWaiterDisplayName(table) }}</span>
+          </div>
+          @if (selectedTableActiveOrder(); as activeOrd) {
+          <div class="info-row">
+            <span class="lbl">Active Ticket</span>
+            <span class="val">#{{ activeOrd.id }} ({{ activeOrd.status }})</span>
+          </div>
+          <div class="info-row">
+            <span class="lbl">Current Balance</span>
+            <span class="val">${{ activeOrd.finalTotal | number:'1.2-2' }}</span>
+          </div>
+          }
+        </div>
+        }
+
+        <!-- SUMMARIZED ORDER HISTORY SECTION -->
+        <div class="orders-section-container">
+          <p class="section-label">Recent Order History (Click to view ticket)</p>
+          @if (selectedTableOrders().length === 0) {
+          <div class="empty-orders-card">
+            No orders recorded for Table #{{ table.number }} yet.
+          </div>
+          } @else {
+          <div class="order-history-list">
+            @for (ord of selectedTableOrders(); track ord.id) {
+            <div class="order-card" (click)="openTicketModal(ord, $event)" role="button" tabindex="0">
+              <div class="order-card-top">
+                <span class="order-id">#{{ ord.id }}</span>
+                <span class="order-status-pill" [ngClass]="'pill-' + (ord.status || '').toLowerCase()">
+                  {{ ord.status }}
                 </span>
-              </button>
-            }
-            <button
-              type="button"
-              class="btn-close-drawer"
-              (click)="closeDrawer()"
-              aria-label="Close panel"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div class="drawer-body">
-          <!-- OPERATIONAL TABLE SESSION CARD -->
-          @if (table.available) {
-              <div class="info-card">
-                <p class="section-label">Current Status</p>
-                <div class="info-row">
-                  <span class="lbl">Availability</span>
-                  <span class="val val-free">Ready to Seat Guests</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Assigned Waiter</span>
-                  <span class="val">— Unassigned —</span>
-                </div>
-                @if (isWaiter()) {
-                  <div class="role-readonly-banner">
-                    Read-only view — Only Host, Manager, or Admin can open unassigned tables.
-                  </div>
-                }
               </div>
-            } @else {
-              <div class="info-card">
-                <p class="section-label">Active Table Session</p>
-                <div class="info-row">
-                  <span class="lbl">Assigned Waiter</span>
-                  <span class="val">{{ getWaiterDisplayName(table) }}</span>
-                </div>
-                @if (selectedTableActiveOrder(); as activeOrd) {
-                  <div class="info-row">
-                    <span class="lbl">Active Ticket</span>
-                    <span class="val">#{{ activeOrd.id }} ({{ activeOrd.status }})</span>
-                  </div>
-                  <div class="info-row">
-                    <span class="lbl">Current Balance</span>
-                    <span class="val">${{ activeOrd.finalTotal | number:'1.2-2' }}</span>
-                  </div>
-                }
-
-                @if (!canActOnSelectedTable()) {
-                  <div class="role-readonly-banner">
-                    Read-only view — You can only perform actions on tables assigned to your name.
-                  </div>
-                }
+              <div class="order-card-meta">
+                <span>{{ formatOrderTimestamp(ord.createdAt) }}</span>
+                <span>•</span>
+                <span>Waiter: {{ ord.waiterFirstName }} {{ ord.waiterLastName }}</span>
               </div>
-            }
-
-          <!-- SUMMARIZED ORDER HISTORY SECTION -->
-          <div class="orders-section-container">
-            <p class="section-label">Recent Order History (Click to view ticket)</p>
-            @if (selectedTableOrders().length === 0) {
-              <div class="empty-orders-card">
-                No orders recorded for Table #{{ table.number }} yet.
+              <div class="order-card-items-preview">
+                {{ getOrderItemsPreview(ord) }}
               </div>
-            } @else {
-              <div class="order-history-list">
-                @for (ord of selectedTableOrders(); track ord.id) {
-                  <div
-                    class="order-card"
-                    (click)="openTicketModal(ord, $event)"
-                    role="button"
-                    tabindex="0"
-                  >
-                    <div class="order-card-top">
-                      <span class="order-id">#{{ ord.id }}</span>
-                      <span
-                        class="order-status-pill"
-                        [ngClass]="'pill-' + (ord.status || '').toLowerCase()"
-                      >
-                        {{ ord.status }}
-                      </span>
-                    </div>
-                    <div class="order-card-meta">
-                      <span>{{ formatOrderTimestamp(ord.createdAt) }}</span>
-                      <span>•</span>
-                      <span>Waiter: {{ ord.waiterFirstName }} {{ ord.waiterLastName }}</span>
-                    </div>
-                    <div class="order-card-items-preview">
-                      {{ getOrderItemsPreview(ord) }}
-                    </div>
-                    <div class="order-card-bottom">
-                      <span class="view-ticket-hint">View full ticket →</span>
-                      <span class="order-total">${{ ord.finalTotal | number:'1.2-2' }}</span>
-                    </div>
-                  </div>
-                }
+              <div class="order-card-bottom">
+                <span class="view-ticket-hint">View full ticket →</span>
+                <span class="order-total">${{ ord.finalTotal | number:'1.2-2' }}</span>
               </div>
+            </div>
             }
           </div>
+          }
         </div>
+      </div>
 
-        <!-- STICKY BOTTOM FOOTER: Free Table -> iOS 26 Morphing "Open Table" Button -->
-        @if (table.available && !isEditMode() && canOpenTables()) {
-          <div class="drawer-footer">
-            <div
-              class="open-table-morph-shell"
-              [class.open]="isWaiterSelectOpen()"
-              (click)="$event.stopPropagation()"
-            >
-              <div class="morph-select-body">
-                <div class="upward-select-header">
-                  <span>Assign Waiter to Open Table</span>
-                  <span>Active Load</span>
+      <!-- STICKY BOTTOM FOOTER -->
+      @if (!isEditMode()) {
+      @if (table.available && canOpenTables()) {
+      <div class="drawer-footer">
+        <div class="open-table-morph-shell" [class.open]="isWaiterSelectOpen()" (click)="$event.stopPropagation()">
+          <div class="morph-select-body">
+            <div class="upward-select-header">
+              <span>Assign Waiter to Open Table</span>
+              <span>Active Load</span>
+            </div>
+            <div class="waiter-list">
+              @for (opt of assignableWaiterOptions(); track opt.id + '-' + opt.isSelf) {
+              <button type="button" class="waiter-option" [class.waiter-option--self]="opt.isSelf"
+                [disabled]="isSaving()" (click)="openTableWithWaiter(opt, $event)">
+                <div class="waiter-option-left">
+                  <span class="waiter-name">
+                    {{ opt.fullName }}{{ opt.isSelf ? ' (Self-assign)' : '' }}
+                  </span>
+                  <span class="waiter-role">{{ opt.roleLabel }}</span>
                 </div>
-                <div class="waiter-list">
-                  @for (opt of assignableWaiterOptions(); track opt.id + '-' + opt.isSelf) {
-                    <button
-                      type="button"
-                      class="waiter-option"
-                      [class.waiter-option--self]="opt.isSelf"
-                      [disabled]="isSaving()"
-                      (click)="openTableWithWaiter(opt, $event)"
-                    >
-                      <div class="waiter-option-left">
-                        <span class="waiter-name">
-                          {{ opt.fullName }}{{ opt.isSelf ? ' (Self-assign)' : '' }}
-                        </span>
-                        <span class="waiter-role">{{ opt.roleLabel }}</span>
-                      </div>
-                      <span class="serving-pill">serving {{ opt.servingCount }}</span>
-                    </button>
-                  }
-                </div>
-              </div>
-
-              <button
-                type="button"
-                class="btn-open-table-trigger"
-                (click)="toggleWaiterSelect($event)"
-              >
-                <span>Open Table #{{ table.number }}</span>
-                <span class="chevron-up" aria-hidden="true">▲</span>
+                <span class="serving-pill">serving {{ opt.servingCount }}</span>
               </button>
+              }
             </div>
           </div>
-        }
 
-        <!-- STICKY BOTTOM FOOTER: Occupied Table -> iOS 26 Pill "New Order" or "Close & Charge Order" Button -->
-        @if (!table.available && !isEditMode() && canActOnSelectedTable()) {
-          <div class="drawer-footer">
-            @if (selectedTableActiveOrder(); as activeOrd) {
-              <button
-                type="button"
-                class="btn-order-pill-trigger"
-                (click)="goToCloseOrder(table, activeOrd.id)"
-              >
-                <span class="btn-order-title">CLOSE &amp; CHARGE #{{ activeOrd.id }}</span>
-              </button>
-            } @else {
-              <button
-                type="button"
-                class="btn-order-pill-trigger"
-                (click)="goToNewOrder(table)"
-              >
-                <span class="btn-order-title">NEW ORDER</span>
-              </button>
-            }
-          </div>
+          <button type="button" class="btn-open-table-trigger" (click)="toggleWaiterSelect($event)">
+            <span>Open Table #{{ table.number }}</span>
+            <span class="chevron-up" aria-hidden="true">▲</span>
+          </button>
+        </div>
+      </div>
+      } @else if (!table.available && canActOnSelectedTable()) {
+      <div class="drawer-footer">
+        @if (selectedTableActiveOrder(); as activeOrd) {
+        <div class="drawer-footer-split">
+          <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--split"
+            (click)="goToNewOrder(table)">
+            <span class="btn-order-title">NEW ORDER</span>
+          </button>
+          <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--split"
+            [class.btn-order-pill-trigger--unserved]="hasUnservedActiveOrder()"
+            (click)="onCloseOrderClick(table, activeOrd)">
+            <span class="btn-order-title">PAY TABLE</span>
+          </button>
+        </div>
+        } @else {
+        <button type="button" class="btn-order-pill-trigger" (click)="goToNewOrder(table)">
+          <span class="btn-order-title">NEW ORDER</span>
+        </button>
         }
+      </div>
+      } @else {
+      <div class="drawer-footer">
+        <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--disabled" disabled>
+          <span class="btn-order-title">TABLE NOT ASSIGNED TO YOU</span>
+        </button>
+      </div>
+      }
+      }
       }
     </aside>
   </div>
 
   <!-- FULL TICKET DETAIL MODAL -->
-  <app-ticket-modal
-    [ticket]="selectedTicketOrder()"
-    [branchName]="activeBranchName()"
-    (closed)="closeTicketModal()"
-  ></app-ticket-modal>
+  <app-ticket-modal [ticket]="selectedTicketOrder()" [branchName]="activeBranchName()"
+    (closed)="closeTicketModal()"></app-ticket-modal>
 
   <!-- NEW TABLE SETUP & EDIT MODAL -->
-  <app-table-edit-modal
-    [isOpen]="isTableModalOpen()"
-    [mode]="tableModalMode()"
-    [tableNumber]="modalTableNumber()"
-    [initialShape]="modalInitialShape()"
-    [initialCapacity]="modalInitialCapacity()"
-    (confirmConfig)="onTableModalConfirm($event)"
-    (dismissModal)="closeTableModal()"
-  ></app-table-edit-modal>
+  <app-table-edit-modal [isOpen]="isTableModalOpen()" [mode]="tableModalMode()" [tableNumber]="modalTableNumber()"
+    [initialShape]="modalInitialShape()" [initialCapacity]="modalInitialCapacity()"
+    (confirmConfig)="onTableModalConfirm($event)" (dismissModal)="closeTableModal()"></app-table-edit-modal>
 
   <!-- DELETE TABLE CONFIRMATION MODAL -->
   @if (isDeleteConfirmModalOpen() && tableToDelete()) {
-    <div
-      class="delete-confirm-backdrop"
-      (click)="cancelDeleteTable()"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="delete-confirm-title"
-    >
-      <div class="delete-confirm-card" (click)="$event.stopPropagation()">
-        <div class="delete-confirm-icon-box" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
-          </svg>
-        </div>
-        <h2 id="delete-confirm-title" class="delete-confirm-title">
-          Do you want to delete Table #{{ tableToDelete()!.number }}?
-        </h2>
-        <p class="delete-confirm-subtitle">
-          This option cannot be undone.
-        </p>
+  <div class="delete-confirm-backdrop" (click)="cancelDeleteTable()" role="dialog" aria-modal="true"
+    aria-labelledby="delete-confirm-title">
+    <div class="delete-confirm-card" (click)="$event.stopPropagation()">
+      <div class="delete-confirm-icon-box" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
+      <h2 id="delete-confirm-title" class="delete-confirm-title">
+        @if (deleteErrorMessage()) {
+        Cannot Delete Table #{{ tableToDelete()!.number }}
+        } @else {
+        Do you want to delete Table #{{ tableToDelete()!.number }}?
+        }
+      </h2>
+      <p class="delete-confirm-subtitle">
+        {{ deleteErrorMessage() || 'This option cannot be undone.' }}
+      </p>
 
-        <div class="delete-confirm-actions">
-          <button
-            type="button"
-            class="btn-delete-cancel"
-            [disabled]="isSaving()"
-            (click)="cancelDeleteTable()"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="btn-delete-confirm"
-            [disabled]="isSaving()"
-            (click)="confirmDeleteTable()"
-          >
-            Delete
-          </button>
-        </div>
+      <div class="delete-confirm-actions">
+        @if (deleteErrorMessage()) {
+        <button type="button" class="btn-delete-cancel" (click)="cancelDeleteTable()">
+          Got it
+        </button>
+        } @else {
+        <button type="button" class="btn-delete-cancel" [disabled]="isSaving()" (click)="cancelDeleteTable()">
+          Cancel
+        </button>
+        <button type="button" class="btn-delete-confirm" [disabled]="isSaving()" (click)="confirmDeleteTable()">
+          Delete
+        </button>
+        }
       </div>
     </div>
+  </div>
   }
 
   <!-- FREE TABLE / CANCEL ORDER CONFIRMATION MODAL -->
   @if (headerActionConfirmType(); as confirmType) {
-    <div
-      class="delete-confirm-backdrop"
-      (click)="dismissHeaderActionConfirm()"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="header-action-confirm-title"
-    >
-      <div class="delete-confirm-card" (click)="$event.stopPropagation()">
-        <div class="delete-confirm-icon-box" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
-          </svg>
-        </div>
+  <div class="delete-confirm-backdrop" (click)="dismissHeaderActionConfirm()" role="dialog" aria-modal="true"
+    aria-labelledby="header-action-confirm-title">
+    <div class="delete-confirm-card" (click)="$event.stopPropagation()">
+      <div class="delete-confirm-icon-box" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
 
-        @if (confirmType === 'cancel-order') {
-          <h2 id="header-action-confirm-title" class="delete-confirm-title">
-            Cancel Order #{{ orderToCancel()?.id }}?
-          </h2>
-          <p class="delete-confirm-subtitle">
-            This will change the order status to CANCELLED. This action cannot be undone.
-          </p>
-        } @else {
-          <h2 id="header-action-confirm-title" class="delete-confirm-title">
-            Free Table #{{ selectedTable()?.number }}?
-          </h2>
-          <p class="delete-confirm-subtitle">
-            Please confirm that you want to mark this table as available.
-          </p>
-        }
+      @if (confirmType === 'cancel-order') {
+      <h2 id="header-action-confirm-title" class="delete-confirm-title">
+        Cancel Order #{{ orderToCancel()?.id }}?
+      </h2>
+      <p class="delete-confirm-subtitle">
+        This will change the order status to CANCELLED. This action cannot be undone.
+      </p>
+      } @else {
+      <h2 id="header-action-confirm-title" class="delete-confirm-title">
+        Free Table #{{ selectedTable()?.number }}?
+      </h2>
+      <p class="delete-confirm-subtitle">
+        Please confirm that you want to mark this table as available.
+      </p>
+      }
 
-        <div class="delete-confirm-actions">
-          <button
-            type="button"
-            class="btn-delete-cancel"
-            [disabled]="isSaving()"
-            (click)="dismissHeaderActionConfirm()"
-          >
-            {{ confirmType === 'cancel-order' ? 'Keep Order' : 'Cancel' }}
-          </button>
-          <button
-            type="button"
-            class="btn-delete-confirm"
-            [disabled]="isSaving()"
-            (click)="confirmHeaderAction()"
-          >
-            {{ confirmType === 'cancel-order' ? 'Cancel Order' : 'Free Table' }}
-          </button>
-        </div>
+      <div class="delete-confirm-actions">
+        <button type="button" class="btn-delete-cancel" [disabled]="isSaving()" (click)="dismissHeaderActionConfirm()">
+          {{ confirmType === 'cancel-order' ? 'Keep Order' : 'Cancel' }}
+        </button>
+        <button type="button" class="btn-delete-confirm" [disabled]="isSaving()" (click)="confirmHeaderAction()">
+          {{ confirmType === 'cancel-order' ? 'Cancel Order' : 'Free Table' }}
+        </button>
       </div>
     </div>
+  </div>
+  }
+
+  <!-- UNSERVED ORDER INFO MODAL -->
+  @if (isUnservedOrderModalOpen()) {
+  <div class="info-modal-backdrop" (click)="dismissUnservedOrderModal()" role="dialog" aria-modal="true"
+    aria-labelledby="unserved-order-modal-title">
+    <div class="info-modal-card" (click)="$event.stopPropagation()">
+      <div class="unserved-modal-icon-box" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <h2 id="unserved-order-modal-title" class="info-modal-title">
+        Orders Not Served Yet
+      </h2>
+      <p class="unserved-modal-subtitle">
+        All orders must be served before you can charge and close the table.
+      </p>
+
+      <div class="info-modal-actions">
+        <button type="button" class="btn-unserved-ok" (click)="dismissUnservedOrderModal()">
+          Got it
+        </button>
+      </div>
+    </div>
+  </div>
   }
 
   <!-- FLOATING BOTTOM-CENTER: EXIT EDIT MODE BUTTON -->
   @if (isEditMode() && canEditLayout()) {
-    <button
-      type="button"
-      class="btn-exit-edit-pill"
-      (click)="exitEditMode($event)"
-      aria-label="Exit edit mode"
-      title="Exit edit mode"
-    >
-      <span class="exit-pill-mode-label">EDIT MODE</span>
-      <span class="exit-pill-thumb">EXIT</span>
-    </button>
+  <button type="button" class="btn-exit-edit-pill" (click)="exitEditMode($event)" aria-label="Exit edit mode"
+    title="Exit edit mode">
+    <span class="exit-pill-mode-label">EDIT MODE</span>
+    <span class="exit-pill-thumb">EXIT</span>
+  </button>
   }
 </div>

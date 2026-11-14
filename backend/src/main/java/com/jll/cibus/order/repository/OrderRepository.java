@@ -31,6 +31,19 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, JpaSp
     Boolean userHasOrdersActive(@Param("userId") Long userId);
 
     @Query("""
+    SELECT COUNT(o) > 0
+        FROM OrderEntity o
+        WHERE o.table.id = :tableId
+        AND (
+            o.status.name = 'PENDING'
+            OR o.status.name = 'PREPARING'
+            OR o.status.name = 'READY'
+            OR o.status.name = 'SERVED'
+        )
+   """)
+    Boolean tableHasOrdersActive(@Param("tableId") Long tableId);
+
+    @Query("""
     SELECT new com.jll.cibus.statistics.dto.table.TableMetricDTO(t.number, COUNT(o))
         FROM OrderEntity o
         JOIN o.table t

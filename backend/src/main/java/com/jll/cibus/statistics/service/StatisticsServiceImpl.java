@@ -431,7 +431,7 @@ public class StatisticsServiceImpl  implements  StatisticsService {
 
         // Porcentaje de ocupacion
         Long occupiedTables = orderRepository.countGlobalOccupiedTables(start, end);
-        long totalTables = tableRepository.count();
+        long totalTables = tableRepository.countActiveTables();
         Double occupancyRate = totalTables == 0 ? 0.0 : occupiedTables.doubleValue() * 100 / totalTables;
 
         ProductMetricDTO mostPopularProduct = orderDetailRepository.findGlobalMostPopularProducts(start, end)

@@ -89,7 +89,7 @@ describe('OrderService', () => {
     expect(closed?.closedAt).toBe('2026-11-13T13:00:00');
   });
 
-  it('should transition a READY order to SERVED before applying discount and split payments sequentially', () => {
+  it('should apply discount and split payments sequentially for a SERVED order', () => {
     let closed: OrderResponse | undefined;
     service
       .closeOrder(
@@ -100,13 +100,9 @@ describe('OrderService', () => {
           { paymentMethodId: 2, amount: 400 },
         ],
         200,
-        'READY'
+        'SERVED'
       )
       .subscribe((res) => (closed = res));
-
-    const serveReq = httpMock.expectOne('/api/branches/1/orders/10/serve');
-    expect(serveReq.request.method).toBe('POST');
-    serveReq.flush(mockOrder({ status: 'SERVED' }));
 
     const discountReq = httpMock.expectOne('/api/branches/1/orders/10/discount');
     expect(discountReq.request.method).toBe('PATCH');
@@ -140,6 +136,19 @@ describe('OrderService', () => {
     expect(closed?.status).toBe('PAID');
     expect(closed?.discount).toBe(200);
     expect(closed?.finalTotal).toBe(800);
+  });
+
+  it('should reject closing an order that is not in SERVED status', () => {
+    let unservedError: Error | undefined;
+    service
+      .closeOrder(1, 10, [{ paymentMethodId: 1, amount: 1000 }], 0, 'READY')
+      .subscribe({
+        error: (err: Error) => (unservedError = err),
+      });
+
+    expect(unservedError?.message).toContain('All orders must be served');
+    httpMock.expectNone('/api/branches/1/orders/10/serve');
+    httpMock.expectNone('/api/branches/1/orders/10/payments');
   });
 
   it('should reject closing an order with empty payments or non-positive amounts', () => {

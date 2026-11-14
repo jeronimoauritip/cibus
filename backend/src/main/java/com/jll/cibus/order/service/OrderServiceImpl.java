@@ -171,7 +171,7 @@ public class OrderServiceImpl implements OrderService {
         validateOrderRequest(branchId, dto);
         BranchEntity branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new ResourceNotFoundException("branch", branchId));
-        TableEntity table = tableRepository.findByBranch_IdAndNumber(branchId, dto.getTableNumber())
+        TableEntity table = tableRepository.findByBranch_IdAndNumberAndActiveTrue(branchId, dto.getTableNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("There is no table number "+dto.getTableNumber()+"in this branch"));
         UserEntity waiter = userRepository.findById(dto.getWaiterId())
                 .orElseThrow(()->new ResourceNotFoundException("user",dto.getWaiterId()));
@@ -204,7 +204,7 @@ public class OrderServiceImpl implements OrderService {
         UserEntity waiter = userRepository.findById(order.getWaiter().getId())
                 .orElseThrow(()->new ResourceNotFoundException("user", order.getWaiter().getId()));
         if (dto.getTableNumber() != null) {
-            TableEntity table = tableRepository.findByBranch_IdAndNumber(branchId, dto.getTableNumber())
+            TableEntity table = tableRepository.findByBranch_IdAndNumberAndActiveTrue(branchId, dto.getTableNumber())
                     .orElseThrow(() -> new ResourceNotFoundException("There is no table number "+dto.getTableNumber()+" in this branch"));
             if (!table.isAvailable()) {
                 throw new BusinessException("The table " + table.getNumber() + " is occupied");
