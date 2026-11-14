@@ -24,6 +24,48 @@
       </div>
     }
   </label>
+    <div class="dashboard-range">
+    <span class="dashboard-range-label">Period</span>
+
+    <div class="dashboard-range-presets" role="group" aria-label="Time range">
+      @for (preset of presets; track preset.key) {
+        <button
+          type="button"
+          [class.active]="selectedPreset() === preset.key"
+          [attr.aria-pressed]="selectedPreset() === preset.key"
+          (click)="selectPreset(preset.key)"
+        >
+          {{ preset.label }}
+        </button>
+      }
+    </div>
+
+    @if (selectedPreset() === 'custom') {
+      <div class="dashboard-range-custom-row">
+        <label class="dashboard-range-custom">
+          <span>Start date</span>
+          <input
+            type="date"
+            [max]="customEnd() || today"
+            [value]="customStart()"
+            (change)="setCustomStart($any($event.target).value)"
+          />
+        </label>
+
+        <label class="dashboard-range-custom">
+          <span>End date</span>
+          <input
+            type="date"
+            [min]="customStart()"
+            [max]="today"
+            [value]="customEnd()"
+            (change)="setCustomEnd($any($event.target).value)"
+          />
+        </label>
+      </div>
+    }
+  </div>
+
 
   <nav class="dashboard-tabs" aria-label="Reports">
     @for (tab of tabs; track tab.key) {
