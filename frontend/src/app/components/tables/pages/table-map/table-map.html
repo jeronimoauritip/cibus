@@ -353,53 +353,100 @@
             <span class="lbl">Assigned Waiter</span>
             <span class="val">{{ getWaiterDisplayName(table) }}</span>
           </div>
-          @if (selectedTableActiveOrder(); as activeOrd) {
           <div class="info-row">
-            <span class="lbl">Active Ticket</span>
-            <span class="val">#{{ activeOrd.id }} ({{ activeOrd.status }})</span>
+            <span class="lbl">Active Tickets</span>
+            @if (selectedTableActiveOrders().length > 0) {
+            <span class="val">
+              {{ selectedTableActiveOrders().length }}
+              {{ selectedTableActiveOrders().length === 1 ? 'order' : 'orders' }}
+            </span>
+            } @else {
+            <span class="val val-free">No active orders yet</span>
+            }
           </div>
-          <div class="info-row">
-            <span class="lbl">Current Balance</span>
-            <span class="val">${{ activeOrd.finalTotal | number:'1.2-2' }}</span>
+          @if (selectedTableSessionBreakdown().length > 0) {
+          <div class="session-status-chips">
+            @for (item of selectedTableSessionBreakdown(); track item.status) {
+            <span class="order-status-pill session-chip" [ngClass]="item.cssClass">
+              {{ item.count }} {{ item.status }}
+            </span>
+            }
+          </div>
+          }
+          <div class="info-row info-row--balance">
+            <span class="lbl">Session Balance</span>
+            <span class="val session-balance-val">${{ selectedTableSessionBalance() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+        }
+
+        <ng-template #orderCardTemplate let-ord let-isPast="isPast">
+          <div class="order-card" [class.order-card--past]="isPast" (click)="openTicketModal(ord, $event)"
+            role="button" tabindex="0">
+            <div class="order-card-top">
+              <span class="order-id">#{{ ord.id }}</span>
+              <span class="order-status-pill" [ngClass]="'pill-' + (ord.status || '').toLowerCase()">
+                {{ ord.status }}
+              </span>
+            </div>
+            <div class="order-card-meta">
+              <span>{{ formatOrderTimestamp(ord.createdAt) }}</span>
+              <span>•</span>
+              <span>Waiter: {{ ord.waiterFirstName }} {{ ord.waiterLastName }}</span>
+            </div>
+            <div class="order-card-items-preview">
+              {{ getOrderItemsPreview(ord) }}
+            </div>
+            <div class="order-card-bottom">
+              <span class="view-ticket-hint">View full ticket →</span>
+              <span class="order-total">${{ ord.finalTotal | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- ACTIVE SESSION & PAST ORDER HISTORY -->
+        @if (!table.available || selectedTableActiveOrders().length > 0) {
+        <div class="orders-section-container">
+          <p class="section-label">Active Session Orders (Click to view ticket)</p>
+          @if (selectedTableActiveOrders().length === 0) {
+          <div class="empty-orders-card">
+            No active orders for Table #{{ table.number }} yet.
+          </div>
+          } @else {
+          <div class="order-history-list">
+            @for (ord of selectedTableActiveOrders(); track ord.id) {
+            <ng-container *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: false }"></ng-container>
+            }
           </div>
           }
         </div>
         }
 
-        <!-- SUMMARIZED ORDER HISTORY SECTION -->
+        @if (selectedTablePastOrders().length > 0 || (table.available && selectedTableOrders().length === 0)) {
         <div class="orders-section-container">
-          <p class="section-label">Recent Order History (Click to view ticket)</p>
-          @if (selectedTableOrders().length === 0) {
+          @if (selectedTablePastOrders().length === 0) {
+          <p class="section-label">Recent Order History</p>
           <div class="empty-orders-card">
             No orders recorded for Table #{{ table.number }} yet.
           </div>
           } @else {
+          <button type="button" class="past-history-toggle" (click)="togglePastHistory($event)"
+            [attr.aria-expanded]="table.available || isPastHistoryExpanded()">
+            <span class="section-label">Past Order History ({{ selectedTablePastOrders().length }})</span>
+            @if (!table.available) {
+            <span class="past-history-chevron" [class.open]="isPastHistoryExpanded()" aria-hidden="true">▾</span>
+            }
+          </button>
+          @if (table.available || isPastHistoryExpanded()) {
           <div class="order-history-list">
-            @for (ord of selectedTableOrders(); track ord.id) {
-            <div class="order-card" (click)="openTicketModal(ord, $event)" role="button" tabindex="0">
-              <div class="order-card-top">
-                <span class="order-id">#{{ ord.id }}</span>
-                <span class="order-status-pill" [ngClass]="'pill-' + (ord.status || '').toLowerCase()">
-                  {{ ord.status }}
-                </span>
-              </div>
-              <div class="order-card-meta">
-                <span>{{ formatOrderTimestamp(ord.createdAt) }}</span>
-                <span>•</span>
-                <span>Waiter: {{ ord.waiterFirstName }} {{ ord.waiterLastName }}</span>
-              </div>
-              <div class="order-card-items-preview">
-                {{ getOrderItemsPreview(ord) }}
-              </div>
-              <div class="order-card-bottom">
-                <span class="view-ticket-hint">View full ticket →</span>
-                <span class="order-total">${{ ord.finalTotal | number:'1.2-2' }}</span>
-              </div>
-            </div>
+            @for (ord of selectedTablePastOrders(); track ord.id) {
+            <ng-container *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: true }"></ng-container>
             }
           </div>
           }
+          }
         </div>
+        }
       </div>
 
       <!-- STICKY BOTTOM FOOTER -->

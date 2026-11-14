@@ -110,6 +110,7 @@ export class TableMapComponent implements OnInit {
   readonly headerActionConfirmType = signal<'free-table' | 'cancel-order' | null>(null);
   readonly orderToCancel = signal<TableOrder | null>(null);
   readonly isUnservedOrderModalOpen = signal<boolean>(false);
+  readonly isPastHistoryExpanded = signal<boolean>(false);
 
   // Edit mode form fields for selected table
   readonly editNumber = signal<number>(1);
@@ -253,6 +254,41 @@ export class TableMapComponent implements OnInit {
   readonly hasReadyActiveOrder = computed(
     () => this.selectedTableReadyOrders().length > 0
   );
+
+  readonly selectedTablePastOrders = computed(() =>
+    this.selectedTableOrders().filter((o) => {
+      const st = o.status?.toUpperCase();
+      return st === 'PAID' || st === 'CANCELLED';
+    })
+  );
+
+  readonly selectedTableSessionBalance = computed(() =>
+    this.selectedTableActiveOrders().reduce(
+      (sum, o) =>
+        sum + (typeof o.remainingAmount === 'number' ? o.remainingAmount : (o.finalTotal ?? 0)),
+      0
+    )
+  );
+
+  readonly selectedTableSessionBreakdown = computed(() => {
+    const counts = new Map<string, number>();
+    for (const ord of this.selectedTableActiveOrders()) {
+      const st = (ord.status || 'PENDING').toUpperCase();
+      counts.set(st, (counts.get(st) ?? 0) + 1);
+    }
+    const orderPriority = ['READY', 'SERVED', 'PREPARING', 'PENDING'];
+    return Array.from(counts.entries())
+      .sort(([a], [b]) => {
+        const ia = orderPriority.indexOf(a);
+        const ib = orderPriority.indexOf(b);
+        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+      })
+      .map(([status, count]) => ({
+        status,
+        count,
+        cssClass: `pill-${status.toLowerCase()}`,
+      }));
+  });
 
   /**
    * Counts for the top HUD filter pills.
@@ -1221,11 +1257,11 @@ export class TableMapComponent implements OnInit {
             list.map((o) =>
               o.id === updatedOrder.id
                 ? {
-                    ...o,
-                    ...updatedOrder,
-                    items: updatedOrder.items ?? o.items,
-                    status: updatedOrder.status || 'CANCELLED',
-                  }
+                  ...o,
+                  ...updatedOrder,
+                  items: updatedOrder.items ?? o.items,
+                  status: updatedOrder.status || 'CANCELLED',
+                }
                 : o
             )
           );
@@ -1330,11 +1366,11 @@ export class TableMapComponent implements OnInit {
               const updated = updatedMap.get(o.id);
               return updated
                 ? {
-                    ...o,
-                    ...updated,
-                    items: updated.items ?? o.items,
-                    status: updated.status || 'SERVED',
-                  }
+                  ...o,
+                  ...updated,
+                  items: updated.items ?? o.items,
+                  status: updated.status || 'SERVED',
+                }
                 : o;
             })
           );
@@ -1369,6 +1405,11 @@ export class TableMapComponent implements OnInit {
     this.router.navigate(['/tables', table.number, 'order', orderId, 'close'], {
       queryParams: branchId ? { branchId } : undefined,
     });
+  }
+
+  togglePastHistory(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.isPastHistoryExpanded.update((v) => !v);
   }
 
   closeTicketModal(): void {

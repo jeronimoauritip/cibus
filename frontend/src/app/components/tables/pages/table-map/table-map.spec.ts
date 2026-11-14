@@ -645,4 +645,95 @@ describe('TableMapComponent', () => {
     expect(component.getTableVisualState(component.tables()[0])).toBe('served');
     expect(component.hasUnservedActiveOrder()).toBe(false);
   });
+
+  it('should consolidate multi-order Active Table Session summary and separate collapsible Past Order History', () => {
+    const auth = TestBed.inject(AuthService) as any;
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+
+    component.activeBranchId.set(2);
+    component.isLoading.set(false);
+    component.tables.set([
+      {
+        id: 5,
+        number: 4,
+        capacity: 4,
+        available: false,
+        posX: 100,
+        posY: 100,
+        waiterId: 7,
+        branchId: 2,
+      },
+    ]);
+    component.branchOrders.set([
+      {
+        id: 89,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'READY',
+        createdAt: '2026-11-13T13:00:00',
+        subtotal: 800,
+        discount: 0,
+        finalTotal: 800,
+        remainingAmount: 800,
+        items: [],
+      },
+      {
+        id: 88,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'SERVED',
+        createdAt: '2026-11-13T12:45:00',
+        subtotal: 1200,
+        discount: 0,
+        finalTotal: 1200,
+        remainingAmount: 900,
+        items: [],
+      },
+      {
+        id: 50,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'PAID',
+        createdAt: '2026-11-13T10:00:00',
+        subtotal: 5000,
+        discount: 0,
+        finalTotal: 5000,
+        remainingAmount: 0,
+        items: [],
+      },
+    ]);
+    component.selectedTableNumber.set(4);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const infoCardText = el.querySelector('.info-card')?.textContent ?? '';
+    expect(infoCardText).toContain('2 orders');
+    expect(infoCardText).toContain('1 READY');
+    expect(infoCardText).toContain('1 SERVED');
+    expect(infoCardText).toContain('$1,700.00');
+
+    // Only 2 active session cards visible initially; past history is collapsed
+    expect(el.querySelectorAll('.order-card').length).toBe(2);
+    expect(el.querySelectorAll('.order-card--past').length).toBe(0);
+
+    const pastToggle = el.querySelector('.past-history-toggle') as HTMLButtonElement;
+    expect(pastToggle.textContent).toContain('Past Order History (1)');
+    pastToggle.click();
+    fixture.detectChanges();
+
+    expect(el.querySelectorAll('.order-card--past').length).toBe(1);
+    expect(el.querySelector('.order-card--past')?.textContent).toContain('#50');
+  });
 });

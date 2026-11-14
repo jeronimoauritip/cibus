@@ -1569,6 +1569,59 @@
   color: var(--background-green);
 }
 
+.session-status-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  padding: 2px 0 6px;
+}
+
+.session-chip {
+  font-size: 10px;
+}
+
+.info-row--balance {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(32, 90, 64, 0.2);
+}
+
+.info-row .session-balance-val {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.past-history-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 8px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+}
+
+.past-history-toggle .section-label {
+  margin: 0;
+}
+
+.past-history-chevron {
+  font-size: 12px;
+  color: var(--background-green);
+  transition: transform 0.2s ease;
+}
+
+.past-history-chevron.open {
+  transform: rotate(180deg);
+}
+
+.order-card--past {
+  opacity: 0.78;
+}
+
 /* ORDER HISTORY */
 .empty-orders-card {
   padding: 18px;
