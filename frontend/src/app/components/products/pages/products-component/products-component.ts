@@ -3,9 +3,10 @@ import { ProductService } from '../../service/product-service';
 import { ProductCategory } from '../../models/product';
 import { HeaderComponent } from '../../../header-component/header-component';
 import { Router } from '@angular/router';
+import { BackButtonDirective } from '../../../back-button/back-button.directive';
 
 @Component({
-  imports: [HeaderComponent],
+  imports: [HeaderComponent, BackButtonDirective],
   selector: 'app-products-component',
   styleUrl: './products-component.css',
   templateUrl: './products-component.html',
