@@ -1,5 +1,12 @@
 <article class="kitchen-card">
   <header class="kitchen-card__header">
+    <span class="kitchen-card__handle" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+        <circle cx="9" cy="6" r="1.8" /><circle cx="15" cy="6" r="1.8" />
+        <circle cx="9" cy="12" r="1.8" /><circle cx="15" cy="12" r="1.8" />
+        <circle cx="9" cy="18" r="1.8" /><circle cx="15" cy="18" r="1.8" />
+      </svg>
+    </span>
     <h2 class="kitchen-card__table">Mesa {{ order().tableNumber }}</h2>
     <span class="kitchen-card__time">{{ order().createdAt | date: 'HH:mm' }}</span>
   </header>
@@ -16,9 +23,34 @@
     }
   </ul>
 
-  @if (showAction()) {
-    <button type="button" class="kitchen-card__ready" (click)="onAdvance()">
-      {{ actionLabel() }}
-    </button>
+  <button
+    type="button"
+    class="kitchen-card__move"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="menuOpen()"
+    (click)="toggleMenu()"
+  >
+    <span>Move to…</span>
+    <svg class="kitchen-card__chevron" [class.kitchen-card__chevron--open]="menuOpen()" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </button>
+
+  @if (menuOpen()) {
+    <ul class="kitchen-card__menu" role="menu">
+      @for (option of options(); track option.status) {
+        <li role="none">
+          <button
+            type="button"
+            role="menuitem"
+            [class]="'kitchen-card__option kitchen-card__option--' + option.status.toLowerCase()"
+            (click)="select(option.status)"
+          >
+            <span class="kitchen-card__dot" aria-hidden="true"></span>
+            {{ option.label }}
+          </button>
+        </li>
+      }
+    </ul>
   }
 </article>

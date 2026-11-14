@@ -9,6 +9,12 @@
   padding: 16px 14px 16px;
   background: var(--light-cream);
   color: var(--dark-green);
+  cursor: grab;
+  user-select: none;
+}
+
+.kitchen-card:active {
+  cursor: grabbing;
 }
 
 /* top strip */
@@ -96,34 +102,118 @@
   line-height: 1.3;
 }
 
-/* Ready button */
-.kitchen-card__ready {
-  display: flex;
+/* Visual hint that the card can be dragged */
+.kitchen-card__handle {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
+  width: 44px;
+  height: 44px;
+  margin: -8px 0 -8px -10px;
+  color: var(--background-green);
+  user-select: none;
+}
+
+.kitchen-card__table {
+  margin-right: auto;
+}
+
+/* Move to… control */
+.kitchen-card__move {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: 48px;
+  height: 56px;
   margin-top: 16px;
+  padding: 0 20px;
   background: var(--background-green);
   border: none;
   border-radius: 999px;
   font: inherit;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--cream);
   cursor: pointer;
   touch-action: manipulation;
 }
 
-.kitchen-card__ready:hover {
+.kitchen-card__move:hover {
   background: var(--light-green);
 }
 
-.kitchen-card__ready:active {
+.kitchen-card__move:active {
   transform: scale(0.98);
 }
 
-.kitchen-card__ready:focus-visible {
+.kitchen-card__move:focus-visible {
   outline: 2px solid var(--dark-green);
   outline-offset: 2px;
+}
+
+.kitchen-card__chevron {
+  transition: transform 0.2s ease;
+}
+
+.kitchen-card__chevron--open {
+  transform: rotate(180deg);
+}
+
+.kitchen-card__menu {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kitchen-card__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  background: transparent;
+  border: 2px solid var(--dark-green);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--dark-green);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kitchen-card__option:hover {
+  background: color-mix(in srgb, var(--dark-green) 10%, transparent);
+}
+
+.kitchen-card__option:active {
+  transform: scale(0.98);
+}
+
+.kitchen-card__option:focus-visible {
+  outline: 2px solid var(--dark-green);
+  outline-offset: 2px;
+}
+
+.kitchen-card__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--background-green);
+}
+
+.kitchen-card__option--pending .kitchen-card__dot {
+  background: #b45309;
+}
+
+.kitchen-card__option--preparing .kitchen-card__dot {
+  background: var(--light-green);
+}
+
+.kitchen-card__option--ready .kitchen-card__dot {
+  background: var(--background-green);
 }
