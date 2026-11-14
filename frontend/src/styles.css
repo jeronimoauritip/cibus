@@ -145,3 +145,37 @@ button, input {
     height: 18px;
   }
 }
+
+/* In-page back link (same look as the statistics one) */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  border: 2px solid var(--light-green);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--dark-green);
+  font-size: 17px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.back-link:hover {
+  background: var(--light-green);
+  color: rgba(244, 240, 228, 0.95);
+}
+
+.back-link:focus-visible {
+  outline: 3px solid var(--light-green);
+  outline-offset: 4px;
+}
+
+@media (max-width: 768px) {
+  .back-link {
+    padding: 8px 16px;
+    font-size: 15px;
+  }
+}

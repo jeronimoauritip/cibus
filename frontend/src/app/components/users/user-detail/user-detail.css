@@ -11,6 +11,22 @@
   overflow-x: hidden;
   isolation: isolate;
   padding: 0.5rem;
+  /* Pull the container up so the back link sits at header height, like in the other panels */
+  margin-top: -112px;
+  padding-top: calc(0.5rem + 112px);
+}
+
+.back-link {
+  position: absolute;
+  top: -112px;
+  left: max(24px, calc(50% - 340px));
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .back-link {
+    left: 20px;
+  }
 }
 
 /* Main content */

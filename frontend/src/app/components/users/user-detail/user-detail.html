@@ -1,15 +1,13 @@
 <app-header-component>
-  <a class="btn-back" [routerLink]="[getBackRoute()]" aria-label="Back to employee list" title="Back">
-    <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-  </a>
   Employee Detail
 </app-header-component>
 
 <div class="container">
   <main class="content">
+    <a class="back-link" [routerLink]="[getBackRoute()]" aria-label="Back to employee list" title="Back">
+      <span aria-hidden="true">←</span> Back
+    </a>
+
     @if (user(); as currentUser) {
     @if (successMessage()) {
     <div class="feedback-success" role="status">
