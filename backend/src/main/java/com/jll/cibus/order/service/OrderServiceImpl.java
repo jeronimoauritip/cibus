@@ -234,11 +234,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponseDTO changeStatus(Long orderId, String newStatus) {
         OrderEntity order = getEntity(orderId);
         orderStatusService.changeOrderStatus(order, newStatus);
         OrderEntity updatedOrder = orderRepository.save(order);
         OrderResponseDTO response = orderMapper.toDTO(updatedOrder);
+        setResponseItems(response);
         setRemainingAmount(response);
         return response;
     }
@@ -292,6 +294,8 @@ public class OrderServiceImpl implements OrderService {
         setResponseItems(response);
         return response;
     }
+    @Override
+    @Transactional
     public OrderResponseDTO changeStatusInBranch(Long branchId, Long orderId, String newStatus) {
         assertOrderInBranch(branchId, orderId);
         OrderEntity order = getEntity(orderId);

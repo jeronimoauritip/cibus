@@ -337,6 +337,21 @@
   background: rgba(231, 219, 191, 0.97);
 }
 
+.hud-bottom-filters {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.hud-bottom-filters::-webkit-scrollbar {
+  display: none;
+}
+
 .btn-hud-edit {
   display: inline-flex;
   align-items: center;
@@ -1833,6 +1848,34 @@
 }
 
 /* Occupied Table Order Button (Exact same place & iOS 26 pill shape as Open Table) */
+.mark-served-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    grid-template-rows 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.24s ease;
+}
+
+.mark-served-collapse.visible {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mark-served-collapse-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  transition: padding 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mark-served-collapse.visible .mark-served-collapse-inner {
+  overflow: visible;
+  padding: 0 0 10px;
+}
+
 .drawer-footer-split {
   display: flex;
   align-items: center;
@@ -1892,11 +1935,55 @@
   cursor: not-allowed;
 }
 
+.btn-order-pill-trigger.btn-order-pill-trigger--ready,
+.btn-order-pill-trigger.btn-order-pill-trigger--ready:disabled {
+  background: var(--state-ready-bg);
+  border-color: var(--state-ready-bg);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(23, 66, 47, 0.2);
+  transform: translateY(0);
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.2s ease,
+    opacity 0.22s ease,
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mark-served-collapse.visible .btn-order-pill-trigger--ready:not(:hover):not(.is-saving) {
+  animation: pulse-ready 2.2s ease-in-out infinite;
+}
+
+.mark-served-collapse:not(.visible) .btn-order-pill-trigger--ready {
+  transform: translateY(18px);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.btn-order-pill-trigger.btn-order-pill-trigger--ready:hover:not(:disabled) {
+  background: #b45309;
+  border-color: #b45309;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(23, 66, 47, 0.28);
+}
+
+.btn-order-pill-trigger.btn-order-pill-trigger--ready.is-saving {
+  opacity: 0.72;
+  cursor: wait;
+}
+
 .btn-order-title {
   font-size: 18px;
   font-weight: 900;
   letter-spacing: 1.5px;
   text-transform: uppercase;
+}
+
+.btn-order-pill-trigger--ready .btn-order-title,
+.btn-order-pill-trigger--ready:disabled .btn-order-title {
+  font-size: 16px;
+  letter-spacing: 1.3px;
+  white-space: nowrap;
 }
 
 .btn-order-pill-trigger--split .btn-order-title {
@@ -2264,15 +2351,28 @@
     flex-wrap: wrap;
   }
 
-  .hud-center {
+  .hud-center--edit {
     order: 3;
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
     overflow-x: auto;
   }
 
+  .hud-bottom-filters {
+    bottom: 14px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .hud-bottom-filters .filter-chip {
+    padding: 0 9px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
   .floor-stage {
-    padding-top: 116px;
+    padding-top: 72px;
+    padding-bottom: 68px;
   }
 
   .right-drawer {

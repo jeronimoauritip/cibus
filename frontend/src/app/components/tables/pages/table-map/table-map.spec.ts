@@ -334,7 +334,7 @@ describe('TableMapComponent', () => {
     const [newOrderBtn, payTableBtn] = splitButtons;
     expect(newOrderBtn.textContent?.trim()).toBe('NEW ORDER');
     expect(newOrderBtn.disabled).toBe(false);
-    expect(payTableBtn.textContent?.trim()).toBe('PAY TABLE');
+    expect(payTableBtn.textContent?.trim()).toBe('PAY ORDER');
     expect(payTableBtn.disabled).toBe(false);
     expect(payTableBtn.classList.contains('btn-order-pill-trigger--unserved')).toBe(true);
 
@@ -362,13 +362,23 @@ describe('TableMapComponent', () => {
     fixture.detectChanges();
     expect(component.isUnservedOrderModalOpen()).toBe(false);
 
-    // Once order is SERVED, PAY TABLE is no longer opaque and navigates on click
+    // Once order is SERVED, PAY ORDER is no longer opaque and navigates on click
     component.branchOrders.set([
       { ...component.branchOrders()[0], status: 'SERVED' },
     ]);
     fixture.detectChanges();
 
+    expect(payTableBtn.textContent?.trim()).toBe('PAY ORDER');
     expect(payTableBtn.classList.contains('btn-order-pill-trigger--unserved')).toBe(false);
+
+    // When 2+ active orders exist, button label becomes PAY ORDERS
+    component.branchOrders.set([
+      { ...component.branchOrders()[0], status: 'SERVED' },
+      { ...component.branchOrders()[0], id: 89, status: 'SERVED' },
+    ]);
+    fixture.detectChanges();
+    expect(payTableBtn.textContent?.trim()).toBe('PAY ORDERS');
+
     payTableBtn.click();
     fixture.detectChanges();
     expect(component.isUnservedOrderModalOpen()).toBe(false);
@@ -549,5 +559,90 @@ describe('TableMapComponent', () => {
     fixture.detectChanges();
     expect(component.isDeleteConfirmModalOpen()).toBe(false);
     expect(component.tables().map((t) => t.number)).toEqual([2]);
+  });
+
+  it('should display MARK AS SERVED pill above split footer only when a READY order exists, call /serve, and collapse to SERVED', () => {
+    const auth = TestBed.inject(AuthService) as any;
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+
+    component.activeBranchId.set(2);
+    component.isLoading.set(false);
+    component.tables.set([
+      {
+        id: 5,
+        number: 4,
+        capacity: 4,
+        available: false,
+        posX: 100,
+        posY: 100,
+        waiterId: 7,
+        branchId: 2,
+      },
+    ]);
+    component.branchOrders.set([
+      {
+        id: 88,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'PREPARING',
+        createdAt: '2026-11-13T12:45:00',
+        subtotal: 1000,
+        discount: 0,
+        finalTotal: 1000,
+        remainingAmount: 1000,
+        items: [{ productId: 10, productName: 'Burger', quantity: 1, unitPrice: 1000, subtotal: 1000 }],
+      },
+    ]);
+    component.selectedTableNumber.set(4);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const collapseBox = el.querySelector('.drawer-footer .mark-served-collapse') as HTMLElement;
+    const markServedBtn = el.querySelector('.btn-order-pill-trigger--ready') as HTMLButtonElement;
+    expect(collapseBox).toBeTruthy();
+    expect(markServedBtn).toBeTruthy();
+
+    // Hidden / collapsed when no order is READY
+    expect(collapseBox.classList.contains('visible')).toBe(false);
+    expect(collapseBox.getAttribute('aria-hidden')).toBe('true');
+    expect(markServedBtn.disabled).toBe(true);
+    expect(markServedBtn.getAttribute('tabindex')).toBe('-1');
+
+    // Visible directly above split footer when an order becomes READY
+    component.branchOrders.set([
+      { ...component.branchOrders()[0], status: 'READY' },
+    ]);
+    fixture.detectChanges();
+
+    const footerChildren = Array.from(el.querySelector('.drawer-footer')!.children);
+    expect(footerChildren[0]).toBe(collapseBox);
+    expect(footerChildren[1].classList.contains('drawer-footer-split')).toBe(true);
+    expect(collapseBox.classList.contains('visible')).toBe(true);
+    expect(collapseBox.getAttribute('aria-hidden')).toBe('false');
+    expect(markServedBtn.disabled).toBe(false);
+    expect(markServedBtn.textContent?.trim()).toBe('MARK AS SERVED');
+    expect(component.getTableVisualState(component.tables()[0])).toBe('ready');
+
+    // Clicking MARK AS SERVED calls /serve and smoothly collapses it
+    markServedBtn.click();
+    const serveReq = httpMock.expectOne('/api/branches/2/orders/88/serve');
+    expect(serveReq.request.method).toBe('POST');
+    serveReq.flush({
+      ...component.branchOrders()[0],
+      status: 'SERVED',
+      items: undefined,
+    });
+    fixture.detectChanges();
+
+    expect(collapseBox.classList.contains('visible')).toBe(false);
+    expect(collapseBox.getAttribute('aria-hidden')).toBe('true');
+    expect(component.branchOrders()[0].status).toBe('SERVED');
+    expect(component.branchOrders()[0].items.length).toBe(1);
+    expect(component.getTableVisualState(component.tables()[0])).toBe('served');
+    expect(component.hasUnservedActiveOrder()).toBe(false);
   });
 });

@@ -66,36 +66,8 @@
         </div>
       </div>
 
-      <!-- Top-Center: Status Spotlight Filter Pills (Normal) OR Edit Actions (Edit Mode) -->
-      @if (!isEditMode()) {
-      <div class="hud-center" role="group" aria-label="Filter tables by status">
-        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
-          <span>All</span>
-          <span class="chip-count">{{ countAll() }}</span>
-        </button>
-
-        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'available'"
-          (click)="setFilter('available')">
-          <span class="chip-dot dot-free" aria-hidden="true"></span>
-          <span>Free</span>
-          <span class="chip-count">{{ countFree() }}</span>
-        </button>
-
-        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'occupied'"
-          (click)="setFilter('occupied')">
-          <span class="chip-dot dot-occupied" aria-hidden="true"></span>
-          <span>Occupied</span>
-          <span class="chip-count">{{ countOccupied() }}</span>
-        </button>
-
-        <button type="button" class="filter-chip" [class.active]="activeFilter() === 'ready'"
-          (click)="setFilter('ready')">
-          <span class="chip-dot dot-ready" aria-hidden="true"></span>
-          <span>Ready</span>
-          <span class="chip-count">{{ countReady() }}</span>
-        </button>
-      </div>
-      } @else {
+      <!-- Top-Center: Edit Actions (Edit Mode only) -->
+      @if (isEditMode()) {
       <div class="hud-center hud-center--edit" role="group" aria-label="Edit floor layout actions">
         <button type="button" class="btn-hud-edit btn-hud-add" (click)="openNewTableModal($event)"
           title="Create and configure a new table">
@@ -465,6 +437,16 @@
       } @else if (!table.available && canActOnSelectedTable()) {
       <div class="drawer-footer">
         @if (selectedTableActiveOrder(); as activeOrd) {
+        <div class="mark-served-collapse" [class.visible]="hasReadyActiveOrder()"
+          [attr.aria-hidden]="!hasReadyActiveOrder()">
+          <div class="mark-served-collapse-inner">
+            <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--ready"
+              [class.is-saving]="isSaving()" [disabled]="!hasReadyActiveOrder() || isSaving()"
+              [attr.tabindex]="hasReadyActiveOrder() ? 0 : -1" (click)="markReadyOrdersAsServed(table, $event)">
+              <span class="btn-order-title">MARK AS SERVED</span>
+            </button>
+          </div>
+        </div>
         <div class="drawer-footer-split">
           <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--split"
             (click)="goToNewOrder(table)">
@@ -473,7 +455,7 @@
           <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--split"
             [class.btn-order-pill-trigger--unserved]="hasUnservedActiveOrder()"
             (click)="onCloseOrderClick(table, activeOrd)">
-            <span class="btn-order-title">PAY TABLE</span>
+            <span class="btn-order-title">{{ selectedTableActiveOrders().length >= 2 ? 'PAY ORDERS' : 'PAY ORDER' }}</span>
           </button>
         </div>
         } @else {
@@ -612,6 +594,37 @@
         </button>
       </div>
     </div>
+  </div>
+  }
+
+  <!-- FLOATING BOTTOM-CENTER: STATUS SPOTLIGHT FILTER PILLS -->
+  @if (!isEditMode()) {
+  <div class="hud-center hud-bottom-filters" role="group" aria-label="Filter tables by status">
+    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+      <span>All</span>
+      <span class="chip-count">{{ countAll() }}</span>
+    </button>
+
+    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'available'"
+      (click)="setFilter('available')">
+      <span class="chip-dot dot-free" aria-hidden="true"></span>
+      <span>Free</span>
+      <span class="chip-count">{{ countFree() }}</span>
+    </button>
+
+    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'occupied'"
+      (click)="setFilter('occupied')">
+      <span class="chip-dot dot-occupied" aria-hidden="true"></span>
+      <span>Occupied</span>
+      <span class="chip-count">{{ countOccupied() }}</span>
+    </button>
+
+    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'ready'"
+      (click)="setFilter('ready')">
+      <span class="chip-dot dot-ready" aria-hidden="true"></span>
+      <span>Ready</span>
+      <span class="chip-count">{{ countReady() }}</span>
+    </button>
   </div>
   }
 

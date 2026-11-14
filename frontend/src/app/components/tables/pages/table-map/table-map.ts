@@ -223,25 +223,35 @@ export class TableMapComponent implements OnInit {
   });
 
   /**
-   * Active (non-paid, non-cancelled) order for the currently selected table.
+   * Active (non-paid, non-cancelled) orders for the currently selected table.
    */
-  readonly selectedTableActiveOrder = computed(() => {
-    return (
-      this.selectedTableOrders().find(
-        (o) =>
-          o.status?.toUpperCase() !== 'PAID' &&
-          o.status?.toUpperCase() !== 'CANCELLED'
-      ) ?? null
-    );
-  });
-
-  readonly hasUnservedActiveOrder = computed(() =>
-    this.selectedTableOrders().some(
+  readonly selectedTableActiveOrders = computed(() =>
+    this.selectedTableOrders().filter(
       (o) =>
         o.status?.toUpperCase() !== 'PAID' &&
-        o.status?.toUpperCase() !== 'CANCELLED' &&
-        !this.isOrderServed(o)
+        o.status?.toUpperCase() !== 'CANCELLED'
     )
+  );
+
+  /**
+   * Most recent active (non-paid, non-cancelled) order for the currently selected table.
+   */
+  readonly selectedTableActiveOrder = computed(
+    () => this.selectedTableActiveOrders()[0] ?? null
+  );
+
+  readonly hasUnservedActiveOrder = computed(() =>
+    this.selectedTableActiveOrders().some((o) => !this.isOrderServed(o))
+  );
+
+  readonly selectedTableReadyOrders = computed(() =>
+    this.selectedTableActiveOrders().filter(
+      (o) => o.status?.toUpperCase() === 'READY'
+    )
+  );
+
+  readonly hasReadyActiveOrder = computed(
+    () => this.selectedTableReadyOrders().length > 0
   );
 
   /**
@@ -432,24 +442,24 @@ export class TableMapComponent implements OnInit {
     if (table.available) {
       return 'available';
     }
-    const activeOrder = this.branchOrders().find(
+    const activeOrders = this.branchOrders().filter(
       (o) =>
         o.tableNumber === table.number &&
         o.status?.toUpperCase() !== 'PAID' &&
         o.status?.toUpperCase() !== 'CANCELLED'
     );
-    if (!activeOrder) {
+    if (activeOrders.length === 0) {
       const override = this.localVisualOverrides()[table.number];
       if (override && override !== 'available') {
         return override;
       }
       return 'occupied';
     }
-    const st = activeOrder.status.toUpperCase();
-    if (st === 'READY') return 'ready';
-    if (st === 'PREPARING') return 'preparing';
-    if (st === 'PENDING') return 'pending';
-    if (st === 'SERVED') return 'served';
+    const statuses = activeOrders.map((o) => o.status.toUpperCase());
+    if (statuses.includes('READY')) return 'ready';
+    if (statuses.includes('PREPARING')) return 'preparing';
+    if (statuses.includes('PENDING')) return 'pending';
+    if (statuses.includes('SERVED')) return 'served';
     return 'occupied';
   }
 
@@ -1210,7 +1220,12 @@ export class TableMapComponent implements OnInit {
           this.branchOrders.update((list) =>
             list.map((o) =>
               o.id === updatedOrder.id
-                ? { ...o, ...updatedOrder, status: updatedOrder.status || 'CANCELLED' }
+                ? {
+                    ...o,
+                    ...updatedOrder,
+                    items: updatedOrder.items ?? o.items,
+                    status: updatedOrder.status || 'CANCELLED',
+                  }
                 : o
             )
           );
@@ -1285,6 +1300,56 @@ export class TableMapComponent implements OnInit {
 
   isOrderServed(order: TableOrder | null | undefined): boolean {
     return order?.status?.toUpperCase() === 'SERVED';
+  }
+
+  markReadyOrdersAsServed(table: BranchTable, event?: MouseEvent): void {
+    event?.stopPropagation();
+    const branchId = this.activeBranchId();
+    const readyOrders = this.selectedTableReadyOrders();
+    if (
+      !branchId ||
+      !this.canActOnSelectedTable() ||
+      this.isSaving() ||
+      readyOrders.length === 0
+    ) {
+      return;
+    }
+
+    this.isSaving.set(true);
+    forkJoin(
+      readyOrders.map((ord) =>
+        this.tableService.changeOrderStatus(branchId, ord.id, 'SERVED')
+      )
+    )
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: (updatedOrders) => {
+          const updatedMap = new Map(updatedOrders.map((o) => [o.id, o]));
+          this.branchOrders.update((list) =>
+            list.map((o) => {
+              const updated = updatedMap.get(o.id);
+              return updated
+                ? {
+                    ...o,
+                    ...updated,
+                    items: updated.items ?? o.items,
+                    status: updated.status || 'SERVED',
+                  }
+                : o;
+            })
+          );
+          this.localVisualOverrides.update((prev) => {
+            const copy = { ...prev };
+            delete copy[table.number];
+            return copy;
+          });
+        },
+        error: (err) => {
+          this.showToast(
+            err?.error?.message || err?.error?.error || 'Could not mark order as served'
+          );
+        },
+      });
   }
 
   onCloseOrderClick(table: BranchTable, order: TableOrder): void {
