@@ -13,6 +13,15 @@ import { EMPTY } from 'rxjs';
 
 type ReportTab = 'orders' | 'products' | 'waiters';
 
+type RangePreset = '7d' | '30d' | '1y' | 'custom';
+
+const PRESET_DAYS: Record<Exclude<RangePreset, 'custom'>, number> = {
+  '7d': 7,
+  '30d': 30,
+  '1y': 365,
+};
+
+
 @Component({
   imports: [HeaderComponent, BackButtonDirective, ProductsReportComponent, OrdersReportComponent, WaitersReportComponent],
   selector: 'app-dashboard-component',
@@ -38,6 +47,18 @@ export class DashboardComponent {
   
   readonly selectedBranchId = signal<number | undefined>(undefined);
   readonly activeTab = signal<ReportTab>('orders');
+    readonly presets: { key: RangePreset; label: string }[] = [
+    { key: '7d', label: 'Last 7 days' },
+    { key: '30d', label: 'Last 30 days' },
+    { key: '1y', label: 'Last year' },
+    { key: 'custom', label: 'Custom' },
+  ];
+
+  readonly selectedPreset = signal<RangePreset>('30d');
+  readonly customStart = signal<string>('');
+  readonly customEnd = signal<string>('');
+  readonly today = this.toDateInputValue(new Date());
+
   readonly isManager = computed(() => this.auth.role() === 'Manager');
 
   constructor() {
@@ -57,8 +78,41 @@ export class DashboardComponent {
     if (this.isManager() && this.selectedBranchId() === undefined) {
       return { branchId: -1 }; // Invalid ID ensures it won't hit global or leak data
     }
-    return { branchId: this.selectedBranchId() };
+    return { branchId: this.selectedBranchId(), start: this.resolveStart(), end: this.resolveEnd() };
   });
+
+  private resolveStart(): Date | undefined {
+    const preset = this.selectedPreset();
+
+    if (preset === 'custom') {
+      return this.parseDateInput(this.customStart(), false);
+    }
+
+    const start = new Date();
+    start.setDate(start.getDate() - PRESET_DAYS[preset]);
+    start.setHours(0, 0, 0, 0);
+    return start;
+  }
+
+  // Presets omit the end (the backend defaults it to "now"); only custom sets it
+  private resolveEnd(): Date | undefined {
+    if (this.selectedPreset() !== 'custom') return undefined;
+
+    const end = this.parseDateInput(this.customEnd(), true);
+    const start = this.parseDateInput(this.customStart(), false);
+    // Guard against an inverted range, which the backend rejects
+    if (end && start && start > end) return undefined;
+    return end;
+  }
+
+  // Parses a yyyy-MM-dd value as local time; endOfDay includes the whole selected day
+  private parseDateInput(value: string, endOfDay: boolean): Date | undefined {
+    if (!value) return undefined;
+    const [year, month, day] = value.split('-').map(Number);
+    return endOfDay
+      ? new Date(year, month - 1, day, 23, 59, 59)
+      : new Date(year, month - 1, day);
+  }
 
   readonly ordersReport = this.metricsService.getOrdersReport(this.filter);
   readonly productsReport = this.metricsService.getProductsReport(this.filter);
@@ -67,5 +121,22 @@ export class DashboardComponent {
   selectBranch(value: string): void {
     if (this.isManager()) return; // Extra safety: managers cannot change the branch
     this.selectedBranchId.set(value ? Number(value) : undefined);
+  }
+
+  selectPreset(preset: RangePreset): void {
+    this.selectedPreset.set(preset);
+  }
+
+  setCustomStart(value: string): void {
+    this.customStart.set(value);
+  }
+
+  setCustomEnd(value: string): void {
+    this.customEnd.set(value);
+  }
+
+  private toDateInputValue(date: Date): string {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   }
 }
