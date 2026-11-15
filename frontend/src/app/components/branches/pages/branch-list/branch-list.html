@@ -163,3 +163,11 @@
     </section>
   </main>
 </div>
+
+@if (branchToDelete(); as branch) {
+  <app-logout-confirm
+    [message]="'Are you sure you want to delete branch &quot;' + branch.name + '&quot;?'"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+}

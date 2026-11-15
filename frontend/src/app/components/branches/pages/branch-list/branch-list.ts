@@ -6,11 +6,12 @@ import { BranchService } from '../../service/branch-service';
 import { Branch } from '../../models/branch.model';
 import { HeaderComponent } from '../../../header-component/header-component';
 import { BackButtonDirective } from '../../../back-button/back-button.directive';
+import { LogoutConfirmComponent } from '../../../logout-confirm-component/logout-confirm-component';
 
 type SortOption = 'name-asc' | 'name-desc' | 'address-asc';
 
 @Component({
-  imports: [FormsModule, RouterLink, HeaderComponent, BackButtonDirective],
+  imports: [FormsModule, RouterLink, HeaderComponent, BackButtonDirective, LogoutConfirmComponent],
   selector: 'app-branch-list',
   styleUrl: './branch-list.css',
   templateUrl: './branch-list.html',
@@ -24,6 +25,7 @@ export class BranchListComponent implements OnInit {
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly deletingId = signal<number | null>(null);
+  readonly branchToDelete = signal<Branch | null>(null);
 
   // Sorting
   readonly isSortOpen = signal<boolean>(false);
@@ -108,8 +110,17 @@ export class BranchListComponent implements OnInit {
     event.stopPropagation();
     if (!branch.id) return;
 
-    const confirmed = window.confirm(`Are you sure you want to delete branch "${branch.name}"?`);
-    if (!confirmed) return;
+    this.branchToDelete.set(branch);
+  }
+
+  cancelDelete(): void {
+    this.branchToDelete.set(null);
+  }
+
+  confirmDelete(): void {
+    const branch = this.branchToDelete();
+    this.branchToDelete.set(null);
+    if (!branch?.id) return;
 
     this.deletingId.set(branch.id);
     this.errorMessage.set(null);
