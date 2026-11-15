@@ -7,8 +7,17 @@
         <circle cx="9" cy="18" r="1.8" /><circle cx="15" cy="18" r="1.8" />
       </svg>
     </span>
-    <h2 class="kitchen-card__table">Mesa {{ order().tableNumber }}</h2>
-    <span class="kitchen-card__time">{{ order().createdAt | date: 'HH:mm' }}</span>
+    <h2 class="kitchen-card__table">Table {{ order().tableNumber }} | #{{ order().id }}</h2>
+    @if (showTimer()) {
+      <span class="kitchen-card__timer" [class.kitchen-card__timer--late]="isLate()">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 14" />
+        </svg>
+        {{ elapsedLabel() }}
+      </span>
+    } @else {
+      <span class="kitchen-card__time">{{ order().createdAt | date: 'HH:mm' }}</span>
+    }
   </header>
 
   <ul class="kitchen-card__items">
