@@ -5,19 +5,19 @@
       <!-- Top-Left: Return Button + Branch Pill / Selector -->
       <div class="hud-left">
         @if (isAdmin() || isManager()) {
-          <button type="button" class="btn-back" (click)="goBack()">
-            <span class="arrow-left" aria-hidden="true"></span>
-            <span>Return</span>
-          </button>
+        <button type="button" class="btn-back" (click)="goBack()">
+          <span class="arrow-left" aria-hidden="true"></span>
+          <span>Return</span>
+        </button>
         } @else {
-          <button type="button" class="btn-back" (click)="logout()">
-            <svg class="logout-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-            <span>Logout</span>
-          </button>
+        <button type="button" class="btn-back" (click)="logout()">
+          <svg class="logout-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Logout</span>
+        </button>
         }
 
         <div class="branch-selector-wrapper">
@@ -381,8 +381,8 @@
         }
 
         <ng-template #orderCardTemplate let-ord let-isPast="isPast">
-          <div class="order-card" [class.order-card--past]="isPast" (click)="openTicketModal(ord, $event)"
-            role="button" tabindex="0">
+          <div class="order-card" [class.order-card--past]="isPast" (click)="openTicketModal(ord, $event)" role="button"
+            tabindex="0">
             <div class="order-card-top">
               <span class="order-id">#{{ ord.id }}</span>
               <span class="order-status-pill" [ngClass]="'pill-' + (ord.status || '').toLowerCase()">
@@ -415,7 +415,8 @@
           } @else {
           <div class="order-history-list">
             @for (ord of selectedTableActiveOrders(); track ord.id) {
-            <ng-container *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: false }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: false }"></ng-container>
             }
           </div>
           }
@@ -440,7 +441,8 @@
           @if (table.available || isPastHistoryExpanded()) {
           <div class="order-history-list">
             @for (ord of selectedTablePastOrders(); track ord.id) {
-            <ng-container *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: true }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: true }"></ng-container>
             }
           </div>
           }
@@ -483,7 +485,7 @@
       </div>
       } @else if (!table.available && canActOnSelectedTable()) {
       <div class="drawer-footer">
-        @if (selectedTableActiveOrders().length > 0) {
+        @if (selectedTableActiveOrder(); as activeOrd) {
         <div class="mark-served-collapse" [class.visible]="hasReadyActiveOrder()"
           [attr.aria-hidden]="!hasReadyActiveOrder()">
           <div class="mark-served-collapse-inner">
@@ -501,8 +503,9 @@
           </button>
           <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--split"
             [class.btn-order-pill-trigger--unserved]="hasUnservedActiveOrder()"
-            (click)="onCloseOrderClick(table)">
-            <span class="btn-order-title">{{ selectedTableActiveOrders().length >= 2 ? 'PAY ORDERS' : 'PAY ORDER' }}</span>
+            (click)="onCloseOrderClick(table, activeOrd)">
+            <span class="btn-order-title">{{ selectedTableActiveOrders().length >= 2 ? 'PAY ORDERS' : 'PAY ORDER'
+              }}</span>
           </button>
         </div>
         } @else {
@@ -666,8 +669,7 @@
       <span class="chip-count">{{ countOccupied() }}</span>
     </button>
 
-    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'ready'"
-      (click)="setFilter('ready')">
+    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'ready'" (click)="setFilter('ready')">
       <span class="chip-dot dot-ready" aria-hidden="true"></span>
       <span>Ready</span>
       <span class="chip-count">{{ countReady() }}</span>

@@ -97,7 +97,11 @@
   border-right: 9px solid var(--cream);
   transition: transform 0.2s ease;
 }
-.btn-back:hover .arrow-left { transform: translateX(-2px); }
+
+.btn-back:hover .arrow-left {
+  transform: translateX(-2px);
+}
+
 .logout-icon {
   width: 18px;
   height: 18px;

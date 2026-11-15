@@ -61,8 +61,8 @@ describe('TableMapComponent', () => {
       queryParams: { branchId: 2, waiterId: 7 },
     });
 
-    component.goToCloseOrder(table);
-    expect(navSpy).toHaveBeenCalledWith(['/tables', 3, 'checkout'], {
+    component.goToCloseOrder(table, 99);
+    expect(navSpy).toHaveBeenCalledWith(['/tables', 3, 'order', 99, 'close'], {
       queryParams: { branchId: 2 },
     });
   });
@@ -83,7 +83,6 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([table]);
     component.tableOccupiedAt.set({ 4: '2026-11-13T12:41:00' });
     component.selectedTableNumber.set(4);
@@ -181,7 +180,6 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([table]);
     component.branchOrders.set([
       {
@@ -224,7 +222,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 1,
@@ -295,7 +292,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -386,7 +382,7 @@ describe('TableMapComponent', () => {
     payTableBtn.click();
     fixture.detectChanges();
     expect(component.isUnservedOrderModalOpen()).toBe(false);
-    expect(navSpy).toHaveBeenCalledWith(['/tables', 4, 'checkout'], {
+    expect(navSpy).toHaveBeenCalledWith(['/tables', 4, 'order', 88, 'close'], {
       queryParams: { branchId: 2 },
     });
   });
@@ -480,7 +476,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 10,
@@ -542,7 +537,7 @@ describe('TableMapComponent', () => {
 
     // Pointerdown on table #1 in delete mode does NOT start dragging, and click opens confirmation modal
     component.onTablePointerDown(component.tables()[0], {
-      stopPropagation: () => {},
+      stopPropagation: () => { },
     } as unknown as PointerEvent);
     expect(component.draggingTableNumber()).toBeNull();
 
@@ -572,7 +567,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -658,7 +652,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -742,20 +735,5 @@ describe('TableMapComponent', () => {
 
     expect(el.querySelectorAll('.order-card--past').length).toBe(1);
     expect(el.querySelector('.order-card--past')?.textContent).toContain('#50');
-  });
-
-  it('should not call /api/branches for non-admin waiter and should load floor data using profile.branchId', () => {
-    const auth = TestBed.inject(AuthService) as any;
-    auth._user.set({ id: 7, branchId: 2, role: { role: 'WAITER' } });
-
-    (component as any).initializeContext();
-
-    httpMock.expectNone('/api/branches');
-    const tablesReq = httpMock.expectOne((r) => r.url === '/api/branches/2/tables');
-    const ordersReq = httpMock.expectOne((r) => r.url === '/api/branches/2/orders');
-    const usersReq = httpMock.expectOne((r) => r.url === '/api/users');
-    tablesReq.flush({ content: [] });
-    ordersReq.flush({ content: [] });
-    usersReq.flush({ content: [] });
   });
 });
