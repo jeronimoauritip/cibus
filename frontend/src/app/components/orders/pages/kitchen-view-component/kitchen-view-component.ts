@@ -2,6 +2,7 @@ import { CdkDragDrop, CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cd
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
 import { AuthService } from '../../../../Auth/services/auth-service';
+import { LogoutConfirmComponent } from '../../../logout-confirm-component/logout-confirm-component';
 import { HeaderComponent } from '../../../header-component/header-component';
 import {
   KITCHEN_STATUS_LABELS,
@@ -21,7 +22,7 @@ interface LastMove {
 
 @Component({
   selector: 'app-kitchen-view',
-  imports: [HeaderComponent, KitchenOrderCardComponent, CdkDropListGroup, CdkDropList, CdkDrag],
+  imports: [HeaderComponent, LogoutConfirmComponent, KitchenOrderCardComponent, CdkDropListGroup, CdkDropList, CdkDrag],
   templateUrl: './kitchen-view-component.html',
   styleUrl: './kitchen-view-component.css'
 })
@@ -30,7 +31,18 @@ export class KitchenViewComponent {
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
+  readonly confirmingLogout = signal(false);
+
+  openLogoutConfirm(): void {
+    this.confirmingLogout.set(true);
+  }
+
+  cancelLogout(): void {
+    this.confirmingLogout.set(false);
+  }
+
   logout(): void {
+    this.confirmingLogout.set(false);
     this.authService.logout();
   }
 
