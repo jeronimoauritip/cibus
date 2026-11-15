@@ -3,6 +3,7 @@ import { form, FormField, FormRoot, maxLength, pattern, required } from '@angula
 import { finalize } from 'rxjs/operators';
 import { User, ChangeRoleRequest } from '../../../users/user.model';
 import { UserService } from '../../../users/user.service';
+import { LogoutConfirmComponent } from '../../../logout-confirm-component/logout-confirm-component';
 
 export interface EditRoleFormModel {
   roleName: string;
@@ -11,7 +12,7 @@ export interface EditRoleFormModel {
 
 @Component({
   selector: 'app-employee-edit-modal',
-  imports: [FormField, FormRoot],
+  imports: [FormField, FormRoot, LogoutConfirmComponent],
   templateUrl: './employee-edit-modal.html',
   styleUrl: './employee-edit-modal.css',
 })
@@ -27,6 +28,7 @@ export class EmployeeEditModalComponent {
 
   readonly isSavingRole = signal<boolean>(false);
   readonly isDeleting = signal<boolean>(false);
+  readonly confirmingDelete = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
   readonly submitted = signal<boolean>(false);
 
@@ -112,7 +114,16 @@ export class EmployeeEditModalComponent {
       });
   }
 
+  openDeleteConfirm(): void {
+    this.confirmingDelete.set(true);
+  }
+
+  cancelDelete(): void {
+    this.confirmingDelete.set(false);
+  }
+
   onDeleteEmployee(): void {
+    this.confirmingDelete.set(false);
     this.errorMessage.set(null);
     this.isDeleting.set(true);
 
@@ -141,6 +152,8 @@ export class EmployeeEditModalComponent {
 
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
+    // The confirmation dialog handles Escape itself
+    if (this.confirmingDelete()) return;
     this.closed.emit();
   }
 }
