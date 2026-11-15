@@ -55,11 +55,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.update(branchId, orderId, dto));
     }
 
+    @Deprecated
     @PostMapping("/{orderId}/payments")
     public ResponseEntity<PaymentDTO> addPayment(@PathVariable Long branchId,@PathVariable Long orderId, @Valid @RequestBody PaymentDTO payment){
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addPayment(branchId,orderId, payment));
     }
 
+    @Deprecated
     @PatchMapping("/{orderId}/discount")
     public ResponseEntity<OrderResponseDTO> addDiscount(@PathVariable Long branchId,@PathVariable Long orderId, @Valid @RequestBody DiscountRequestDTO discount){
         return ResponseEntity.ok(orderService.applyDiscount(branchId,orderId, discount));

@@ -70,7 +70,7 @@ export const routes: Routes = [
         ]
     },
     {
-        path: 'tables/:tableNumber/order/:orderId/close',
+        path: 'tables/:tableNumber/checkout',
         component: OrderCloseComponent,
         canActivate: [authGuard, roleGuard],
         data: { roles: ['Waiter', 'Host', 'Manager', 'Admin'] }

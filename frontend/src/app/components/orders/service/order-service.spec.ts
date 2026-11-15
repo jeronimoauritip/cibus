@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { OrderResponse } from '../models/order-response';
+import { TableBill } from '../models/table-bill';
 import { OrderService } from './order-service';
 
 describe('OrderService', () => {
@@ -191,5 +192,91 @@ describe('OrderService', () => {
     secondItemReq.flush({});
 
     expect(created?.id).toBe(105);
+  });
+
+  it('should fetch table bill and checkout table atomically', () => {
+    let bill: TableBill | undefined;
+    service.getTableBill(1, 3).subscribe((res) => (bill = res));
+
+    const billReq = httpMock.expectOne('/api/branches/1/tables/3/bill');
+    expect(billReq.request.method).toBe('GET');
+    billReq.flush({
+      branchId: 1,
+      branchName: 'Sucursal Centro',
+      tableNumber: 3,
+      waiterId: 2,
+      waiterFirstName: 'Carlos',
+      waiterLastName: 'Gómez',
+      openedAt: '2026-11-13T12:00:00',
+      allServed: true,
+      subtotal: 1500,
+      discount: 0,
+      finalTotal: 1500,
+      totalPaid: 0,
+      remainingAmount: 1500,
+      orders: [mockOrder({ id: 10 }), mockOrder({ id: 11, subtotal: 500, finalTotal: 500, remainingAmount: 500 })],
+      payments: [],
+    });
+    expect(bill?.orders.length).toBe(2);
+
+    let checkedOut: TableBill | undefined;
+    service
+      .checkoutTable(
+        1,
+        3,
+        [
+          { paymentMethodId: 1, amount: 700 },
+          { paymentMethodId: 2, amount: 650 },
+        ],
+        150,
+        [10, 11],
+        true
+      )
+      .subscribe((res) => (checkedOut = res));
+
+    const checkoutReq = httpMock.expectOne('/api/branches/1/tables/3/checkout');
+    expect(checkoutReq.request.method).toBe('POST');
+    expect(checkoutReq.request.body).toEqual({
+      orderIds: [10, 11],
+      discount: 150,
+      payments: [
+        { paymentMethodId: 1, amount: 700 },
+        { paymentMethodId: 2, amount: 650 },
+      ],
+    });
+    checkoutReq.flush({
+      branchId: 1,
+      branchName: 'Sucursal Centro',
+      tableNumber: 3,
+      waiterId: 2,
+      waiterFirstName: 'Carlos',
+      waiterLastName: 'Gómez',
+      openedAt: '2026-11-13T12:00:00',
+      closedAt: '2026-11-13T13:10:00',
+      allServed: true,
+      subtotal: 1500,
+      discount: 150,
+      finalTotal: 1350,
+      totalPaid: 1350,
+      remainingAmount: 0,
+      orders: [],
+      payments: [
+        { paymentMethodId: 1, amount: 700 },
+        { paymentMethodId: 2, amount: 650 },
+      ],
+    });
+
+    expect(checkedOut?.remainingAmount).toBe(0);
+    expect(checkedOut?.finalTotal).toBe(1350);
+  });
+
+  it('should reject table checkout when not all orders are served', () => {
+    let errResult: Error | undefined;
+    service
+      .checkoutTable(1, 3, [{ paymentMethodId: 1, amount: 1000 }], 0, [10], false)
+      .subscribe({ error: (err: Error) => (errResult = err) });
+
+    expect(errResult?.message).toContain('All orders must be served');
+    httpMock.expectNone('/api/branches/1/tables/3/checkout');
   });
 });

@@ -1,27 +1,46 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { OrderResponse } from '../../models/order-response';
+import { TableBill } from '../../models/table-bill';
 import { ReceiptComponent } from './receipt-component';
 
 describe('ReceiptComponent', () => {
   let component: ReceiptComponent;
   let fixture: ComponentFixture<ReceiptComponent>;
 
-  const paidOrder: OrderResponse = {
-    id: 22,
+  const paidBill: TableBill = {
     branchId: 1,
     branchName: 'Sucursal Centro',
     tableNumber: 2,
     waiterId: 2,
     waiterFirstName: 'Carlos',
     waiterLastName: 'Gómez',
-    status: 'PAID',
-    createdAt: '2026-11-13T12:00:00',
+    openedAt: '2026-11-13T12:00:00',
     closedAt: '2026-11-13T13:15:00',
+    allServed: true,
     subtotal: 2000,
     discount: 200,
     finalTotal: 1800,
+    totalPaid: 1800,
     remainingAmount: 0,
-    items: [],
+    payments: [],
+    orders: [
+      {
+        id: 22,
+        branchId: 1,
+        branchName: 'Sucursal Centro',
+        tableNumber: 2,
+        waiterId: 2,
+        waiterFirstName: 'Carlos',
+        waiterLastName: 'Gómez',
+        status: 'PAID',
+        createdAt: '2026-11-13T12:00:00',
+        closedAt: '2026-11-13T13:15:00',
+        subtotal: 2000,
+        discount: 200,
+        finalTotal: 1800,
+        remainingAmount: 0,
+        items: [],
+      },
+    ],
   };
 
   beforeEach(async () => {
@@ -31,7 +50,7 @@ describe('ReceiptComponent', () => {
 
     fixture = TestBed.createComponent(ReceiptComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('order', paidOrder);
+    fixture.componentRef.setInput('bill', paidBill);
     fixture.componentRef.setInput('payments', [
       { paymentMethodId: 1, amount: 1000 },
       { paymentMethodId: 2, amount: 800 },

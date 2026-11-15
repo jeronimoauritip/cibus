@@ -61,8 +61,8 @@ describe('TableMapComponent', () => {
       queryParams: { branchId: 2, waiterId: 7 },
     });
 
-    component.goToCloseOrder(table, 99);
-    expect(navSpy).toHaveBeenCalledWith(['/tables', 3, 'order', 99, 'close'], {
+    component.goToCloseOrder(table);
+    expect(navSpy).toHaveBeenCalledWith(['/tables', 3, 'checkout'], {
       queryParams: { branchId: 2 },
     });
   });
@@ -83,6 +83,7 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([table]);
     component.tableOccupiedAt.set({ 4: '2026-11-13T12:41:00' });
     component.selectedTableNumber.set(4);
@@ -180,6 +181,7 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([table]);
     component.branchOrders.set([
       {
@@ -222,6 +224,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 1,
@@ -292,6 +295,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -382,7 +386,7 @@ describe('TableMapComponent', () => {
     payTableBtn.click();
     fixture.detectChanges();
     expect(component.isUnservedOrderModalOpen()).toBe(false);
-    expect(navSpy).toHaveBeenCalledWith(['/tables', 4, 'order', 88, 'close'], {
+    expect(navSpy).toHaveBeenCalledWith(['/tables', 4, 'checkout'], {
       queryParams: { branchId: 2 },
     });
   });
@@ -476,6 +480,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 10,
@@ -567,6 +572,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -644,5 +650,112 @@ describe('TableMapComponent', () => {
     expect(component.branchOrders()[0].items.length).toBe(1);
     expect(component.getTableVisualState(component.tables()[0])).toBe('served');
     expect(component.hasUnservedActiveOrder()).toBe(false);
+  });
+
+  it('should consolidate multi-order Active Table Session summary and separate collapsible Past Order History', () => {
+    const auth = TestBed.inject(AuthService) as any;
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+
+    component.activeBranchId.set(2);
+    component.isLoading.set(false);
+    component.errorMessage.set(null);
+    component.tables.set([
+      {
+        id: 5,
+        number: 4,
+        capacity: 4,
+        available: false,
+        posX: 100,
+        posY: 100,
+        waiterId: 7,
+        branchId: 2,
+      },
+    ]);
+    component.branchOrders.set([
+      {
+        id: 89,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'READY',
+        createdAt: '2026-11-13T13:00:00',
+        subtotal: 800,
+        discount: 0,
+        finalTotal: 800,
+        remainingAmount: 800,
+        items: [],
+      },
+      {
+        id: 88,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'SERVED',
+        createdAt: '2026-11-13T12:45:00',
+        subtotal: 1200,
+        discount: 0,
+        finalTotal: 1200,
+        remainingAmount: 900,
+        items: [],
+      },
+      {
+        id: 50,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'PAID',
+        createdAt: '2026-11-13T10:00:00',
+        subtotal: 5000,
+        discount: 0,
+        finalTotal: 5000,
+        remainingAmount: 0,
+        items: [],
+      },
+    ]);
+    component.selectedTableNumber.set(4);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const infoCardText = el.querySelector('.info-card')?.textContent ?? '';
+    expect(infoCardText).toContain('2 orders');
+    expect(infoCardText).toContain('1 READY');
+    expect(infoCardText).toContain('1 SERVED');
+    expect(infoCardText).toContain('$1,700.00');
+
+    // Only 2 active session cards visible initially; past history is collapsed
+    expect(el.querySelectorAll('.order-card').length).toBe(2);
+    expect(el.querySelectorAll('.order-card--past').length).toBe(0);
+
+    const pastToggle = el.querySelector('.past-history-toggle') as HTMLButtonElement;
+    expect(pastToggle.textContent).toContain('Past Order History (1)');
+    pastToggle.click();
+    fixture.detectChanges();
+
+    expect(el.querySelectorAll('.order-card--past').length).toBe(1);
+    expect(el.querySelector('.order-card--past')?.textContent).toContain('#50');
+  });
+
+  it('should not call /api/branches for non-admin waiter and should load floor data using profile.branchId', () => {
+    const auth = TestBed.inject(AuthService) as any;
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'WAITER' } });
+
+    (component as any).initializeContext();
+
+    httpMock.expectNone('/api/branches');
+    const tablesReq = httpMock.expectOne((r) => r.url === '/api/branches/2/tables');
+    const ordersReq = httpMock.expectOne((r) => r.url === '/api/branches/2/orders');
+    const usersReq = httpMock.expectOne((r) => r.url === '/api/users');
+    tablesReq.flush({ content: [] });
+    ordersReq.flush({ content: [] });
+    usersReq.flush({ content: [] });
   });
 });

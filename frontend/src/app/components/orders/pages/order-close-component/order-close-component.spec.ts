@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../../../Auth/services/auth-service';
-import { OrderResponse } from '../../models/order-response';
+import { TableBill } from '../../models/table-bill';
 import { OrderCloseComponent } from './order-close-component';
 
 describe('OrderCloseComponent', () => {
@@ -13,22 +13,41 @@ describe('OrderCloseComponent', () => {
   let httpMock: HttpTestingController;
   let router: Router;
 
-  const mockOrder = (overrides: Partial<OrderResponse> = {}): OrderResponse => ({
-    id: 10,
+  const mockBill = (overrides: Partial<TableBill> = {}): TableBill => ({
     branchId: 1,
     branchName: 'Sucursal Centro',
     tableNumber: 3,
     waiterId: 2,
     waiterFirstName: 'Carlos',
     waiterLastName: 'Gómez',
-    status: 'READY',
-    createdAt: '2026-11-13T12:00:00',
+    openedAt: '2026-11-13T12:00:00',
     closedAt: null,
+    allServed: true,
     subtotal: 1500,
     discount: 0,
     finalTotal: 1500,
+    totalPaid: 0,
     remainingAmount: 1500,
-    items: [],
+    payments: [],
+    orders: [
+      {
+        id: 10,
+        branchId: 1,
+        branchName: 'Sucursal Centro',
+        tableNumber: 3,
+        waiterId: 2,
+        waiterFirstName: 'Carlos',
+        waiterLastName: 'Gómez',
+        status: 'SERVED',
+        createdAt: '2026-11-13T12:00:00',
+        closedAt: null,
+        subtotal: 1500,
+        discount: 0,
+        finalTotal: 1500,
+        remainingAmount: 1500,
+        items: [],
+      },
+    ],
     ...overrides,
   });
 
@@ -43,7 +62,7 @@ describe('OrderCloseComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              paramMap: convertToParamMap({ tableNumber: '3', orderId: '10' }),
+              paramMap: convertToParamMap({ tableNumber: '3' }),
               queryParamMap: convertToParamMap({ branchId: '1' }),
             },
           },
@@ -74,37 +93,50 @@ describe('OrderCloseComponent', () => {
     httpMock.verify();
   });
 
-  it('should load a SERVED order and payment methods and transition to receipt upon closing', () => {
-    const orderReq = httpMock.expectOne('/api/branches/1/orders/10');
-    orderReq.flush(mockOrder({ status: 'SERVED' }));
+  it('should load table bill and payment methods and transition to receipt upon checkout', () => {
+    const billReq = httpMock.expectOne('/api/branches/1/tables/3/bill');
+    expect(billReq.request.method).toBe('GET');
+    billReq.flush(mockBill({ allServed: true }));
 
     const methodsReq = httpMock.expectOne('/api/payment-methods');
     methodsReq.flush([{ id: 1, name: 'EFECTIVO' }]);
 
     fixture.detectChanges();
     expect(component.loading()).toBe(false);
-    expect(component.order()?.id).toBe(10);
-    expect(component.closedOrder()).toBeNull();
+    expect(component.bill()?.tableNumber).toBe(3);
+    expect(component.closedBill()).toBeNull();
 
     component.onConfirmPayment({
       payments: [{ paymentMethodId: 1, amount: 1500 }],
       discount: 0,
     });
 
-    const payReq = httpMock.expectOne('/api/branches/1/orders/10/payments');
-    payReq.flush({ paymentMethodId: 1, amount: 1500 });
-
-    const finalReq = httpMock.expectOne('/api/branches/1/orders/10');
-    finalReq.flush(
-      mockOrder({
-        status: 'PAID',
+    const checkoutReq = httpMock.expectOne('/api/branches/1/tables/3/checkout');
+    expect(checkoutReq.request.method).toBe('POST');
+    expect(checkoutReq.request.body).toEqual({
+      orderIds: [10],
+      discount: 0,
+      payments: [{ paymentMethodId: 1, amount: 1500 }],
+    });
+    checkoutReq.flush(
+      mockBill({
         closedAt: '2026-11-13T13:00:00',
+        totalPaid: 1500,
         remainingAmount: 0,
+        payments: [{ paymentMethodId: 1, amount: 1500 }],
+        orders: [
+          {
+            ...mockBill().orders[0],
+            status: 'PAID',
+            closedAt: '2026-11-13T13:00:00',
+            remainingAmount: 0,
+          },
+        ],
       })
     );
 
     fixture.detectChanges();
-    expect(component.closedOrder()?.status).toBe('PAID');
+    expect(component.closedBill()?.remainingAmount).toBe(0);
     expect(component.appliedPayments()).toEqual([{ paymentMethodId: 1, amount: 1500 }]);
 
     const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
@@ -117,9 +149,14 @@ describe('OrderCloseComponent', () => {
     expect(navSpy).toHaveBeenCalledWith(['/tables']);
   });
 
-  it('should block charging an order that has not been marked as SERVED', () => {
-    const orderReq = httpMock.expectOne('/api/branches/1/orders/10');
-    orderReq.flush(mockOrder({ status: 'READY' }));
+  it('should block charging a table when not all orders are SERVED', () => {
+    const billReq = httpMock.expectOne('/api/branches/1/tables/3/bill');
+    billReq.flush(
+      mockBill({
+        allServed: false,
+        orders: [{ ...mockBill().orders[0], status: 'READY' }],
+      })
+    );
 
     const methodsReq = httpMock.expectOne('/api/payment-methods');
     methodsReq.flush([{ id: 1, name: 'EFECTIVO' }]);
