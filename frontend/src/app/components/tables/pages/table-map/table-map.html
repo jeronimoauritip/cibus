@@ -10,7 +10,7 @@
             <span>Return</span>
           </button>
         } @else {
-          <button type="button" class="btn-back" (click)="logout()">
+          <button type="button" class="btn-back" (click)="openLogoutConfirm()">
             <svg class="logout-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
               <polyline points="16 17 21 12 16 7"></polyline>
@@ -637,3 +637,7 @@
   </button>
   }
 </div>
+
+@if (confirmingLogout()) {
+  <app-logout-confirm (confirmed)="logout()" (cancelled)="cancelLogout()" />
+}

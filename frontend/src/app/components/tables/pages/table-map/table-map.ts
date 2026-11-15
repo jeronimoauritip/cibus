@@ -19,6 +19,7 @@ import { Branch } from '../../../branches/models/branch.model';
 import { BranchService } from '../../../branches/service/branch-service';
 import { User } from '../../../users/user.model';
 import { UserService } from '../../../users/user.service';
+import { LogoutConfirmComponent } from '../../../logout-confirm-component/logout-confirm-component';
 import { TicketModalComponent } from '../../components/ticket-modal/ticket-modal';
 import { TableEditModalComponent } from '../../components/table-edit-modal/table-edit-modal';
 import {
@@ -38,7 +39,7 @@ const FLOOR_REFRESH_INTERVAL_MS = 10_000;
 @Component({
   selector: 'app-table-map',
   standalone: true,
-  imports: [CommonModule, FormsModule, TicketModalComponent, TableEditModalComponent],
+  imports: [CommonModule, FormsModule, TicketModalComponent, TableEditModalComponent, LogoutConfirmComponent],
   templateUrl: './table-map.html',
   styleUrl: './table-map.css',
 })
@@ -1406,7 +1407,18 @@ export class TableMapComponent implements OnInit {
     }
   }
 
+  readonly confirmingLogout = signal(false);
+
+  openLogoutConfirm(): void {
+    this.confirmingLogout.set(true);
+  }
+
+  cancelLogout(): void {
+    this.confirmingLogout.set(false);
+  }
+
   logout(): void {
+    this.confirmingLogout.set(false);
     this.authService.logout();
   }
 
