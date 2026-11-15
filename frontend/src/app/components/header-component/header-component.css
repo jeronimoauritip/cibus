@@ -20,42 +20,13 @@
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--cream);
   text-decoration: none;
-  font-family: "Croogla", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -1px;
 }
 
-/* Logo tray symbol */
-
-.tray-logo {
-  position: relative;
-  width: 24px;
-  height: 14px;
-  border-bottom: 3px solid currentColor;
-}
-
-.tray-logo::before {
-  content: "";
-  position: absolute;
-  inset: 1px 1px 2px;
-  border-radius: 12px 12px 0 0;
-  background: currentColor;
-}
-
-.tray-logo::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: 10px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
+.logo img {
+  display: block;
+  height: 44px;
+  width: auto;
 }
 
 /* Fondo con forma de campana / bandeja */
@@ -109,6 +80,7 @@
 
 .title {
   font-family: "Croogla", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   position: absolute;
   top: 110px;
   left: 0;
@@ -139,8 +111,8 @@
   .header {
     padding: 16px 20px;
   }
-  .logo {
-    font-size: 24px;
+  .logo img {
+    height: 34px;
   }
   .handle {
     top: 30px;
