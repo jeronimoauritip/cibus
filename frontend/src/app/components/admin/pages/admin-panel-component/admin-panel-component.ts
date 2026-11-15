@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../../header-component/header-component';
+import { LogoutConfirmComponent } from '../../../logout-confirm-component/logout-confirm-component';
 import { AuthService } from '../../../../Auth/services/auth-service';
 
 @Component({
-  imports: [RouterLink, HeaderComponent],
+  imports: [RouterLink, HeaderComponent, LogoutConfirmComponent],
   selector: 'app-admin-panel-component',
   styleUrl: './admin-panel-component.css',
   templateUrl: './admin-panel-component.html',
