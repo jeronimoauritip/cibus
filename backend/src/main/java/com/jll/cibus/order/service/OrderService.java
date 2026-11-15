@@ -7,6 +7,8 @@ import com.jll.cibus.order.dto.OrderUpdateDTO;
 import com.jll.cibus.order.entity.OrderEntity;
 import com.jll.cibus.payment.dto.DiscountRequestDTO;
 import com.jll.cibus.payment.dto.PaymentDTO;
+import com.jll.cibus.payment.dto.TableBillDTO;
+import com.jll.cibus.payment.dto.TableCheckoutRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,8 +29,12 @@ public interface OrderService {
     OrderResponseDTO changeStatus(Long orderId, String newStatus);
     Boolean isCancelled(OrderEntity order);
     Boolean isPaid(OrderEntity order);
+    @Deprecated
     PaymentDTO addPayment(Long branchId, Long orderId, PaymentDTO payment);
+    @Deprecated
     OrderResponseDTO applyDiscount(Long branchId, Long orderId, DiscountRequestDTO discount);
+    TableBillDTO getTableBill(Long branchId, Integer tableNumber);
+    TableBillDTO checkoutTable(Long branchId, Integer tableNumber, TableCheckoutRequestDTO request);
     OrderResponseDTO changeStatusInBranch(Long branchId, Long orderId, String newStatus);
     void recalculateTotals(Long id);
     void setRemainingAmount(OrderResponseDTO dto);

@@ -42,6 +42,26 @@ public class PaymentServiceImpl implements  PaymentService{
     }
 
     @Override
+    public PaymentMethodEntity getPaymentMethod(Long paymentMethodId) {
+        return paymentMethodRepository.findById(paymentMethodId)
+                .orElseThrow(() -> new ResourceNotFoundException("payment method ID", paymentMethodId));
+    }
+
+    @Override
+    @Transactional
+    public OrderPaymentEntity registerPaymentSlice(OrderEntity order, PaymentMethodEntity paymentMethod, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("Amount must be greater than zero");
+        }
+        OrderPaymentEntity paymentEntity = OrderPaymentEntity.builder()
+                .order(order)
+                .paymentMethod(paymentMethod)
+                .amount(amount)
+                .build();
+        return orderPaymentRepository.save(paymentEntity);
+    }
+
+    @Override
     @Transactional
     public PaymentDTO addPayment(OrderEntity order, PaymentDTO payment){
         if (payment.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
@@ -52,15 +72,9 @@ public class PaymentServiceImpl implements  PaymentService{
         if(payment.getAmount().compareTo(remainingAmount) > 0){
             throw new BusinessException("Payment amount exceeds remaining balance");
         }
-        PaymentMethodEntity paymentMethod = paymentMethodRepository.findById(payment.getPaymentMethodId())
-                .orElseThrow(() -> new ResourceNotFoundException("payment method ID", payment.getPaymentMethodId()));
-        OrderPaymentEntity paymentEntity = OrderPaymentEntity.builder()
-                .order(order)
-                .paymentMethod(paymentMethod)
-                .amount(payment.getAmount())
-                .build();
-        OrderPaymentEntity saved = orderPaymentRepository.save(paymentEntity);
-        if (totalPaid.add(paymentEntity.getAmount()).compareTo(order.getFinalTotal()) >= 0) {
+        PaymentMethodEntity paymentMethod = getPaymentMethod(payment.getPaymentMethodId());
+        OrderPaymentEntity saved = registerPaymentSlice(order, paymentMethod, payment.getAmount());
+        if (totalPaid.add(saved.getAmount()).compareTo(order.getFinalTotal()) >= 0) {
             orderStatusService.changeOrderStatus(order, "PAID");
             order.setClosedAt(LocalDateTime.now());
             orderRepository.save(order);

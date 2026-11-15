@@ -10,8 +10,8 @@ import { PaymentComponent } from '../../components/payment-component/payment-com
 import { ReceiptComponent } from '../../components/receipt-component/receipt-component';
 import { TicketPreviewComponent } from '../../components/ticket-preview-component/ticket-preview-component';
 import { OrderPayment } from '../../models/order-payment';
-import { OrderResponse } from '../../models/order-response';
 import { PaymentMethod } from '../../models/payment-method';
+import { TableBill } from '../../models/table-bill';
 import { OrderService } from '../../service/order-service';
 
 function extractHttpError(err: unknown, fallback: string): string {
@@ -44,20 +44,19 @@ export class OrderCloseComponent implements OnInit {
   private readonly tableService = inject(TableService);
 
   readonly tableNumber = signal<number>(0);
-  readonly orderId = signal<number>(0);
   readonly branchId = signal<number | null>(null);
 
   readonly loading = signal<boolean>(true);
   readonly loadError = signal<string | null>(null);
 
-  readonly order = signal<OrderResponse | null>(null);
+  readonly bill = signal<TableBill | null>(null);
   readonly paymentMethods = signal<PaymentMethod[]>([]);
   readonly draftDiscount = signal<number>(0);
 
   readonly submitting = signal<boolean>(false);
   readonly submitError = signal<string | null>(null);
 
-  readonly closedOrder = signal<OrderResponse | null>(null);
+  readonly closedBill = signal<TableBill | null>(null);
   readonly appliedPayments = signal<OrderPayment[]>([]);
 
   readonly freeingTable = signal<boolean>(false);
@@ -66,15 +65,13 @@ export class OrderCloseComponent implements OnInit {
 
   ngOnInit(): void {
     const tableNum = Number(this.route.snapshot.paramMap.get('tableNumber'));
-    const ordId = Number(this.route.snapshot.paramMap.get('orderId'));
     const queryBranch = Number(this.route.snapshot.queryParamMap.get('branchId')) || null;
 
     this.tableNumber.set(Number.isFinite(tableNum) ? tableNum : 0);
-    this.orderId.set(Number.isFinite(ordId) ? ordId : 0);
 
-    if (!ordId || !Number.isFinite(ordId)) {
+    if (!tableNum || !Number.isFinite(tableNum)) {
       this.loading.set(false);
-      this.loadError.set('Invalid order identifier.');
+      this.loadError.set('Invalid table identifier.');
       return;
     }
 
@@ -82,49 +79,52 @@ export class OrderCloseComponent implements OnInit {
       const resolvedBranchId = queryBranch ?? profile?.branchId ?? null;
       if (!resolvedBranchId) {
         this.loading.set(false);
-        this.loadError.set('Could not determine the active branch for this order.');
+        this.loadError.set('Could not determine the active branch for this table.');
         return;
       }
 
       this.branchId.set(resolvedBranchId);
-      this.loadData(resolvedBranchId, ordId);
+      this.loadData(resolvedBranchId, tableNum);
     });
   }
 
-  loadData(branchId: number, orderId: number): void {
+  loadData(branchId: number, tableNumber: number): void {
     this.loading.set(true);
     this.loadError.set(null);
 
     forkJoin({
-      order: this.orderService.getOrderById(branchId, orderId),
+      bill: this.orderService.getTableBill(branchId, tableNumber),
       paymentMethods: this.orderService.getPaymentMethods(),
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: ({ order, paymentMethods }) => {
-          this.order.set(order);
+        next: ({ bill, paymentMethods }) => {
+          this.bill.set(bill);
           this.paymentMethods.set(paymentMethods ?? []);
-          if (order.status === 'PAID') {
-            this.closedOrder.set(order);
-          } else if (order.status === 'CANCELLED') {
-            this.loadError.set(`Order #${order.id} is cancelled and cannot be closed.`);
-          } else if (order.status !== 'SERVED') {
+          if (!bill.orders || bill.orders.length === 0) {
+            this.loadError.set(`Table #${tableNumber} has no active orders to close.`);
+          } else if (
+            bill.remainingAmount <= 0 &&
+            bill.orders.every((o) => o.status === 'PAID')
+          ) {
+            this.closedBill.set(bill);
+          } else if (!bill.allServed) {
             this.loadError.set(
-              `Order #${order.id} is currently ${order.status}. All orders must be served before charging and closing the table.`
+              'All orders must be served before charging and closing the table.'
             );
           }
         },
         error: (err) => {
-          this.loadError.set(extractHttpError(err, 'Could not load order details.'));
+          this.loadError.set(extractHttpError(err, 'Could not load table bill details.'));
         },
       });
   }
 
   retryLoad(): void {
     const bId = this.branchId();
-    const oId = this.orderId();
-    if (bId && oId) {
-      this.loadData(bId, oId);
+    const tableNum = this.tableNumber();
+    if (bId && tableNum) {
+      this.loadData(bId, tableNum);
     }
   }
 
@@ -134,44 +134,52 @@ export class OrderCloseComponent implements OnInit {
 
   onConfirmPayment(event: { payments: OrderPayment[]; discount: number }): void {
     const bId = this.branchId();
-    const currentOrder = this.order();
-    if (!bId || !currentOrder) return;
+    const currentBill = this.bill();
+    if (!bId || !currentBill) return;
 
     this.submitting.set(true);
     this.submitError.set(null);
 
     this.orderService
-      .closeOrder(
+      .checkoutTable(
         bId,
-        currentOrder.id,
+        currentBill.tableNumber,
         event.payments,
         event.discount,
-        currentOrder.status
+        currentBill.orders.map((o) => o.id),
+        currentBill.allServed
       )
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
-        next: (paidOrder) => {
-          this.order.set(paidOrder);
-          this.closedOrder.set(paidOrder);
-          this.appliedPayments.set(event.payments);
+        next: (paidBill) => {
+          this.bill.set(paidBill);
+          this.closedBill.set(paidBill);
+          this.appliedPayments.set(
+            paidBill.payments && paidBill.payments.length > 0
+              ? paidBill.payments
+              : event.payments
+          );
           this.draftDiscount.set(0);
         },
         error: (err) => {
           this.submitError.set(
-            extractHttpError(err, 'Could not process payment and close order.')
+            extractHttpError(err, 'Could not process payment and close table bill.')
           );
           this.draftDiscount.set(0);
-          this.syncOrderAfterFailure(bId, currentOrder.id);
+          this.syncBillAfterFailure(bId, currentBill.tableNumber);
         },
       });
   }
 
-  private syncOrderAfterFailure(branchId: number, orderId: number): void {
-    this.orderService.getOrderById(branchId, orderId).subscribe({
-      next: (freshOrder) => {
-        this.order.set(freshOrder);
-        if (freshOrder.status === 'PAID') {
-          this.closedOrder.set(freshOrder);
+  private syncBillAfterFailure(branchId: number, tableNumber: number): void {
+    this.orderService.getTableBill(branchId, tableNumber).subscribe({
+      next: (freshBill) => {
+        this.bill.set(freshBill);
+        if (
+          freshBill.remainingAmount <= 0 &&
+          freshBill.orders.every((o) => o.status === 'PAID')
+        ) {
+          this.closedBill.set(freshBill);
           this.submitError.set(null);
         }
       },
@@ -183,7 +191,7 @@ export class OrderCloseComponent implements OnInit {
 
   onFinishAndFreeTable(): void {
     const bId = this.branchId();
-    const tableNum = this.tableNumber() || this.closedOrder()?.tableNumber || 0;
+    const tableNum = this.tableNumber() || this.closedBill()?.tableNumber || 0;
     if (!bId || !tableNum) {
       this.navigateToFloor();
       return;

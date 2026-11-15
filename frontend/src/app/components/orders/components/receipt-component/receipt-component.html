@@ -1,32 +1,32 @@
-<section class="receipt-shell" aria-label="Order closing receipt">
+<section class="receipt-shell" aria-label="Table closing receipt">
   <article class="receipt-paper">
     <header class="receipt__header">
       <h2 class="receipt__brand">CIBUS</h2>
-      <p class="receipt__branch">{{ order().branchName }} • Table #{{ order().tableNumber }}</p>
+      <p class="receipt__branch">{{ bill().branchName }} • Table #{{ bill().tableNumber }}</p>
     </header>
 
     <dl class="receipt__meta">
       <div>
-        <dt>Ticket</dt>
-        <dd>#{{ order().id }}</dd>
+        <dt>Orders</dt>
+        <dd>{{ orderIdsLabel() || '—' }}</dd>
       </div>
       <div>
         <dt>Waiter</dt>
-        <dd>{{ order().waiterFirstName }} {{ order().waiterLastName }}</dd>
+        <dd>{{ bill().waiterFirstName }} {{ bill().waiterLastName }}</dd>
       </div>
       <div>
         <dt>Opened</dt>
-        <dd>{{ order().createdAt | date: 'MMM d, HH:mm' }}</dd>
+        <dd>{{ bill().openedAt ? (bill().openedAt | date: 'MMM d, HH:mm') : '—' }}</dd>
       </div>
       <div>
         <dt>Closed</dt>
-        <dd>{{ order().closedAt ? (order().closedAt | date: 'MMM d, HH:mm') : 'Just now' }}</dd>
+        <dd>{{ bill().closedAt ? (bill().closedAt | date: 'MMM d, HH:mm') : 'Just now' }}</dd>
       </div>
     </dl>
 
-    @if (order().items.length > 0) {
+    @if (allItems().length > 0) {
       <ul class="receipt__items">
-        @for (item of order().items; track item.productId + '-' + item.productName) {
+        @for (item of allItems(); track $index) {
           <li class="receipt__item">
             <div class="receipt__item-left">
               <span class="receipt__item-name">{{ item.quantity }}x {{ item.productName }}</span>
@@ -41,17 +41,17 @@
     <div class="receipt__totals">
       <div class="receipt__row">
         <span>Subtotal</span>
-        <span>{{ order().subtotal | currency }}</span>
+        <span>{{ bill().subtotal | currency }}</span>
       </div>
-      @if (order().discount > 0) {
+      @if (bill().discount > 0) {
         <div class="receipt__row receipt__row--discount">
           <span>Discount</span>
-          <span>-{{ order().discount | currency }}</span>
+          <span>-{{ bill().discount | currency }}</span>
         </div>
       }
       <div class="receipt__row receipt__row--final">
         <span>Total Paid</span>
-        <span>{{ order().finalTotal | currency }}</span>
+        <span>{{ bill().finalTotal | currency }}</span>
       </div>
     </div>
 

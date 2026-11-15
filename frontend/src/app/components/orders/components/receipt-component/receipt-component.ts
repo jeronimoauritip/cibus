@@ -1,8 +1,8 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 import { OrderPayment } from '../../models/order-payment';
-import { OrderResponse } from '../../models/order-response';
 import { PaymentMethod } from '../../models/payment-method';
+import { TableBill } from '../../models/table-bill';
 
 @Component({
   selector: 'app-receipt',
@@ -12,7 +12,7 @@ import { PaymentMethod } from '../../models/payment-method';
   styleUrl: './receipt-component.css',
 })
 export class ReceiptComponent {
-  readonly order = input.required<OrderResponse>();
+  readonly bill = input.required<TableBill>();
   readonly payments = input<OrderPayment[]>([]);
   readonly paymentMethods = input<PaymentMethod[]>([]);
   readonly freeingTable = input<boolean>(false);
@@ -22,9 +22,21 @@ export class ReceiptComponent {
   readonly finishKeepTable = output<void>();
   readonly printReceipt = output<void>();
 
+  readonly orderIdsLabel = computed(() =>
+    this.bill()
+      .orders.map((o) => `#${o.id}`)
+      .join(', ')
+  );
+
+  readonly allItems = computed(() =>
+    this.bill().orders.flatMap((o) => o.items ?? [])
+  );
+
   readonly paymentBreakdown = computed(() => {
     const methodById = new Map(this.paymentMethods().map((m) => [m.id, m.name]));
-    return this.payments().map((p) => ({
+    const sourcePayments =
+      this.payments().length > 0 ? this.payments() : (this.bill().payments ?? []);
+    return sourcePayments.map((p) => ({
       methodName: methodById.get(p.paymentMethodId) ?? `Method #${p.paymentMethodId}`,
       amount: p.amount,
     }));

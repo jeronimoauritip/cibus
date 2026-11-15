@@ -171,6 +171,10 @@ public class TableServiceImpl implements TableService {
             }
         }
 
+        if (Boolean.TRUE.equals(orderRepository.tableHasOrdersActive(table.getId()))) {
+            throw new BusinessException("Cannot free table that has active orders.");
+        }
+
         table.setAvailable(true);
         table.setWaiter(null);
         TableEntity updatedTable = tableRepository.save(table);

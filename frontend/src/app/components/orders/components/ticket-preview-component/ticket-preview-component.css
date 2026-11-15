@@ -132,6 +132,15 @@
   border-top: 1px dashed color-mix(in srgb, var(--icon) 60%, transparent);
 }
 
+.ticket__order-group {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--background-green);
+  padding-top: 0.35rem;
+}
+
 .ticket__item-info {
   display: flex;
   flex-direction: column;

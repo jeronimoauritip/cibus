@@ -6,11 +6,14 @@ import com.jll.cibus.branch.repository.BranchRepository;
 import com.jll.cibus.common.exception.BusinessException;
 import com.jll.cibus.credential.repository.CredentialsRepository;
 import com.jll.cibus.order.repository.OrderRepository;
+import com.jll.cibus.role.entity.RoleEntity;
+import com.jll.cibus.role.enums.Roles;
 import com.jll.cibus.table.dto.TableCreateDTO;
 import com.jll.cibus.table.dto.TableResponseDTO;
 import com.jll.cibus.table.entity.TableEntity;
 import com.jll.cibus.table.mapper.TableMapper;
 import com.jll.cibus.table.repository.TableRepository;
+import com.jll.cibus.user.entity.UserEntity;
 import com.jll.cibus.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -148,6 +151,29 @@ class TableServiceImplTest {
         assertEquals(220, inactiveTable.getPosY());
         assertEquals("RECT", inactiveTable.getShape());
         assertEquals(10L, result.getId());
+    }
+
+    @Test
+    void free_shouldRejectTableWithActiveOrders() {
+        UserEntity manager = UserEntity.builder()
+                .id(1L)
+                .role(new RoleEntity(Roles.MANAGER))
+                .build();
+        TableEntity table = TableEntity.builder()
+                .id(10L)
+                .number(4)
+                .available(false)
+                .active(true)
+                .build();
+
+        when(branchRepository.existsById(1L)).thenReturn(true);
+        when(tableRepository.findByBranch_IdAndNumberAndActiveTrue(1L, 4)).thenReturn(Optional.of(table));
+        when(authService.getAuthenticatedUser()).thenReturn(manager);
+        when(orderRepository.tableHasOrdersActive(10L)).thenReturn(true);
+
+        BusinessException ex = assertThrows(BusinessException.class, () -> tableService.free(1L, 4));
+        assertTrue(ex.getMessage().contains("active orders"));
+        verify(tableRepository, never()).save(any());
     }
 }
 

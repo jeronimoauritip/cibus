@@ -1,6 +1,6 @@
 <app-header-component>
-  @if (closedOrder()) {
-    Receipt #{{ orderId() }}
+  @if (closedBill()) {
+    Receipt — Table #{{ tableNumber() }}
   } @else {
     Table {{ tableNumber() }}
   }
@@ -9,7 +9,7 @@
 <main class="close-page">
   @if (loading()) {
     <div class="state-card">
-      <p>Loading order #{{ orderId() }}...</p>
+      <p>Loading bill for Table #{{ tableNumber() }}...</p>
     </div>
   } @else if (loadError()) {
     <div class="state-card state-card--error" role="alert">
@@ -18,20 +18,20 @@
         <button type="button" class="btn-outline" (click)="navigateToFloor()">
           Back to Floor
         </button>
-        @if (branchId() && orderId() && order()?.status !== 'CANCELLED') {
+        @if (branchId() && tableNumber()) {
           <button type="button" class="btn-solid" (click)="retryLoad()">
             Retry
           </button>
         }
       </div>
     </div>
-  } @else if (closedOrder(); as paid) {
+  } @else if (closedBill(); as paid) {
     <div class="receipt-container">
       @if (receiptError()) {
         <p class="receipt-error" role="alert">{{ receiptError() }}</p>
       }
       <app-receipt
-        [order]="paid"
+        [bill]="paid"
         [payments]="appliedPayments()"
         [paymentMethods]="paymentMethods()"
         [freeingTable]="freeingTable()"
@@ -41,11 +41,11 @@
         (printReceipt)="onPrintReceipt()"
       />
     </div>
-  } @else if (order(); as activeOrder) {
+  } @else if (bill(); as activeBill) {
     <div class="close-grid">
       <aside class="close-grid__ticket">
         <app-ticket-preview
-          [order]="activeOrder"
+          [bill]="activeBill"
           [draftDiscount]="draftDiscount()"
         />
       </aside>
@@ -53,9 +53,9 @@
       <section class="close-grid__payment">
         <app-payment
           [paymentMethods]="paymentMethods()"
-          [subtotal]="activeOrder.subtotal"
-          [existingDiscount]="activeOrder.discount"
-          [remainingAmount]="activeOrder.remainingAmount"
+          [subtotal]="activeBill.subtotal"
+          [existingDiscount]="activeBill.discount"
+          [remainingAmount]="activeBill.remainingAmount"
           [submitting]="submitting()"
           [errorMessage]="submitError()"
           (discountChange)="onDiscountChange($event)"

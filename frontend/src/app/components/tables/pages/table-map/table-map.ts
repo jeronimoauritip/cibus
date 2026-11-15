@@ -359,10 +359,11 @@ export class TableMapComponent implements OnInit {
     const parsedRouteBranchId = routeBranchParam ? Number(routeBranchParam) : null;
 
     this.authService.ensureProfileLoaded().subscribe((profile) => {
-      this.branchService
-        .findAll()
-        .pipe(catchError(() => of([] as Branch[])))
-        .subscribe((branchList) => {
+      const branches$ = this.isAdmin()
+        ? this.branchService.findAll().pipe(catchError(() => of([] as Branch[])))
+        : of([] as Branch[]);
+
+      branches$.subscribe((branchList) => {
           this.branches.set(branchList ?? []);
 
           let targetBranchId: number | null = null;
@@ -1388,21 +1389,21 @@ export class TableMapComponent implements OnInit {
       });
   }
 
-  onCloseOrderClick(table: BranchTable, order: TableOrder): void {
-    if (this.hasUnservedActiveOrder() || !this.isOrderServed(order)) {
+  onCloseOrderClick(table: BranchTable): void {
+    if (this.hasUnservedActiveOrder() || this.selectedTableActiveOrders().length === 0) {
       this.isUnservedOrderModalOpen.set(true);
       return;
     }
-    this.goToCloseOrder(table, order.id);
+    this.goToCloseOrder(table);
   }
 
   dismissUnservedOrderModal(): void {
     this.isUnservedOrderModalOpen.set(false);
   }
 
-  goToCloseOrder(table: BranchTable, orderId: number): void {
+  goToCloseOrder(table: BranchTable): void {
     const branchId = this.activeBranchId();
-    this.router.navigate(['/tables', table.number, 'order', orderId, 'close'], {
+    this.router.navigate(['/tables', table.number, 'checkout'], {
       queryParams: branchId ? { branchId } : undefined,
     });
   }

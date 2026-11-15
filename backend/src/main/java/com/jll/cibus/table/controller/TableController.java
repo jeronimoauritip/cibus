@@ -1,5 +1,8 @@
 package com.jll.cibus.table.controller;
 
+import com.jll.cibus.order.service.OrderService;
+import com.jll.cibus.payment.dto.TableBillDTO;
+import com.jll.cibus.payment.dto.TableCheckoutRequestDTO;
 import com.jll.cibus.table.dto.TableCreateDTO;
 import com.jll.cibus.table.dto.TableUpdateDTO;
 import com.jll.cibus.table.dto.TableResponseDTO;
@@ -16,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/branches/{branchId}/tables")
 public class TableController {
     private final TableService tableService;
+    private final OrderService orderService;
 
-    public TableController(TableService tableService) {
+    public TableController(TableService tableService, OrderService orderService) {
         this.tableService = tableService;
+        this.orderService = orderService;
     }
 
     @GetMapping
@@ -35,6 +40,18 @@ public class TableController {
     @GetMapping("/{tableNumber}")
     public ResponseEntity<TableResponseDTO> getByNumber(@PathVariable Long branchId, @PathVariable Integer tableNumber) {
         return ResponseEntity.ok(tableService.findByNumber(branchId, tableNumber));
+    }
+
+    @GetMapping("/{tableNumber}/bill")
+    public ResponseEntity<TableBillDTO> getBill(@PathVariable Long branchId, @PathVariable Integer tableNumber) {
+        return ResponseEntity.ok(orderService.getTableBill(branchId, tableNumber));
+    }
+
+    @PostMapping("/{tableNumber}/checkout")
+    public ResponseEntity<TableBillDTO> checkout(@PathVariable Long branchId,
+                                                 @PathVariable Integer tableNumber,
+                                                 @Valid @RequestBody TableCheckoutRequestDTO request) {
+        return ResponseEntity.ok(orderService.checkoutTable(branchId, tableNumber, request));
     }
 
     @PostMapping
