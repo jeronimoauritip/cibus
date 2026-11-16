@@ -317,7 +317,9 @@
             }
           </div>
           @if (!table.available) {
-          <div class="drawer-state-timer" aria-label="Time in current table state">
+          <div class="drawer-state-timer" [class.drawer-state-timer--hidden]="isHeaderActionExpanded()"
+            [attr.aria-hidden]="isHeaderActionExpanded() ? 'true' : null"
+            aria-label="Time in current table state">
             <span class="drawer-timer-divider" aria-hidden="true"></span>
             <svg class="drawer-timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

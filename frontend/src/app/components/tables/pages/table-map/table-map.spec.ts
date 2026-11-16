@@ -940,4 +940,54 @@ describe('TableMapComponent', () => {
     expect(component.headerActionConfirmType()).toBe('cancel-order');
     expect(el.querySelector('#header-action-confirm-title')?.textContent?.trim()).toBe('Cancel Order #95?');
   });
+
+  it('hides the drawer state timer without stopping it when the header trash button expands and restores it on collapse', () => {
+    localStorage.removeItem('cibus_table_state_timers_2');
+    const auth = TestBed.inject(AuthService) as any;
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+    const el = fixture.nativeElement as HTMLElement;
+    component.activeBranchId.set(2);
+    component.isLoading.set(false);
+    component.errorMessage.set(null);
+
+    const occupiedTable = {
+      id: 6,
+      number: 4,
+      capacity: 4,
+      available: false,
+      posX: 120,
+      posY: 120,
+      waiterId: 7,
+      branchId: 2,
+    };
+    component.tables.set([occupiedTable]);
+    component.selectedTableNumber.set(4);
+    fixture.detectChanges();
+
+    const startedMs = Date.parse(component.tableStateTimers()[4].startedAt);
+    const trashBtn = el.querySelector('.btn-header-trash') as HTMLButtonElement;
+    expect(trashBtn).not.toBeNull();
+
+    trashBtn.click();
+    fixture.detectChanges();
+
+    const hiddenTimer = el.querySelector('.drawer-state-timer');
+    expect(hiddenTimer?.classList.contains('drawer-state-timer--hidden')).toBe(true);
+    expect(hiddenTimer?.getAttribute('aria-hidden')).toBe('true');
+
+    // Timer continues counting while hidden
+    component.nowMs.set(startedMs + 5 * 60 * 1000);
+    fixture.detectChanges();
+    expect(component.tableStateTimers()[4].startedAt).toBe(new Date(startedMs).toISOString());
+    expect(el.querySelector('.drawer-timer-value')?.textContent?.trim()).toBe('05:00');
+
+    // Collapsing the button restores visibility with the updated elapsed time
+    component.collapseHeaderAction();
+    fixture.detectChanges();
+
+    const restoredTimer = el.querySelector('.drawer-state-timer');
+    expect(restoredTimer?.classList.contains('drawer-state-timer--hidden')).toBe(false);
+    expect(restoredTimer?.getAttribute('aria-hidden')).toBeNull();
+    expect(el.querySelector('.drawer-timer-value')?.textContent?.trim()).toBe('05:00');
+  });
 });
