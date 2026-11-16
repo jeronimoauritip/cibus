@@ -102,8 +102,7 @@
   transform: translateX(-2px);
 }
 
-.logout-icon,
-.kitchen-btn-icon {
+.logout-icon {
   width: 18px;
   height: 18px;
   fill: none;
@@ -111,7 +110,6 @@
   stroke-width: 2.2px;
   stroke-linecap: round;
   stroke-linejoin: round;
-  flex-shrink: 0;
 }
 
 /* TOP-LEFT BRANCH SELECTOR & MORPHING PILL */
@@ -187,20 +185,16 @@
 
 /* TOP-LEFT "VIEW KITCHEN" PILL BUTTON */
 .btn-view-kitchen {
-  font: 700 14px inherit;
+  background: rgba(231, 219, 191, 0.95);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.18s ease;
 }
 
 .btn-view-kitchen:hover {
-  background: var(--dark-green);
-  color: var(--cream);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(32, 90, 64, 0.25);
-}
-
-.btn-view-kitchen:active {
-  transform: translateY(0);
+  background-color: color-mix(in srgb, var(--dark-green) 8%, rgba(231, 219, 191, 0.95));
 }
 
 .branch-morph-trigger:hover {
