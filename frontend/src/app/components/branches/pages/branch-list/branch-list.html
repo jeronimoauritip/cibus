@@ -7,44 +7,33 @@
 
 <div class="page">
   <main class="content">
-    <!-- Search bar with New branch button -->
-    <div class="search-row">
-      <form class="searcher" (submit)="$event.preventDefault()">
-        <label class="readers-only" for="search">Search branch</label>
-        <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
-          <circle cx="9" cy="9" r="7" />
-          <path d="M14 15L22 25" />
-        </svg>
-        <input
-          id="search"
-          name="search"
-          type="search"
-          placeholder="Enter name or address"
-          autocomplete="off"
-          [ngModel]="searchTerm()"
-          (ngModelChange)="searchTerm.set($event)"
-        />
-        @if (searchTerm()) {
-          <button type="button" class="btn-clear-search" (click)="searchTerm.set('')" aria-label="Clear search">
-            <svg class="clear-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        }
-      </form>
+    <!-- Search bar -->
+    <form class="searcher" (submit)="$event.preventDefault()">
+      <label class="readers-only" for="search">Search branch</label>
+      <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
+        <circle cx="9" cy="9" r="7" />
+        <path d="M14 15L22 25" />
+      </svg>
+      <input
+        id="search"
+        name="search"
+        type="search"
+        placeholder="Enter name or address"
+        autocomplete="off"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+      />
+      @if (searchTerm()) {
+        <button type="button" class="btn-clear-search" (click)="searchTerm.set('')" aria-label="Clear search">
+          <svg class="clear-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      }
+    </form>
 
-      <!-- New Branch button -->
-      <a class="btn-new-branch" routerLink="/admin/branches/new" aria-label="New branch">
-        <svg class="plus-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        <span>New branch</span>
-      </a>
-    </div>
-
-    <!-- Dropdown Controls -->
+    <!-- Dropdown Controls + New branch button -->
     <div class="controls" aria-label="List options">
       <div class="dropdown-wrapper">
         <button class="control" type="button" (click)="toggleSortMenu($event)">
@@ -73,6 +62,11 @@
           </div>
         }
       </div>
+
+      <!-- New Branch button (igual a New employee) -->
+      <button type="button" class="toolbar__new" routerLink="/admin/branches/new" aria-label="New branch">
+        <span aria-hidden="true">+</span> New branch
+      </button>
     </div>
 
     <!-- Feedback messages -->

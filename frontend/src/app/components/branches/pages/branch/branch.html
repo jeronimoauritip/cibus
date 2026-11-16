@@ -1,18 +1,12 @@
-<app-header-component> New Branch </app-header-component>
+<app-header-component>
+  <a routerLink="/admin/branches" class="btn-return" title="Back to branches" aria-label="Back to branches">
+    <span aria-hidden="true">←</span> Branches list
+  </a>
+  New Branch
+</app-header-component>
 
 <div class="page">
   <main class="content">
-    <!-- Back button -->
-    <div class="title-container">
-      <a routerLink="/admin/branches" class="btn-back" title="Back to branches" aria-label="Back to branches">
-        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        <span>Branches list</span>
-      </a>
-    </div>
-
     @if (successMessage()) {
       <div class="alert-message success" role="alert">
         {{ successMessage() }}

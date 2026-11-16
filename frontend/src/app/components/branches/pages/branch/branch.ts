@@ -44,7 +44,7 @@ export class BranchComponent implements OnInit {
     required(b.number, { message: 'Number is mandatory' });
     min(b.number, 10, { message: 'Number must have at least 2 digits' });
     max(b.number, 9999, { message: 'Number must have at most 4 digits' });
-  });
+    });
 
   ngOnInit(): void {
     this.service.findAll().subscribe({
