@@ -61,7 +61,7 @@ export const routes: Routes = [
     },
     {
         path: 'manager',
-        canActivate: [roleGuard],
+        canActivate: [authGuard, roleGuard],
         data: { roles: ['Manager'] },
         children: [
             { path: '', component: ManagerPanelComponent },
