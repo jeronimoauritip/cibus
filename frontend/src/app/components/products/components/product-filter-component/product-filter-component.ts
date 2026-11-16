@@ -16,8 +16,5 @@ export class ProductFilterComponent {
   readonly isOpen = signal(false);
 
   readonly categories = computed(() => this.service.categories.value() ?? []);
-  readonly names = computed(() =>
-    Array.from(new Set((this.service.products.value() ?? []).map(p => p.name)))
-  );
   readonly hasNoFilter = computed(() => this.filter().name === '' && this.filter().category === '');
 }

@@ -32,17 +32,6 @@
               </label>
             }
           }
-
-          @if (names().length > 0) {
-            <p class="group">Name</p>
-            @for (n of names(); track n) {
-              <label class="option">
-                <input type="radio" [value]="n"
-                  [formField]="filterForm.name" (change)="isOpen.set(false)" />
-                {{ n }}
-              </label>
-            }
-          }
         </div>
       }
     </div>
