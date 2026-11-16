@@ -736,4 +736,41 @@ describe('TableMapComponent', () => {
     expect(el.querySelectorAll('.order-card--past').length).toBe(1);
     expect(el.querySelector('.order-card--past')?.textContent).toContain('#50');
   });
+
+  it('should show "View kitchen" button only for Admin and Manager and navigate to /kitchen with branchId', () => {
+    const auth = TestBed.inject(AuthService) as any;
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const el = fixture.nativeElement as HTMLElement;
+
+    component.activeBranchId.set(2);
+
+    // Waiter & Host should NOT see "View kitchen"
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+    fixture.detectChanges();
+    expect(el.querySelector('.btn-view-kitchen')).toBeNull();
+
+    auth._user.set({ id: 8, branchId: 2, role: { role: 'Host' } });
+    fixture.detectChanges();
+    expect(el.querySelector('.btn-view-kitchen')).toBeNull();
+
+    // Manager should see "View kitchen" and navigate with branchId
+    auth._user.set({ id: 9, branchId: 2, role: { role: 'Manager' } });
+    fixture.detectChanges();
+    const managerBtn = el.querySelector('.btn-view-kitchen') as HTMLButtonElement | null;
+    expect(managerBtn).not.toBeNull();
+    expect(managerBtn?.textContent?.trim()).toContain('View kitchen');
+    managerBtn?.click();
+    expect(navSpy).toHaveBeenCalledWith(['/kitchen'], { queryParams: { branchId: 2 } });
+
+    // Admin should see "View kitchen" and navigate with activeBranchId
+    navSpy.mockClear();
+    auth._user.set({ id: 1, branchId: null, role: { role: 'Admin' } });
+    component.activeBranchId.set(3);
+    fixture.detectChanges();
+    const adminBtn = el.querySelector('.btn-view-kitchen') as HTMLButtonElement | null;
+    expect(adminBtn).not.toBeNull();
+    adminBtn?.click();
+    expect(navSpy).toHaveBeenCalledWith(['/kitchen'], { queryParams: { branchId: 3 } });
+  });
 });

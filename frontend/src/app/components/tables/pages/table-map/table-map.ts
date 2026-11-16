@@ -136,6 +136,7 @@ export class TableMapComponent implements OnInit {
   readonly isHost = computed(() => this.role() === 'Host');
   readonly isWaiter = computed(() => this.role() === 'Waiter');
   readonly canSwitchBranch = computed(() => this.isAdmin() && this.branches().length > 1);
+  readonly canViewKitchen = computed(() => this.isAdmin() || this.isManager());
 
   /**
    * Only Admin (any branch) and Manager (within their assigned branch) can edit layout.
@@ -1433,6 +1434,14 @@ export class TableMapComponent implements OnInit {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
+    });
+  }
+
+  goToKitchen(): void {
+    if (!this.canViewKitchen()) return;
+    const branchId = this.activeBranchId() ?? this.currentUser()?.branchId ?? null;
+    this.router.navigate(['/kitchen'], {
+      queryParams: branchId ? { branchId } : undefined,
     });
   }
 
