@@ -130,11 +130,31 @@
   font-weight: 600;
   text-align: left;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .dropdown-item:hover {
   background-color: var(--dark-green);
   color: var(--cream);
+}
+
+.dropdown-item.active {
+  background-color: rgba(32, 90, 64, 0.16);
+  color: var(--dark-green);
+  font-weight: 700;
+}
+
+.dropdown-item.active:hover {
+  background-color: var(--dark-green);
+  color: var(--cream);
+}
+
+.check-icon {
+  font-weight: 800;
+  font-size: 14px;
 }
 
 .dropdown-divider {
@@ -521,6 +541,7 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  
   .content {
     margin-top: 24px;
   }
@@ -550,6 +571,7 @@
 }
 
 @media (max-width: 480px) {
+
   .searcher {
     height: 48px;
     padding: 0 16px;
@@ -567,15 +589,20 @@
   }
 
   .controls {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
     padding-left: 4px;
     margin-top: 16px;
   }
 
   .control {
     font-size: 18px;
+  }
+
+  .toolbar__new {
+    margin-left: auto;
   }
 
   .employee-card {

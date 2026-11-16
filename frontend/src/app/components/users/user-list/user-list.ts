@@ -49,6 +49,7 @@ export class UserList implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadBranches();
   }
 
   isInactive(user: User): boolean {
@@ -222,15 +223,14 @@ export class UserList implements OnInit {
       this.currentBranchId.set(undefined);
       this.onlyInactive.set(false);
     } else if (type === 'role') {
-      this.currentRoleId.set(id);
+      this.currentRoleId.update((prev) => (prev === id ? undefined : id));
     } else if (type === 'branch') {
-      this.currentBranchId.set(id);
+      this.currentBranchId.update((prev) => (prev === id ? undefined : id));
       this.onlyInactive.set(false);
     } else if (type === 'inactive') {
       this.currentBranchId.set(undefined);
       this.onlyInactive.update((prev) => !prev);
     }
-
     this.isFilterOpen.set(false);
     this.loadUsers();
   }

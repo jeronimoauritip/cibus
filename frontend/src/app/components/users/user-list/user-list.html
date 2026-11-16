@@ -47,38 +47,35 @@
         </button>
         @if (isFilterOpen()) {
           <div class="dropdown-menu">
-            <button
-              type="button"
-              class="dropdown-item clear-filters"
-              (click)="applyFilter('clear')"
-            >
-              Clear all filters
+          <button type="button" class="dropdown-item clear-filters" (click)="applyFilter('clear')">
+            Clear all filters
+          </button>
+          <div class="dropdown-divider">Status</div>
+          <button type="button" class="dropdown-item" [class.active]="onlyInactive()" (click)="applyFilter('inactive')">
+            <span>Inactive employees</span>
+            @if (onlyInactive()) { <span class="check-icon">✓</span> }
+          </button>
+          <div class="dropdown-divider">Roles</div>
+          <button type="button" class="dropdown-item" [class.active]="currentRoleId() === 1" (click)="applyFilter('role', 1)">
+            <span>Admin</span>
+            @if (currentRoleId() === 1) { <span class="check-icon">✓</span> }
+          </button>
+          <button type="button" class="dropdown-item" [class.active]="currentRoleId() === 2" (click)="applyFilter('role', 2)">
+            <span>Manager</span>
+            @if (currentRoleId() === 2) { <span class="check-icon">✓</span> }
+          </button>
+          <button type="button" class="dropdown-item" [class.active]="currentRoleId() === 3" (click)="applyFilter('role', 3)">
+            <span>Employee</span>
+            @if (currentRoleId() === 3) { <span class="check-icon">✓</span> }
+          </button>
+          <div class="dropdown-divider">Branches</div>
+          @for (branch of branches(); track branch.id) {
+            <button type="button" class="dropdown-item" [class.active]="currentBranchId() === branch.id" (click)="applyFilter('branch', branch.id)">
+              <span>{{ branch.name }}</span>
+              @if (currentBranchId() === branch.id) { <span class="check-icon">✓</span> }
             </button>
-
-            <div class="dropdown-divider">Status</div>
-            <button type="button" class="dropdown-item" (click)="applyFilter('inactive')">
-              Inactive employees
-            </button>
-
-            <div class="dropdown-divider">Roles</div>
-            <button type="button" class="dropdown-item" (click)="applyFilter('role', 1)">
-              Admin
-            </button>
-            <button type="button" class="dropdown-item" (click)="applyFilter('role', 2)">
-              Manager
-            </button>
-            <button type="button" class="dropdown-item" (click)="applyFilter('role', 3)">
-              Employee
-            </button>
-
-            <div class="dropdown-divider">Branches</div>
-            <button type="button" class="dropdown-item" (click)="applyFilter('branch', 1)">
-              Branch 1
-            </button>
-            <button type="button" class="dropdown-item" (click)="applyFilter('branch', 2)">
-              Branch 2
-            </button>
-          </div>
+          }
+        </div>
         }
       </div>
       <button type="button" class="toolbar__new" [routerLink]="[getNewEmployeeRoute()]">
