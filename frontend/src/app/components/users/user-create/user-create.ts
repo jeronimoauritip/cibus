@@ -106,7 +106,8 @@ export class UserCreate implements OnInit {
       },
       error: (err) => {
         console.error('Error creating user', err);
-        this.errorMessage.set('Failed to create the user. Please verify the data and try again.');
+        const backendMessage = err.error?.message || 'Failed to create the user. Please verify the data and try again.';
+        this.errorMessage.set(backendMessage);
         this.isSubmitting.set(false);
       },
     });
