@@ -1,6 +1,9 @@
 import { CdkDragDrop, CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
+import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../Auth/services/auth-service';
 import { HeaderComponent } from '../../../header-component/header-component';
 import {
@@ -29,12 +32,41 @@ export class KitchenViewComponent {
   private readonly orderService = inject(OrderService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
+
+  private readonly queryParams = toSignal(this.route.queryParamMap);
+
+  readonly canReturnToTables = computed(() => this.authService.isManager());
 
   logout(): void {
     this.authService.logout();
   }
 
-  private readonly branchId = computed(() => this.authService.user()?.branchId);
+  goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+    const id = this.branchId();
+    if (id) {
+      this.router.navigate(['/branches', id, 'tables']);
+    } else {
+      this.router.navigate(['/tables']);
+    }
+  }
+
+  private readonly branchId = computed(() => {
+    const param = this.queryParams()?.get('branchId');
+    if (param) {
+      const parsed = Number(param);
+      if (Number.isFinite(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+    return this.authService.user()?.branchId;
+  });
 
   private readonly pendingResource = this.orderService.getKitchenOrders(this.branchId, 'PENDING');
   private readonly preparingResource = this.orderService.getKitchenOrders(this.branchId, 'PREPARING');

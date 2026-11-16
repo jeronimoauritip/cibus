@@ -86,7 +86,7 @@ export const routes: Routes = [
     path: 'kitchen',
     component: KitchenViewComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Kitchen'] }
+    data: { roles: ['Kitchen', 'Manager', 'Admin'] }
 },
 
     { path: '**', redirectTo: '' }
