@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
             branchId = user.getBranch().getId();
         }
         Specification<UserEntity> spec = Specification.allOf(
-                UserSpecification.idNotEquals(user.getId()),
                 UserSpecification.nameContains(name),
                 UserSpecification.dniEquals(dni),
                 UserSpecification.emailEquals(email),
@@ -60,6 +59,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(spec, pageable)
                 .map(userMapper::toDTO);
     }
+
     @Override
     public UserResponseDTO findById(Long id) {
         UserEntity user = userRepository.findById(id)

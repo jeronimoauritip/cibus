@@ -70,7 +70,7 @@ export class UserCreate implements OnInit {
 
   private loadRoles(): void {
     this.userService.getRoles().subscribe({
-      next: (data) => this.roles.set((data || []).filter((r) => r.toUpperCase() !== 'ADMIN')),
+      next: (data) => this.roles.set(data || []),
       error: (err) => {
         console.error('Error fetching roles', err);
         this.errorMessage.set('Failed to load roles from the server.');

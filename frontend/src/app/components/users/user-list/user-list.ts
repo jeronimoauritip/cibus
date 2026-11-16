@@ -183,23 +183,7 @@ export class UserList implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (page) => {
-          if (page?.content) {
-            const currentUser = this.authService.user();
-            const filtered = page.content.filter((u) => {
-              if (!currentUser) return true;
-              if (currentUser.id && u.id === currentUser.id) return false;
-              if (
-                currentUser.email &&
-                u.email?.toLowerCase() === currentUser.email.toLowerCase()
-              ) {
-                return false;
-              }
-              return true;
-            });
-            this.allUsers.set(filtered);
-          } else {
-            this.allUsers.set([]);
-          }
+          this.allUsers.set(page?.content ?? []);
           this.usersPage.set(page);
         },
         error: (err) => {
