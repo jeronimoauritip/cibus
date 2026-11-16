@@ -17,6 +17,8 @@ import { switchMap } from 'rxjs/operators';
 import { HeaderComponent } from '../../header-component/header-component';
 import { UserService } from '../user.service';
 import { User, UserRequest, UserUpdate } from '../user.model';
+import { BranchService } from '../../branches/service/branch-service';
+import { Branch } from '../../branches/models/branch.model';
 
 @Component({
   imports: [HeaderComponent, FormField, FormRoot, RouterLink],
@@ -29,9 +31,11 @@ export class UserDetail implements OnInit {
 
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
+  private readonly branchService = inject(BranchService);
 
   readonly user = signal<User | null>(null);
   readonly roles = signal<string[]>([]);
+  readonly branches = signal<Branch[]>([]);
 
   readonly isEditModalOpen = signal<boolean>(false);
   readonly isDeleteModalOpen = signal<boolean>(false);
@@ -40,13 +44,13 @@ export class UserDetail implements OnInit {
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
 
-  readonly userModel = signal<UserRequest>({
+  readonly userModel = signal<Omit<UserRequest, 'branchId'> & { branchId: string }>({
     dni: 0,
     firstName: '',
     lastName: '',
     phoneNumber: '',
     email: '',
-    branchId: 0,
+    branchId: '',
     role: '',
     pin: '',
   });
@@ -78,8 +82,7 @@ export class UserDetail implements OnInit {
     required(path.email, { message: 'Email is required' });
     email(path.email, { message: 'Enter a valid email address' });
 
-    required(path.branchId, { message: 'Branch ID is required' });
-    min(path.branchId, 1, { message: 'Branch ID must be a positive number' });
+    required(path.branchId, { message: 'Branch is required' });
 
     required(path.role, { message: 'Role is required' });
     pattern(path.pin, /^([0-9]{4})?$/, { message: 'PIN must be exactly 4 digits' });
@@ -108,6 +111,7 @@ export class UserDetail implements OnInit {
 
   ngOnInit(): void {
     this.loadRoles();
+    this.loadBranches();
   }
 
   getBackRoute(): string {
@@ -132,9 +136,16 @@ export class UserDetail implements OnInit {
   private loadRoles(): void {
     this.userService.getRoles().subscribe({
       next: (data) => {
-        this.roles.set((data || []).filter((role) => role.toUpperCase() !== 'ADMIN'));
+        this.roles.set(data || [])
       },
       error: (err) => console.error('Error fetching roles', err),
+    });
+  }
+
+  private loadBranches(): void {
+    this.branchService.findAll().subscribe({
+      next: (data) => this.branches.set(data || []),
+      error: (err) => console.error('Error fetching branches', err),
     });
   }
 
@@ -145,7 +156,7 @@ export class UserDetail implements OnInit {
       lastName: userData.lastName,
       phoneNumber: userData.phoneNumber,
       email: userData.email,
-      branchId: userData.branchId,
+      branchId: userData.branchId ? String(userData.branchId) : '',
       role: userData.role,
       pin: '',
     });

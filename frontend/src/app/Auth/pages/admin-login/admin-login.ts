@@ -22,9 +22,11 @@ export class AdminLogin {
     required(path.email,    { message: 'Enter your email.' });
     email(path.email,       { message: 'Enter a valid email (e.g. name@domain.com).' });
     required(path.password, { message: 'Enter your password.' });
+    /*
     minLength(path.password, this.minPasswordLength, {
       message: `Password must be at least ${this.minPasswordLength} characters long.`,
     });
+    */
   });
 
   onSubmit(): void {

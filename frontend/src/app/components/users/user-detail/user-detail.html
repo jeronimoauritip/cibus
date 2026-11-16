@@ -173,8 +173,13 @@
 
       <div class="field-group">
         <div class="form-field">
-          <label for="branchId">Branch ID</label>
-          <input type="number" id="branchId" [formField]="form.branchId" />
+          <label for="branchId">Branch</label>
+          <select id="branchId" [formField]="form.branchId">
+            <option value="" disabled>Select a branch</option>
+            @for (branch of branches(); track branch.id) {
+              <option [value]="branch.id">{{ branch.name }}</option>
+            }
+          </select>
         </div>
         @if (form.branchId().invalid() && form.branchId().touched()) {
         <div class="field-errors">
