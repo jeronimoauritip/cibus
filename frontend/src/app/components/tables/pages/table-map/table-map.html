@@ -485,7 +485,7 @@
       </div>
       } @else if (!table.available && canActOnSelectedTable()) {
       <div class="drawer-footer">
-        @if (selectedTableActiveOrder(); as activeOrd) {
+        @if (selectedTableActiveOrders().length > 0) {
         <div class="mark-served-collapse" [class.visible]="hasReadyActiveOrder()"
           [attr.aria-hidden]="!hasReadyActiveOrder()">
           <div class="mark-served-collapse-inner">
@@ -503,7 +503,7 @@
           </button>
           <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--split"
             [class.btn-order-pill-trigger--unserved]="hasUnservedActiveOrder()"
-            (click)="onCloseOrderClick(table, activeOrd)">
+            (click)="onCloseOrderClick(table)">
             <span class="btn-order-title">{{ selectedTableActiveOrders().length >= 2 ? 'PAY ORDERS' : 'PAY ORDER'
               }}</span>
           </button>

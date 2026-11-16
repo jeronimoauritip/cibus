@@ -61,8 +61,8 @@ describe('TableMapComponent', () => {
       queryParams: { branchId: 2, waiterId: 7 },
     });
 
-    component.goToCloseOrder(table, 99);
-    expect(navSpy).toHaveBeenCalledWith(['/tables', 3, 'order', 99, 'close'], {
+    component.goToCloseOrder(table);
+    expect(navSpy).toHaveBeenCalledWith(['/tables', 3, 'checkout'], {
       queryParams: { branchId: 2 },
     });
   });
@@ -382,7 +382,7 @@ describe('TableMapComponent', () => {
     payTableBtn.click();
     fixture.detectChanges();
     expect(component.isUnservedOrderModalOpen()).toBe(false);
-    expect(navSpy).toHaveBeenCalledWith(['/tables', 4, 'order', 88, 'close'], {
+    expect(navSpy).toHaveBeenCalledWith(['/tables', 4, 'checkout'], {
       queryParams: { branchId: 2 },
     });
   });
