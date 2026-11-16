@@ -69,38 +69,28 @@
       </div>
     }
 
-    <p class="receipt__thanks">THANK YOU FOR DINING WITH CIBUS</p>
+    <p class="receipt__thanks">Thank you for visiting us</p>
   </article>
 
   <div class="receipt-actions">
+    <button
+      type="button"
+      class="btn-keep-table"
+      [disabled]="freeingTable()"
+      (click)="onFinishKeepTable()"
+    >
+      {{ tableAlreadyFree() ? 'Return to Floor' : 'Return and keep table' }}
+    </button>
     @if (!tableAlreadyFree()) {
       <button
         type="button"
-        class="btn-primary"
+        class="btn-free-table"
         [disabled]="freeingTable()"
         (click)="onFinishAndFreeTable()"
       >
-        {{ freeingTable() ? 'Freeing table...' : 'Free Table & Return to Floor' }}
+        {{ freeingTable() ? 'Freeing table...' : 'Return and free' }}
       </button>
     }
-    <div class="receipt-actions__secondary">
-      <button
-        type="button"
-        class="btn-outline"
-        [disabled]="freeingTable()"
-        (click)="onFinishKeepTable()"
-      >
-        {{ tableAlreadyFree() ? 'Return to Floor' : 'Return (Keep Table Occupied)' }}
-      </button>
-      <button
-        type="button"
-        class="btn-outline"
-        [disabled]="freeingTable()"
-        (click)="onPrint()"
-      >
-        Print Receipt
-      </button>
-    </div>
   </div>
 </section>
 

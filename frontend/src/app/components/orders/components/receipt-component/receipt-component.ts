@@ -20,7 +20,6 @@ export class ReceiptComponent {
 
   readonly finishAndFreeTable = output<void>();
   readonly finishKeepTable = output<void>();
-  readonly printReceipt = output<void>();
 
   readonly orderIdsLabel = computed(() =>
     this.bill()
@@ -48,10 +47,6 @@ export class ReceiptComponent {
 
   onFinishKeepTable(): void {
     this.finishKeepTable.emit();
-  }
-
-  onPrint(): void {
-    this.printReceipt.emit();
   }
 }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { TableOrder } from '../../models/table.model';
 
 @Component({
@@ -12,10 +12,21 @@ import { TableOrder } from '../../models/table.model';
 export class TicketModalComponent {
   readonly ticket = input<TableOrder | null>(null);
   readonly branchName = input<string>('Branch Floor');
+  readonly canCancel = input<boolean>(true);
   readonly closed = output<void>();
+  readonly cancelOrder = output<TableOrder>();
+
+  readonly isActiveOrder = computed(() => {
+    const status = this.ticket()?.status?.toUpperCase();
+    return !!status && status !== 'PAID' && status !== 'CANCELLED';
+  });
 
   closeModal(): void {
     this.closed.emit();
+  }
+
+  onCancelOrder(order: TableOrder): void {
+    this.cancelOrder.emit(order);
   }
 
   formatTimestamp(iso: string | undefined | null): string {

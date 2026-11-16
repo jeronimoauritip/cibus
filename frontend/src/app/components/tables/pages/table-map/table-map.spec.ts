@@ -83,7 +83,6 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([table]);
     component.tableOccupiedAt.set({ 4: '2026-11-13T12:41:00' });
     component.selectedTableNumber.set(4);
@@ -151,7 +150,7 @@ describe('TableMapComponent', () => {
     fixture.detectChanges();
     expect(component.headerActionConfirmType()).toBe('cancel-order');
     expect(el.querySelector('#header-action-confirm-title')?.textContent?.trim()).toBe(
-      'Cancel Order #88?'
+      'Cancel and free table #4?'
     );
     expect(el.querySelector('.delete-confirm-subtitle')?.textContent?.trim()).toContain(
       'CANCELLED'
@@ -163,10 +162,13 @@ describe('TableMapComponent', () => {
     const cancelReq = httpMock.expectOne('/api/branches/2/orders/88/cancel');
     expect(cancelReq.request.method).toBe('POST');
     cancelReq.flush({ ...component.branchOrders()[0], status: 'CANCELLED' });
+    const freeReq = httpMock.expectOne('/api/branches/2/tables/free/4');
+    expect(freeReq.request.method).toBe('PATCH');
+    freeReq.flush({ ...table, available: true, waiterId: null });
 
     fixture.detectChanges();
     expect(component.headerActionConfirmType()).toBeNull();
-    expect(el.querySelector('.trash-label')?.textContent?.trim()).toBe('Free Table');
+    expect(el.querySelector('.btn-header-trash')).toBeNull();
   });
 
   it('should display PENDING when an order is created and PREPARING when kitchen starts preparing', () => {
@@ -181,7 +183,6 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([table]);
     component.branchOrders.set([
       {
@@ -224,7 +225,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 1,
@@ -295,7 +295,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -480,7 +479,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 10,
@@ -542,7 +540,7 @@ describe('TableMapComponent', () => {
 
     // Pointerdown on table #1 in delete mode does NOT start dragging, and click opens confirmation modal
     component.onTablePointerDown(component.tables()[0], {
-      stopPropagation: () => {},
+      stopPropagation: () => { },
     } as unknown as PointerEvent);
     expect(component.draggingTableNumber()).toBeNull();
 
@@ -572,7 +570,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -658,7 +655,6 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
-    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -744,18 +740,155 @@ describe('TableMapComponent', () => {
     expect(el.querySelector('.order-card--past')?.textContent).toContain('#50');
   });
 
-  it('should not call /api/branches for non-admin waiter and should load floor data using profile.branchId', () => {
+  it('should show "View kitchen" button only for Admin and Manager and navigate to /kitchen with branchId', () => {
     const auth = TestBed.inject(AuthService) as any;
-    auth._user.set({ id: 7, branchId: 2, role: { role: 'WAITER' } });
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const el = fixture.nativeElement as HTMLElement;
 
-    (component as any).initializeContext();
+    component.activeBranchId.set(2);
 
-    httpMock.expectNone('/api/branches');
-    const tablesReq = httpMock.expectOne((r) => r.url === '/api/branches/2/tables');
-    const ordersReq = httpMock.expectOne((r) => r.url === '/api/branches/2/orders');
-    const usersReq = httpMock.expectOne((r) => r.url === '/api/users');
-    tablesReq.flush({ content: [] });
-    ordersReq.flush({ content: [] });
-    usersReq.flush({ content: [] });
+    // Waiter & Host should NOT see "View kitchen"
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+    fixture.detectChanges();
+    expect(el.querySelector('.btn-view-kitchen')).toBeNull();
+
+    auth._user.set({ id: 8, branchId: 2, role: { role: 'Host' } });
+    fixture.detectChanges();
+    expect(el.querySelector('.btn-view-kitchen')).toBeNull();
+
+    // Manager should see "View kitchen" and navigate with branchId
+    auth._user.set({ id: 9, branchId: 2, role: { role: 'Manager' } });
+    fixture.detectChanges();
+    const managerBtn = el.querySelector('.btn-view-kitchen') as HTMLButtonElement | null;
+    expect(managerBtn).not.toBeNull();
+    expect(managerBtn?.textContent?.trim()).toContain('View kitchen');
+    managerBtn?.click();
+    expect(navSpy).toHaveBeenCalledWith(['/kitchen'], { queryParams: { branchId: 2 } });
+
+    // Admin should see "View kitchen" and navigate with activeBranchId
+    navSpy.mockClear();
+    auth._user.set({ id: 1, branchId: null, role: { role: 'Admin' } });
+    component.activeBranchId.set(3);
+    fixture.detectChanges();
+    const adminBtn = el.querySelector('.btn-view-kitchen') as HTMLButtonElement | null;
+    expect(adminBtn).not.toBeNull();
+    adminBtn?.click();
+    expect(navSpy).toHaveBeenCalledWith(['/kitchen'], { queryParams: { branchId: 3 } });
+  });
+
+  it('should list and cancel all active orders from drawer trash, and open same confirmation modal from ticket modal cancel', () => {
+    const auth = TestBed.inject(AuthService) as any;
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+
+    component.activeBranchId.set(2);
+    component.isLoading.set(false);
+    component.tables.set([
+      {
+        id: 5,
+        number: 4,
+        capacity: 4,
+        available: false,
+        posX: 100,
+        posY: 100,
+        waiterId: 7,
+        branchId: 2,
+      },
+    ]);
+    component.branchOrders.set([
+      {
+        id: 88,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'PREPARING',
+        createdAt: '2026-11-13T12:45:00',
+        subtotal: 1000,
+        discount: 0,
+        finalTotal: 1000,
+        remainingAmount: 1000,
+        items: [],
+      },
+      {
+        id: 89,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 4,
+        waiterId: 7,
+        waiterFirstName: 'Martina',
+        waiterLastName: 'Romero',
+        status: 'PENDING',
+        createdAt: '2026-11-13T12:50:00',
+        subtotal: 500,
+        discount: 0,
+        finalTotal: 500,
+        remainingAmount: 500,
+        items: [],
+      },
+    ]);
+    component.selectedTableNumber.set(4);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const trashBtn = el.querySelector('.btn-header-trash') as HTMLButtonElement;
+    expect(el.querySelector('.trash-label')?.textContent?.trim()).toBe('Cancel Orders');
+
+    trashBtn.click();
+    fixture.detectChanges();
+    trashBtn.click();
+    fixture.detectChanges();
+
+    expect(component.headerActionConfirmType()).toBe('cancel-order');
+    expect(el.querySelector('#header-action-confirm-title')?.textContent?.trim()).toBe('Cancel and free table #4?');
+    const previewItems = Array.from(el.querySelectorAll('.cancel-orders-preview-item')).map((li) =>
+      li.textContent?.trim()
+    );
+    expect(previewItems.length).toBe(2);
+    expect(previewItems.some((t) => t?.includes('#88'))).toBe(true);
+    expect(previewItems.some((t) => t?.includes('#89'))).toBe(true);
+
+    (el.querySelector('.btn-delete-confirm') as HTMLButtonElement).click();
+    const req1 = httpMock.expectOne('/api/branches/2/orders/89/cancel');
+    const req2 = httpMock.expectOne('/api/branches/2/orders/88/cancel');
+    req1.flush({ ...component.branchOrders()[1], status: 'CANCELLED' });
+    req2.flush({ ...component.branchOrders()[0], status: 'CANCELLED' });
+    const freeReq = httpMock.expectOne('/api/branches/2/tables/free/4');
+    freeReq.flush({ ...component.tables()[0], available: true, waiterId: null });
+    fixture.detectChanges();
+
+    expect(component.selectedTableActiveOrders().length).toBe(0);
+    expect(component.headerActionConfirmType()).toBeNull();
+
+    // Test cancelling a single order from TicketModalComponent
+    const singleOrder = {
+      id: 95,
+      branchId: 2,
+      branchName: 'Sucursal Norte',
+      tableNumber: 4,
+      waiterId: 7,
+      waiterFirstName: 'Martina',
+      waiterLastName: 'Romero',
+      status: 'SERVED',
+      createdAt: '2026-11-13T13:00:00',
+      subtotal: 700,
+      discount: 0,
+      finalTotal: 700,
+      remainingAmount: 700,
+      items: [],
+    };
+    component.tables.update((list) => list.map((t) => ({ ...t, available: false, waiterId: 7 })));
+    component.branchOrders.set([singleOrder]);
+    component.openTicketModal(singleOrder);
+    fixture.detectChanges();
+    expect(component.selectedTicketOrder()?.id).toBe(95);
+
+    component.onCancelSingleOrder(singleOrder);
+    fixture.detectChanges();
+    expect(component.selectedTicketOrder()).toBeNull();
+    expect(component.headerActionConfirmType()).toBe('cancel-order');
+    expect(el.querySelector('#header-action-confirm-title')?.textContent?.trim()).toBe('Cancel Order #95?');
   });
 });

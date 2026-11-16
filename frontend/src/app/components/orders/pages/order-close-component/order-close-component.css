@@ -92,14 +92,3 @@
   }
 }
 
-@media print {
-  app-header-component {
-    display: none;
-  }
-
-  .close-page {
-    width: 100%;
-    padding: 0;
-  }
-}
-

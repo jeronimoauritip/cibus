@@ -228,9 +228,5 @@ export class OrderCloseComponent implements OnInit {
     }
     this.router.navigate(['/tables']);
   }
-
-  onPrintReceipt(): void {
-    window.print();
-  }
 }
 

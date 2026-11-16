@@ -5,10 +5,10 @@
       <!-- Top-Left: Return Button + Branch Pill / Selector -->
       <div class="hud-left">
         @if (isAdmin() || isManager()) {
-          <button type="button" class="btn-back" (click)="goBack()">
-            <span class="arrow-left" aria-hidden="true"></span>
-            <span>Return</span>
-          </button>
+        <button type="button" class="btn-back" (click)="goBack()">
+          <span class="arrow-left" aria-hidden="true"></span>
+          <span>Return</span>
+        </button>
         } @else {
           <button type="button" class="btn-back" (click)="openLogoutConfirm()">
             <svg class="logout-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -64,6 +64,12 @@
           </div>
           }
         </div>
+
+        @if (canViewKitchen()) {
+        <button type="button" class="btn-view-kitchen" (click)="goToKitchen()">
+          <span>View kitchen</span>
+        </button>
+        }
       </div>
 
       <!-- Top-Center: Edit Actions (Edit Mode only) -->
@@ -312,7 +318,8 @@
         <div class="drawer-header-actions">
           @if (!table.available && canActOnSelectedTable()) {
           <button type="button" class="btn-header-trash" [class.expanded]="isHeaderActionExpanded()"
-            [disabled]="isSaving()" [attr.aria-label]="selectedTableActiveOrder() ? 'Cancel order' : 'Free table'"
+            [disabled]="isSaving()"
+            [attr.aria-label]="selectedTableActiveOrders().length > 1 ? 'Cancel orders' : (selectedTableActiveOrders().length === 1 ? 'Cancel order' : 'Free table')"
             (click)="onHeaderTrashClick($event)">
             <svg class="trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -322,7 +329,7 @@
               <line x1="14" y1="11" x2="14" y2="17"></line>
             </svg>
             <span class="trash-label">
-              {{ selectedTableActiveOrder() ? 'Cancel Order' : 'Free Table' }}
+              {{ selectedTableActiveOrders().length > 1 ? 'Cancel Orders' : (selectedTableActiveOrders().length === 1 ? 'Cancel Order' : 'Free Table') }}
             </span>
           </button>
           }
@@ -381,8 +388,8 @@
         }
 
         <ng-template #orderCardTemplate let-ord let-isPast="isPast">
-          <div class="order-card" [class.order-card--past]="isPast" (click)="openTicketModal(ord, $event)"
-            role="button" tabindex="0">
+          <div class="order-card" [class.order-card--past]="isPast" (click)="openTicketModal(ord, $event)" role="button"
+            tabindex="0">
             <div class="order-card-top">
               <span class="order-id">#{{ ord.id }}</span>
               <span class="order-status-pill" [ngClass]="'pill-' + (ord.status || '').toLowerCase()">
@@ -415,7 +422,8 @@
           } @else {
           <div class="order-history-list">
             @for (ord of selectedTableActiveOrders(); track ord.id) {
-            <ng-container *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: false }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: false }"></ng-container>
             }
           </div>
           }
@@ -440,7 +448,8 @@
           @if (table.available || isPastHistoryExpanded()) {
           <div class="order-history-list">
             @for (ord of selectedTablePastOrders(); track ord.id) {
-            <ng-container *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: true }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="orderCardTemplate; context: { $implicit: ord, isPast: true }"></ng-container>
             }
           </div>
           }
@@ -502,7 +511,8 @@
           <button type="button" class="btn-order-pill-trigger btn-order-pill-trigger--split"
             [class.btn-order-pill-trigger--unserved]="hasUnservedActiveOrder()"
             (click)="onCloseOrderClick(table)">
-            <span class="btn-order-title">{{ selectedTableActiveOrders().length >= 2 ? 'PAY ORDERS' : 'PAY ORDER' }}</span>
+            <span class="btn-order-title">{{ selectedTableActiveOrders().length >= 2 ? 'PAY ORDERS' : 'PAY ORDER'
+              }}</span>
           </button>
         </div>
         } @else {
@@ -525,7 +535,8 @@
 
   <!-- FULL TICKET DETAIL MODAL -->
   <app-ticket-modal [ticket]="selectedTicketOrder()" [branchName]="activeBranchName()"
-    (closed)="closeTicketModal()"></app-ticket-modal>
+    [canCancel]="canActOnSelectedTable()" (closed)="closeTicketModal()"
+    (cancelOrder)="onCancelSingleOrder($event)"></app-ticket-modal>
 
   <!-- NEW TABLE SETUP & EDIT MODAL -->
   <app-table-edit-modal [isOpen]="isTableModalOpen()" [mode]="tableModalMode()" [tableNumber]="modalTableNumber()"
@@ -590,11 +601,26 @@
 
       @if (confirmType === 'cancel-order') {
       <h2 id="header-action-confirm-title" class="delete-confirm-title">
-        Cancel Order #{{ orderToCancel()?.id }}?
+        @if (freeTableAfterCancel()) {
+        Cancel and free table #{{ selectedTable()?.number }}?
+        } @else {
+        Cancel Order #{{ ordersToCancel()[0]?.id }}?
+        }
       </h2>
       <p class="delete-confirm-subtitle">
         This will change the order status to CANCELLED. This action cannot be undone.
       </p>
+      <ul class="cancel-orders-preview-list" aria-label="Orders to cancel">
+        @for (ord of ordersToCancel(); track ord.id) {
+        <li class="cancel-orders-preview-item">
+          <span class="cancel-order-id">#{{ ord.id }}</span>
+          <span class="order-status-pill" [ngClass]="'pill-' + (ord.status || '').toLowerCase()">
+            {{ ord.status }}
+          </span>
+          <span class="cancel-order-total">${{ ord.finalTotal | number:'1.2-2' }}</span>
+        </li>
+        }
+      </ul>
       } @else {
       <h2 id="header-action-confirm-title" class="delete-confirm-title">
         Free Table #{{ selectedTable()?.number }}?
@@ -606,10 +632,10 @@
 
       <div class="delete-confirm-actions">
         <button type="button" class="btn-delete-cancel" [disabled]="isSaving()" (click)="dismissHeaderActionConfirm()">
-          {{ confirmType === 'cancel-order' ? 'Keep Order' : 'Cancel' }}
+          {{ confirmType === 'cancel-order' ? (ordersToCancel().length > 1 ? 'Keep Orders' : 'Keep Order') : 'Cancel' }}
         </button>
         <button type="button" class="btn-delete-confirm" [disabled]="isSaving()" (click)="confirmHeaderAction()">
-          {{ confirmType === 'cancel-order' ? 'Cancel Order' : 'Free Table' }}
+          {{ confirmType === 'cancel-order' ? (freeTableAfterCancel() ? 'Cancel and free table' : 'Cancel Order') : 'Free Table' }}
         </button>
       </div>
     </div>
@@ -666,8 +692,7 @@
       <span class="chip-count">{{ countOccupied() }}</span>
     </button>
 
-    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'ready'"
-      (click)="setFilter('ready')">
+    <button type="button" class="filter-chip" [class.active]="activeFilter() === 'ready'" (click)="setFilter('ready')">
       <span class="chip-dot dot-ready" aria-hidden="true"></span>
       <span>Ready</span>
       <span class="chip-count">{{ countReady() }}</span>
