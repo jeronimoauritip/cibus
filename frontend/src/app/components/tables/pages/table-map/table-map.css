@@ -102,7 +102,8 @@
   transform: translateX(-2px);
 }
 
-.logout-icon {
+.logout-icon,
+.kitchen-btn-icon {
   width: 18px;
   height: 18px;
   fill: none;
@@ -110,45 +111,49 @@
   stroke-width: 2.2px;
   stroke-linecap: round;
   stroke-linejoin: round;
+  flex-shrink: 0;
 }
 
 /* TOP-LEFT BRANCH SELECTOR & MORPHING PILL */
 .branch-selector-wrapper {
   position: relative;
   height: 44px;
-  min-width: 200px;
+  min-width: 0;
   z-index: 70;
 }
 
-/* Static Pill (When only 1 branch exists or user cannot switch) */
-.branch-static-pill {
+.branch-static-pill,
+.btn-view-kitchen {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   height: 44px;
-  padding: 0 16px;
-  border-radius: 14px;
+  padding: 0 18px;
+  border-radius: 999px;
   background: rgba(231, 219, 191, 0.92);
   backdrop-filter: blur(8px);
   border: 2px solid var(--dark-green);
-  font: 700 15px inherit;
   color: var(--dark-green);
   box-shadow: var(--shadow-soft);
+  white-space: nowrap;
+}
+
+/* Static Pill (When only 1 branch exists or user cannot switch) */
+.branch-static-pill {
+  font: 700 15px inherit;
   user-select: none;
 }
 
 /* Morphing Branch Pill (When multiple branches can be switched) */
 .branch-morph-shell {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   min-width: 200px;
   width: max-content;
   max-width: 340px;
   background: rgba(231, 219, 191, 0.95);
   backdrop-filter: blur(10px);
   border: 2px solid var(--dark-green);
-  border-radius: 14px;
+  border-radius: 22px;
   box-shadow: var(--shadow-soft);
   overflow: hidden;
   display: flex;
@@ -159,7 +164,7 @@
 
 .branch-morph-shell.open {
   background: rgba(236, 226, 203, 0.98);
-  border-radius: 18px;
+  border-radius: 22px;
   box-shadow: 0 14px 34px rgba(23, 66, 47, 0.22);
 }
 
@@ -167,8 +172,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 44px;
-  padding: 0 16px;
+  height: 40px;
+  padding: 0 18px;
   border: 0;
   background: transparent;
   color: var(--dark-green);
@@ -178,6 +183,24 @@
   width: 100%;
   justify-content: flex-start;
   transition: background-color 0.18s ease;
+}
+
+/* TOP-LEFT "VIEW KITCHEN" PILL BUTTON */
+.btn-view-kitchen {
+  font: 700 14px inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-view-kitchen:hover {
+  background: var(--dark-green);
+  color: var(--cream);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(32, 90, 64, 0.25);
+}
+
+.btn-view-kitchen:active {
+  transform: translateY(0);
 }
 
 .branch-morph-trigger:hover {
@@ -326,8 +349,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px;
-  border-radius: 16px;
+  padding: 5px 6px;
+  border-radius: 999px;
   background: rgba(231, 219, 191, 0.92);
   backdrop-filter: blur(8px);
   border: 2px solid var(--dark-green);
@@ -362,7 +385,7 @@
   gap: 6px;
   height: 34px;
   padding: 0 14px;
-  border-radius: 11px;
+  border-radius: 999px;
   border: 0;
   font: 800 13px inherit;
   cursor: pointer;
@@ -417,8 +440,8 @@
   align-items: center;
   gap: 6px;
   height: 34px;
-  padding: 0 12px;
-  border-radius: 11px;
+  padding: 0 14px;
+  border-radius: 999px;
   border: 0;
   background: transparent;
   color: var(--dark-green);
@@ -2405,6 +2428,10 @@
     top: 10px;
     left: 10px;
     right: 10px;
+    flex-wrap: wrap;
+  }
+
+  .hud-left {
     flex-wrap: wrap;
   }
 
