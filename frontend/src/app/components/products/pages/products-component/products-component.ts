@@ -40,8 +40,9 @@ export class ProductsComponent {
         this.service.products.reload();
         this.router.navigate(['/admin/menu']);
       },
-      error: () => {
-        this.error.set('Error creating the product');
+      error: (err) => {
+        const backendMessage = err.error?.message || 'Error creating the product';
+        this.error.set(backendMessage);
         this.loading.set(false);
       }
     });

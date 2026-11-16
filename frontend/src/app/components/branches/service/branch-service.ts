@@ -10,7 +10,7 @@ export class BranchService {
 
 
     public findAll(): Observable<Branch[]> {
-        return this.http.get<Branch[]>(this.url);
+        return this.http.get<Branch[]>('/api/branches?page=0&size=1000');
     }
 
     public findById(id: number): Observable<Branch> {
