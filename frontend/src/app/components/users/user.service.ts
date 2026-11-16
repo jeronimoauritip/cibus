@@ -20,7 +20,7 @@ export class UserService {
         }
       });
     }
-    return this.http.get<Page<User>>(this.apiUrl, { params });
+    return this.http.get<Page<User>>('/api/users?page=0&size=1000', { params });
   }
 
   getById(userId: number): Observable<User> {

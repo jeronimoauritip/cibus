@@ -7,7 +7,7 @@
 
 <div class="container">
   <main class="content">
-    <form class="searcher" (ngSubmit)="onSearch()">
+    <form class="searcher" (submit)="$event.preventDefault()">
       <label class="readers-only" for="search">Search employee</label>
       <svg class="search-icon" viewBox="0 0 24 27" aria-hidden="true">
         <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="3" />
@@ -89,11 +89,17 @@
         <div class="error-message">
           {{ errorMessage() }}
         </div>
-      } @else if (!usersPage()?.content?.length) {
-        <div class="state-message">No employees found.</div>
+      } @else if (!filteredUsers().length) {
+        <div class="state-message">
+          @if (searchTerm()) {
+            No employees found matching "{{ searchTerm() }}".
+          } @else {
+            No employees found.
+          }
+        </div>
       } @else {
         <div class="employee-list">
-          @for (user of usersPage()?.content; track user.id) {
+          @for (user of filteredUsers(); track user.id) {
             <article
               class="employee-card"
               [class.employee-card--inactive]="isInactive(user)"

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, HostListener } from '@angular/core';
+import { Component, inject, OnInit, signal, HostListener, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -23,6 +23,7 @@ export class UserList implements OnInit {
   private readonly router = inject(Router);
 
   usersPage = signal<Page<User> | undefined>(undefined);
+  allUsers = signal<User[]>([]);
   searchTerm = signal<string>('');
   isLoading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
@@ -36,6 +37,26 @@ export class UserList implements OnInit {
   currentRoleId = signal<number | undefined>(undefined);
   currentBranchId = signal<number | undefined>(undefined);
   onlyInactive = signal<boolean>(false);
+
+  // Filtered users in real time while typing
+  filteredUsers = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    let list = this.allUsers();
+
+    if (this.onlyInactive()) {
+      list = list.filter((u) => this.isInactive(u));
+    }
+
+    if (!term) {
+      return list;
+    }
+
+    return list.filter((u) => {
+      const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
+      const dni = String(u.dni || '').toLowerCase();
+      return fullName.includes(term) || dni.includes(term);
+    });
+  });
 
   // Reactivation modal state
   isReactivateModalOpen = signal<boolean>(false);
@@ -152,7 +173,6 @@ export class UserList implements OnInit {
     this.errorMessage.set(null);
 
     const filters: any = {
-      name: this.searchTerm(),
       sort: this.currentSort(),
       userRoleId: this.currentRoleId(),
       branchId: this.currentBranchId(),
@@ -165,7 +185,7 @@ export class UserList implements OnInit {
         next: (page) => {
           if (page?.content) {
             const currentUser = this.authService.user();
-            let filtered = page.content.filter((u) => {
+            const filtered = page.content.filter((u) => {
               if (!currentUser) return true;
               if (currentUser.id && u.id === currentUser.id) return false;
               if (
@@ -176,13 +196,9 @@ export class UserList implements OnInit {
               }
               return true;
             });
-            if (this.onlyInactive()) {
-              filtered = filtered.filter((u) => this.isInactive(u));
-            }
-            page = {
-              ...page,
-              content: filtered,
-            };
+            this.allUsers.set(filtered);
+          } else {
+            this.allUsers.set([]);
           }
           this.usersPage.set(page);
         },
@@ -191,10 +207,6 @@ export class UserList implements OnInit {
           this.errorMessage.set(`Failed to load users: ${err.error?.message || err.message}`);
         },
       });
-  }
-
-  onSearch(): void {
-    this.loadUsers();
   }
 
   // --- Dropdown logic ---
