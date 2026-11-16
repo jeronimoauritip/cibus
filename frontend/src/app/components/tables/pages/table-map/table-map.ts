@@ -108,7 +108,8 @@ export class TableMapComponent implements OnInit {
   readonly selectedTicketOrder = signal<TableOrder | null>(null);
   readonly isHeaderActionExpanded = signal<boolean>(false);
   readonly headerActionConfirmType = signal<'free-table' | 'cancel-order' | null>(null);
-  readonly orderToCancel = signal<TableOrder | null>(null);
+  readonly ordersToCancel = signal<TableOrder[]>([]);
+  readonly freeTableAfterCancel = signal<boolean>(false);
   readonly isUnservedOrderModalOpen = signal<boolean>(false);
   readonly isPastHistoryExpanded = signal<boolean>(false);
 
@@ -963,7 +964,8 @@ export class TableMapComponent implements OnInit {
     this.isWaiterSelectOpen.set(false);
     this.isHeaderActionExpanded.set(false);
     this.headerActionConfirmType.set(null);
-    this.orderToCancel.set(null);
+    this.ordersToCancel.set([]);
+    this.freeTableAfterCancel.set(false);
     this.isUnservedOrderModalOpen.set(false);
   }
 
@@ -1212,14 +1214,24 @@ export class TableMapComponent implements OnInit {
       return;
     }
 
-    const activeOrder = this.selectedTableActiveOrder();
-    if (activeOrder) {
-      this.orderToCancel.set(activeOrder);
+    const activeOrders = this.selectedTableActiveOrders();
+    if (activeOrders.length > 0) {
+      this.ordersToCancel.set(activeOrders);
+      this.freeTableAfterCancel.set(true);
       this.headerActionConfirmType.set('cancel-order');
     } else {
-      this.orderToCancel.set(null);
+      this.ordersToCancel.set([]);
+      this.freeTableAfterCancel.set(false);
       this.headerActionConfirmType.set('free-table');
     }
+  }
+
+  onCancelSingleOrder(order: TableOrder): void {
+    if (!this.canActOnSelectedTable()) return;
+    this.selectedTicketOrder.set(null);
+    this.ordersToCancel.set([order]);
+    this.freeTableAfterCancel.set(false);
+    this.headerActionConfirmType.set('cancel-order');
   }
 
   collapseHeaderAction(): void {
@@ -1228,54 +1240,73 @@ export class TableMapComponent implements OnInit {
 
   dismissHeaderActionConfirm(): void {
     this.headerActionConfirmType.set(null);
-    this.orderToCancel.set(null);
+    this.ordersToCancel.set([]);
+    this.freeTableAfterCancel.set(false);
     this.isHeaderActionExpanded.set(false);
   }
 
   confirmHeaderAction(): void {
     const type = this.headerActionConfirmType();
     if (type === 'cancel-order') {
-      const order = this.orderToCancel();
-      if (order) {
-        this.cancelActiveOrder(order);
+      const orders = this.ordersToCancel();
+      if (orders.length > 0) {
+        this.cancelActiveOrders(orders, this.freeTableAfterCancel());
       }
     } else if (type === 'free-table') {
       this.freeSelectedTable();
     }
   }
 
-  cancelActiveOrder(order: TableOrder): void {
+  cancelActiveOrders(orders: TableOrder[], shouldFreeTable = false): void {
     const branchId = this.activeBranchId();
     const table = this.selectedTable();
-    if (!branchId || !table || !this.canActOnSelectedTable()) return;
+    if (!branchId || !table || !this.canActOnSelectedTable() || orders.length === 0) return;
 
     this.isSaving.set(true);
-    this.tableService
-      .changeOrderStatus(branchId, order.id, 'CANCELLED')
-      .pipe(finalize(() => this.isSaving.set(false)))
+    forkJoin(
+      orders.map((ord) =>
+        this.tableService.changeOrderStatus(branchId, ord.id, 'CANCELLED')
+      )
+    )
+      .pipe(finalize(() => {
+        if (!shouldFreeTable) {
+          this.isSaving.set(false);
+        }
+      }))
       .subscribe({
-        next: (updatedOrder) => {
+        next: (updatedOrders) => {
+          const updatedMap = new Map(updatedOrders.map((o) => [o.id, o]));
           this.branchOrders.update((list) =>
-            list.map((o) =>
-              o.id === updatedOrder.id
+            list.map((o) => {
+              const updated = updatedMap.get(o.id);
+              return updated
                 ? {
-                  ...o,
-                  ...updatedOrder,
-                  items: updatedOrder.items ?? o.items,
-                  status: updatedOrder.status || 'CANCELLED',
-                }
-                : o
-            )
+                    ...o,
+                    ...updated,
+                    items: updated.items ?? o.items,
+                    status: updated.status || 'CANCELLED',
+                  }
+                : o;
+            })
           );
           this.localVisualOverrides.update((prev) => {
             const copy = { ...prev };
             delete copy[table.number];
             return copy;
           });
+          if (shouldFreeTable) {
+            this.freeSelectedTable();
+            return;
+          }
           this.dismissHeaderActionConfirm();
-          this.showToast(`Order #${order.id} cancelled`);
+          this.showToast(
+            orders.length === 1
+              ? `Order #${orders[0].id} cancelled`
+              : `${orders.length} orders cancelled`
+          );
         },
         error: (err) => {
+          this.isSaving.set(false);
           this.showToast(
             err?.error?.message || err?.error?.error || 'Could not cancel order'
           );

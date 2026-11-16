@@ -2123,10 +2123,11 @@
 }
 
 /* DELETE CONFIRMATION MODAL */
-.delete-confirm-backdrop {
+.delete-confirm-backdrop,
+.info-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(18, 52, 37, 0.45);
+  background: rgba(18, 52, 37, 0.38);
   backdrop-filter: blur(6px);
   z-index: 120;
   display: flex;
@@ -2140,14 +2141,14 @@
   width: 100%;
   max-width: 440px;
   background: var(--cream);
-  border: 2px solid #900c3f;
+  border: 1.5px solid rgba(32, 90, 64, 0.28);
   border-radius: 28px;
   padding: 30px 26px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 24px 50px rgba(18, 52, 37, 0.35), 0 10px 20px rgba(144, 12, 63, 0.15);
+  box-shadow: 0 20px 44px rgba(23, 66, 47, 0.22);
   animation: scaleInCard 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -2155,8 +2156,8 @@
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  background: rgba(144, 12, 63, 0.1);
-  color: #900c3f;
+  background: rgba(32, 90, 64, 0.1);
+  color: var(--dark-green);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2180,8 +2181,37 @@
   margin: 0 0 24px;
   font-size: 14px;
   font-weight: 600;
-  color: #900c3f;
-  opacity: 0.9;
+  color: rgba(32, 90, 64, 0.76);
+  line-height: 1.45;
+}
+
+.cancel-orders-preview-list {
+  list-style: none;
+  margin: -10px 0 20px;
+  padding: 0;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cancel-orders-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  background: rgba(32, 90, 64, 0.07);
+  color: var(--dark-green);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cancel-order-total {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
 }
 
 .delete-confirm-actions {
@@ -2201,27 +2231,29 @@
 }
 
 .btn-delete-cancel {
-  border: 2px solid var(--dark-green);
-  background: transparent;
-  color: var(--dark-green);
+  border: 0;
+  background: var(--dark-green);
+  color: var(--cream);
+  box-shadow: 0 6px 16px rgba(23, 66, 47, 0.2);
 }
 
 .btn-delete-cancel:hover:not(:disabled) {
-  background: rgba(32, 90, 64, 0.1);
+  background: var(--dark-green-hover);
   transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(23, 66, 47, 0.28);
 }
 
 .btn-delete-confirm {
   border: 0;
   background: #900c3f;
   color: #ffffff;
-  box-shadow: 0 8px 18px rgba(144, 12, 63, 0.3);
+  box-shadow: 0 6px 16px rgba(144, 12, 63, 0.22);
 }
 
 .btn-delete-confirm:hover:not(:disabled) {
   background: #730932;
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(144, 12, 63, 0.4);
+  box-shadow: 0 10px 22px rgba(144, 12, 63, 0.3);
 }
 
 .btn-delete-cancel:disabled,
@@ -2231,19 +2263,6 @@
 }
 
 /* SOFT INFORMATIONAL MODAL (UNSERVED ORDERS) */
-.info-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(18, 52, 37, 0.38);
-  backdrop-filter: blur(6px);
-  z-index: 120;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  animation: fadeInBackdrop 0.22s ease-out;
-}
-
 .info-modal-card {
   width: 100%;
   max-width: 420px;
