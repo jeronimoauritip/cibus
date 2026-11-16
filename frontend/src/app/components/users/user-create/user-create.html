@@ -70,8 +70,12 @@
         }
       </div>
       <div class="form-field">
-        <label for="branchId">Branch ID</label>
-        <input type="number" id="branchId" [formField]="form.branchId" />
+        <label for="branchId">Branch</label>
+        <select id="branchId" [formField]="form.branchId">
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branch.name }}</option>
+          }
+        </select>
         @if (form.branchId().invalid() && form.branchId().touched()) {
           <div class="errors">
             @for (error of form.branchId().errors(); track $index) {
@@ -83,7 +87,6 @@
       <div class="form-field">
         <label for="role">Role</label>
         <select id="role" [formField]="form.role">
-          <option value="" disabled>Select a role</option>
           @for (role of roles(); track role) {
             <option [value]="role">{{ role }}</option>
           }

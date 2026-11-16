@@ -4,6 +4,8 @@ import { email, form, FormField, minLength, required } from '@angular/forms/sign
 import { UserService } from '../user.service';
 import { UserRequest } from '../user.model';
 import { HeaderComponent } from '../../header-component/header-component';
+import { BranchService } from '../../branches/service/branch-service';
+import { Branch } from '../../branches/models/branch.model';
 
 @Component({
   imports: [FormField, HeaderComponent, RouterLink],
@@ -13,6 +15,7 @@ import { HeaderComponent } from '../../header-component/header-component';
 })
 export class UserCreate implements OnInit {
   private readonly userService = inject(UserService);
+  private readonly branchService = inject(BranchService);
   private readonly router = inject(Router);
 
   readonly userModel = signal<UserRequest>({
@@ -52,11 +55,13 @@ export class UserCreate implements OnInit {
   );
 
   readonly roles = signal<string[]>([]);
+  readonly branches = signal<Branch[]>([]);
   readonly isSubmitting = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadRoles();
+    this.loadBranches();
   }
 
   getBackRoute(): string {
@@ -73,6 +78,16 @@ export class UserCreate implements OnInit {
     });
   }
 
+  private loadBranches(): void {
+    this.branchService.findAll().subscribe({
+      next: (data) => this.branches.set(data || []),
+      error: (err) => {
+        console.error('Error fetching branches', err);
+        this.errorMessage.set('Failed to load branches from the server.');
+      },
+    });
+  }
+
   onSubmit(): void {
     if (!this.isFormValid()) {
       this.errorMessage.set('Please fill out all required fields.');
@@ -80,7 +95,11 @@ export class UserCreate implements OnInit {
     }
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
-    this.userService.create(this.userModel()).subscribe({
+    const payload: UserRequest = {
+      ...this.userModel(),
+      branchId: Number(this.userModel().branchId),
+    };
+    this.userService.create(payload).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this.router.navigate([this.getBackRoute()]);

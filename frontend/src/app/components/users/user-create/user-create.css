@@ -80,6 +80,7 @@ form {
   line-height: 42px;
 }
 
+
 .form-field input::placeholder {
   color: var(--cream);
   opacity: 0.85;
@@ -94,8 +95,10 @@ form {
 }
 
 .form-field select option {
-  background-color: var(--light-green);
-  color: var(--cream);
+  background-color: var(--cream);
+  color: var(--dark-green);
+  font-size: 18px;
+  font-weight: 600;
 }
 
 label {
