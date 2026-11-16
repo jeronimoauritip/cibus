@@ -307,12 +307,25 @@
       (click)="$event.stopPropagation(); collapseHeaderAction()">
       @if (selectedTable(); as table) {
       <div class="drawer-header">
-        <div class="drawer-title-group">
-          <h2>
-            <span>Table #{{ table.number }}</span>
-          </h2>
+        <div class="drawer-header-main">
+          <div class="drawer-title-group">
+            <h2>
+              <span>Table #{{ table.number }}</span>
+            </h2>
+            @if (!table.available) {
+            <p class="drawer-subtitle">Occupied at: {{ getOccupiedAtTime(table) }}</p>
+            }
+          </div>
           @if (!table.available) {
-          <p class="drawer-subtitle">Occupied at: {{ getOccupiedAtTime(table) }}</p>
+          <div class="drawer-state-timer" aria-label="Time in current table state">
+            <span class="drawer-timer-divider" aria-hidden="true"></span>
+            <svg class="drawer-timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <polyline points="12 7 12 12 15.5 14"></polyline>
+            </svg>
+            <span class="drawer-timer-value">{{ getStateElapsedTime(table) }}</span>
+          </div>
           }
         </div>
         <div class="drawer-header-actions">

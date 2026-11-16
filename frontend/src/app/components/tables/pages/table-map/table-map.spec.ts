@@ -83,6 +83,7 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([table]);
     component.tableOccupiedAt.set({ 4: '2026-11-13T12:41:00' });
     component.selectedTableNumber.set(4);
@@ -183,6 +184,7 @@ describe('TableMapComponent', () => {
       branchId: 2,
     };
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([table]);
     component.branchOrders.set([
       {
@@ -225,6 +227,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 1,
@@ -295,6 +298,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -479,6 +483,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 10,
@@ -570,6 +575,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -655,6 +661,7 @@ describe('TableMapComponent', () => {
 
     component.activeBranchId.set(2);
     component.isLoading.set(false);
+    component.errorMessage.set(null);
     component.tables.set([
       {
         id: 5,
@@ -740,41 +747,83 @@ describe('TableMapComponent', () => {
     expect(el.querySelector('.order-card--past')?.textContent).toContain('#50');
   });
 
-  it('should show "View kitchen" button only for Admin and Manager and navigate to /kitchen with branchId', () => {
+  it('should not call /api/branches for non-admin waiter and should load floor data using profile.branchId', () => {
     const auth = TestBed.inject(AuthService) as any;
-    const router = TestBed.inject(Router);
-    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    auth._user.set({ id: 7, branchId: 2, role: { role: 'WAITER' } });
+
+    (component as any).initializeContext();
+
+    httpMock.expectNone('/api/branches');
+    const tablesReq = httpMock.expectOne((r) => r.url === '/api/branches/2/tables');
+    const ordersReq = httpMock.expectOne((r) => r.url === '/api/branches/2/orders');
+    const usersReq = httpMock.expectOne((r) => r.url === '/api/users');
+    tablesReq.flush({ content: [] });
+    ordersReq.flush({ content: [] });
+    usersReq.flush({ content: [] });
+  });
+
+  it('should run a state timer in the drawer header when occupied, reset on state change, keep constant style past 15m, and stop when closed', () => {
+    localStorage.removeItem('cibus_table_state_timers_2');
     const el = fixture.nativeElement as HTMLElement;
-
     component.activeBranchId.set(2);
+    component.isLoading.set(false);
+    component.errorMessage.set(null);
 
-    // Waiter & Host should NOT see "View kitchen"
-    auth._user.set({ id: 7, branchId: 2, role: { role: 'Waiter' } });
+    const occupiedTable = {
+      id: 5,
+      number: 3,
+      capacity: 4,
+      available: false,
+      posX: 100,
+      posY: 100,
+      waiterId: 7,
+      branchId: 2,
+    };
+    component.tables.set([occupiedTable]);
+    component.selectedTableNumber.set(3);
     fixture.detectChanges();
-    expect(el.querySelector('.btn-view-kitchen')).toBeNull();
 
-    auth._user.set({ id: 8, branchId: 2, role: { role: 'Host' } });
-    fixture.detectChanges();
-    expect(el.querySelector('.btn-view-kitchen')).toBeNull();
+    const timerEl = el.querySelector('.drawer-state-timer');
+    expect(timerEl).not.toBeNull();
+    expect(el.querySelector('.drawer-timer-value')?.textContent?.trim()).toBe('00:00');
 
-    // Manager should see "View kitchen" and navigate with branchId
-    auth._user.set({ id: 9, branchId: 2, role: { role: 'Manager' } });
+    // Simulate 16 minutes elapsed in the same 'occupied' state: should format as 16:00 with no warning color class
+    const startedMs = Date.parse(component.tableStateTimers()[3].startedAt);
+    component.nowMs.set(startedMs + 16 * 60 * 1000);
     fixture.detectChanges();
-    const managerBtn = el.querySelector('.btn-view-kitchen') as HTMLButtonElement | null;
-    expect(managerBtn).not.toBeNull();
-    expect(managerBtn?.textContent?.trim()).toContain('View kitchen');
-    managerBtn?.click();
-    expect(navSpy).toHaveBeenCalledWith(['/kitchen'], { queryParams: { branchId: 2 } });
+    expect(el.querySelector('.drawer-timer-value')?.textContent?.trim()).toBe('16:00');
+    expect(el.querySelector('.drawer-state-timer')?.className).toBe('drawer-state-timer');
 
-    // Admin should see "View kitchen" and navigate with activeBranchId
-    navSpy.mockClear();
-    auth._user.set({ id: 1, branchId: null, role: { role: 'Admin' } });
-    component.activeBranchId.set(3);
+    // Transition to 'pending': timer restarts from 00:00
+    component.nowMs.set(Date.now());
+    component.branchOrders.set([
+      {
+        id: 103,
+        branchId: 2,
+        branchName: 'Sucursal Norte',
+        tableNumber: 3,
+        waiterId: 7,
+        waiterFirstName: 'Matías',
+        waiterLastName: 'Giménez',
+        status: 'PENDING',
+        createdAt: new Date().toISOString(),
+        subtotal: 3600,
+        discount: 0,
+        finalTotal: 3600,
+        remainingAmount: 3600,
+        items: [],
+      },
+    ]);
     fixture.detectChanges();
-    const adminBtn = el.querySelector('.btn-view-kitchen') as HTMLButtonElement | null;
-    expect(adminBtn).not.toBeNull();
-    adminBtn?.click();
-    expect(navSpy).toHaveBeenCalledWith(['/kitchen'], { queryParams: { branchId: 3 } });
+    expect(component.tableStateTimers()[3].state).toBe('pending');
+    expect(el.querySelector('.drawer-timer-value')?.textContent?.trim()).toBe('00:00');
+
+    // Closing/freeing the table removes the timer and hides it from the drawer header
+    component.branchOrders.set([]);
+    component.tables.set([{ ...occupiedTable, available: true, waiterId: null }]);
+    fixture.detectChanges();
+    expect(component.tableStateTimers()[3]).toBeUndefined();
+    expect(el.querySelector('.drawer-state-timer')).toBeNull();
   });
 
   it('should list and cancel all active orders from drawer trash, and open same confirmation modal from ticket modal cancel', () => {

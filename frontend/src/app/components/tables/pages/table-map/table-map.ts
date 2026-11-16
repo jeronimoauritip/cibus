@@ -3,11 +3,13 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   ElementRef,
   HostListener,
   inject,
   OnInit,
   signal,
+  untracked,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -69,6 +71,11 @@ export class TableMapComponent implements OnInit {
   readonly branchUsers = signal<User[]>([]);
   readonly localVisualOverrides = signal<Record<number, TableVisualState>>({});
   readonly tableOccupiedAt = signal<Record<number, string>>({});
+  readonly tableStateTimers = signal<
+    Record<number, { state: TableVisualState; startedAt: string }>
+  >({});
+  readonly nowMs = signal<number>(Date.now());
+  private loadedTimerBranchId: number | null = null;
 
   // UI state
   readonly isLoading = signal<boolean>(false);
@@ -348,10 +355,55 @@ export class TableMapComponent implements OnInit {
     return waiters;
   });
 
+  private readonly stateTimerSyncEffect = effect(() => {
+    const branchId = this.activeBranchId();
+    const tables = this.tables();
+    if (!branchId) return;
+
+    const currentStates = new Map<number, TableVisualState>();
+    for (const table of tables) {
+      currentStates.set(table.number, this.getTableVisualState(table));
+    }
+
+    const branchChanged = branchId !== this.loadedTimerBranchId;
+    const base = branchChanged
+      ? this.readStateTimerStorage(branchId)
+      : untracked(this.tableStateTimers);
+    this.loadedTimerBranchId = branchId;
+
+    const next: Record<number, { state: TableVisualState; startedAt: string }> = { ...base };
+    let changed = branchChanged;
+    const nowIso = new Date().toISOString();
+
+    for (const [tableNumber, state] of currentStates.entries()) {
+      if (state === 'available') {
+        if (next[tableNumber]) {
+          delete next[tableNumber];
+          changed = true;
+        }
+      } else {
+        const prev = next[tableNumber];
+        if (!prev || prev.state !== state) {
+          next[tableNumber] = { state, startedAt: nowIso };
+          changed = true;
+        }
+      }
+    }
+
+    if (changed) {
+      this.tableStateTimers.set(next);
+      this.writeStateTimerStorage(branchId, next);
+    }
+  });
+
   ngOnInit(): void {
     this.initializeContext();
     const timer = setInterval(() => this.refreshFloorDataSilently(), FLOOR_REFRESH_INTERVAL_MS);
-    this.destroyRef.onDestroy(() => clearInterval(timer));
+    const clockTimer = setInterval(() => this.nowMs.set(Date.now()), 1000);
+    this.destroyRef.onDestroy(() => {
+      clearInterval(timer);
+      clearInterval(clockTimer);
+    });
   }
 
   private initializeContext(): void {
@@ -517,6 +569,49 @@ export class TableMapComponent implements OnInit {
         return 'READY!';
       case 'served':
         return 'SERVED';
+    }
+  }
+
+  getStateElapsedTime(table: BranchTable): string {
+    const state = this.getTableVisualState(table);
+    if (state === 'available') {
+      return '00:00';
+    }
+    const entry = this.tableStateTimers()[table.number];
+    const startMs = entry && entry.state === state ? Date.parse(entry.startedAt) : NaN;
+    const elapsedSec = Number.isFinite(startMs)
+      ? Math.max(0, Math.floor((this.nowMs() - startMs) / 1000))
+      : 0;
+    const mins = Math.floor(elapsedSec / 60);
+    const secs = elapsedSec % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+
+  private stateTimerStorageKey(branchId: number): string {
+    return `cibus_table_state_timers_${branchId}`;
+  }
+
+  private readStateTimerStorage(
+    branchId: number
+  ): Record<number, { state: TableVisualState; startedAt: string }> {
+    try {
+      const raw = localStorage.getItem(this.stateTimerStorageKey(branchId));
+      return raw
+        ? (JSON.parse(raw) as Record<number, { state: TableVisualState; startedAt: string }>)
+        : {};
+    } catch {
+      return {};
+    }
+  }
+
+  private writeStateTimerStorage(
+    branchId: number,
+    map: Record<number, { state: TableVisualState; startedAt: string }>
+  ): void {
+    try {
+      localStorage.setItem(this.stateTimerStorageKey(branchId), JSON.stringify(map));
+    } catch {
+      // Ignore storage failures
     }
   }
 
