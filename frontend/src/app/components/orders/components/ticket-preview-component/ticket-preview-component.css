@@ -47,6 +47,7 @@
 
 .ticket__brand {
   font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   font-size: 1.65rem;
   letter-spacing: 0.14em;
 }
@@ -201,6 +202,7 @@
   padding-top: 0.65rem;
   border-top: 2px solid var(--dark-green);
   font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   font-size: 1.35rem;
   font-weight: 700;
 }

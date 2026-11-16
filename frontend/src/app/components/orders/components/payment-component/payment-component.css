@@ -21,6 +21,7 @@
 .payment-card__title {
   margin: 0;
   font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   font-size: 1.5rem;
   color: var(--dark-green);
 }

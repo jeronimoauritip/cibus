@@ -76,6 +76,7 @@
 .column__title {
   margin: 0;
   font-family: "Croogla", "Instrument Sans", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   font-size: 1.4rem;
   line-height: 1;
 }

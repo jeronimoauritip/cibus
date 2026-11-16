@@ -85,6 +85,7 @@
 
 .category__name {
   font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   font-size: 24px;
   color: var(--dark-green);
   margin: 0;
@@ -154,6 +155,7 @@
 
 .modal-title {
   font-family: "Croogla", "Arial Rounded MT Bold", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   font-size: 1.35rem;
   color: var(--dark-green, #205a40);
   margin: 0;

@@ -49,6 +49,7 @@
 .kitchen-card__table {
   margin: 0;
   font-family: "Croogla", "Instrument Sans", sans-serif;
+  -webkit-text-stroke: 1.5px currentColor;
   font-size: 24px;
   line-height: 1;
   color: var(--dark-green);
