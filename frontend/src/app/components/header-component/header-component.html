@@ -1,6 +1,6 @@
 <div class="header-wrapper">
   <header class="header">
-    <a class="logo" routerLink="/" aria-label="Cibus, home">
+    <a class="logo" (click)="onLogoClick()" style="cursor: pointer;" aria-label="Cibus, home">
       <img src="cibus-logo.svg" alt="" />
     </a>
     <ng-content select="[headerAction]"></ng-content>

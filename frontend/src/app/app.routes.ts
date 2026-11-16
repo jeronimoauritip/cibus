@@ -66,6 +66,7 @@ export const routes: Routes = [
         children: [
             { path: '', component: ManagerPanelComponent },
             { path: 'menu/branch/:branchId', component: MenuComponent },
+            { path: 'branches/:branchId/employees', component: BranchEmployeesComponent },
             { path: 'statistics', component: DashboardComponent}
         ]
     },

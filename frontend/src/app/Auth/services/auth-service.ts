@@ -231,4 +231,32 @@ export class AuthService {
         this.clearSession();
         this.router.navigate(['/login']);
     }
+
+    navigateToHome(): void {
+        const user = this.user();
+        const role = this.role();
+        if (!user || !role) {
+            this.router.navigate(['/login']);
+            return;
+        }
+        if (role === 'Admin') {
+            this.router.navigate(['/admin']);
+        } else if (role === 'Manager') {
+            this.router.navigate(['/manager']);
+        } else {
+            const branchId = user.branchId;
+            if (branchId != null) {
+                this.router.navigate([`/branches/${branchId}/tables`]);
+            } else {
+                // Por si justo recargó la página y todavía no terminó hydrateProfileInBackground()
+                this.ensureProfileLoaded().subscribe(loadedUser => {
+                    if (loadedUser?.branchId != null) {
+                        this.router.navigate([`/branches/${loadedUser.branchId}/tables`]);
+                    } else {
+                        this.router.navigate(['/tables']);
+                    }
+                });
+            }
+        }
+    }
 }

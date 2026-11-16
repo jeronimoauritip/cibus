@@ -1574,7 +1574,11 @@ export class TableMapComponent implements OnInit {
 
   goBack(): void {
     if (this.isAdmin()) {
-      this.router.navigate(['/admin/branches']);
+      this.router.navigate(['/admin']);
+      return;
+    }
+    if (this.isManager()) {
+      this.router.navigate(['/manager']);
       return;
     }
     if (window.history.length > 1) {
