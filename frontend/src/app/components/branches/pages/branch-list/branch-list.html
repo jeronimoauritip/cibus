@@ -109,7 +109,7 @@
                 <p class="branch-detail"><span>Number:</span> {{ branch.number }}</p>
               </div>
 
-              <!-- Badge ID, Table map & Employees links -->
+              <!-- Badge ID, Table map, Employees & Menu links -->
               @if (branch.id) {
                 <a
                   class="btn-tables"
@@ -126,6 +126,14 @@
                   aria-label="Manage branch employees"
                 >
                   Employees
+                </a>
+                <a
+                  class="btn-menu"
+                  [routerLink]="['/admin/menu/branch', branch.id]"
+                  title="Manage branch menu"
+                  aria-label="Manage branch menu"
+                >
+                  Menu
                 </a>
                 <div class="branch-badge">
                   #{{ branch.id }}

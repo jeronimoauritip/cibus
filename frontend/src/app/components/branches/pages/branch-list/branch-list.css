@@ -328,7 +328,8 @@
 }
 
 .btn-tables,
-.btn-employees {
+.btn-employees,
+.btn-menu {
   padding: 6px 16px;
   border-radius: 12px;
   background-color: var(--background-green);
@@ -345,7 +346,8 @@
 }
 
 .btn-tables:hover,
-.btn-employees:hover {
+.btn-employees:hover,
+.btn-menu:hover {
   background-color: #17422f;
   transform: translateY(-1px);
 }
